@@ -4,19 +4,19 @@ namespace Potestas.Observations.Comparers.EqualityComparers
 {
     public abstract class BaseEqualityComparer : EqualityComparer<IEnergyObservation>
     {
-        public bool? BaseEqualityCompare(IEnergyObservation xObservation, IEnergyObservation yObservation)
+        public bool? BaseEqualityCompare<T>(T xObservation, T yObservation) where T : IEnergyObservation
         {
-            if (xObservation == null)
+            if (EqualityComparer<T>.Default.Equals(xObservation, default(T)))
             {
-                return yObservation == null;
+                return EqualityComparer<T>.Default.Equals(yObservation, default(T));
             }
 
-            if (yObservation == null)
+            if (EqualityComparer<T>.Default.Equals(yObservation, default(T)))
             {
-                return xObservation == null;
+                return EqualityComparer<T>.Default.Equals(xObservation, default(T));
             }
 
-            if (ReferenceEquals(xObservation, yObservation))
+            if (EqualityComparer<T>.Default.Equals(xObservation, yObservation))
             {
                 return true;
             }

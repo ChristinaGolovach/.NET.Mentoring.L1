@@ -17,5 +17,17 @@ namespace Potestas.Observations.Comparers
                 epsilon = 0.001;
             }
         }
+
+        public static void GetCanonicalValues(ref double x, ref double y)
+        {
+            GetCanonicalValues(ref x);
+            GetCanonicalValues(ref y);
+        }
+
+        // https://stackoverflow.com/questions/12580981/overriding-equals-and-gethashcode-and-double-comparison
+        public static void GetCanonicalValues(ref double x)
+        {
+            x = Math.Floor(x / epsilon) * epsilon;
+        }
     }
 }

@@ -54,9 +54,11 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         [InlineData(double.NaN, double.NaN, true)]
         [InlineData(double.MinValue, double.MinValue, true)]
         [InlineData(double.MaxValue, double.MaxValue, true)]
+        [InlineData(double.PositiveInfinity, double.PositiveInfinity, true)]
         [InlineData(0.001, 0.001, true)]
         [InlineData(-0.001, -0.001, true)]
-        [InlineData(0.001, 0.00001, true)]
+        [InlineData(0.001, 0.0011, true)]
+        [InlineData(0.01, 0.00001, false)]
         [InlineData(-0.001, 0.001, false)]
         [InlineData(0.01, 0.0000001, false)]
         public void EqualsTest_PassTwoEnergyObservation_ReturnTrueOrFalse(double estimatedValue1, double estimatedValue2, bool expectedResult)
@@ -72,6 +74,54 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
 
             // Assert
             Assert.Equal(expectedResult, actualResult);
+        }
+
+        [Theory]
+        [InlineData(double.NaN, double.NaN)]
+        [InlineData(double.MinValue, double.MinValue)]
+        [InlineData(double.MaxValue, double.MaxValue)]
+        [InlineData(double.PositiveInfinity, double.PositiveInfinity)]
+        [InlineData(0.001, 0.001)]
+        [InlineData(-0.001, -0.001)]
+        [InlineData(0.001, 0.0011)]
+        [InlineData(0.001, 0.00122)]
+        public void GetHashCodeTest_PassTwoEqualEnergyObservationWithThousandPrecision_HashCodesAreEqual(double estimatedValue1, double estimatedValue2)
+        {
+            // Arange
+            var sut = new EstimatedValueEqualityComparer();
+            var energyMock1 = GetEnergyObservationMock(estimatedValue1);
+            var energyMock2 = GetEnergyObservationMock(estimatedValue2);
+
+
+            // Act
+            var hashCode1 = sut.GetHashCode(energyMock1.Object);
+            var hashCode2 = sut.GetHashCode(energyMock2.Object);
+
+            // Assert
+            Assert.Equal(hashCode1, hashCode2);
+        }
+
+        [Theory]
+        [InlineData(double.NaN, double.MinValue)]
+        [InlineData(double.MaxValue, double.MinValue)]
+        [InlineData(0.01, 0.001)]
+        [InlineData(-0.01, -0.001)]
+        [InlineData(0.01, 0.0011)]
+        [InlineData(0.001, 0.0122)]
+        public void GetHashCodeTest_PassTwoNotEqualEnergyObservationWithThousandPrecision_HashCodeAreNotEqual(double estimatedValue1, double estimatedValue2)
+        {
+            // Arange
+            var sut = new EstimatedValueEqualityComparer();
+            var energyMock1 = GetEnergyObservationMock(estimatedValue1);
+            var energyMock2 = GetEnergyObservationMock(estimatedValue2);
+
+
+            // Act
+            var hashCode1 = sut.GetHashCode(energyMock1.Object);
+            var hashCode2 = sut.GetHashCode(energyMock2.Object);
+
+            // Assert
+            Assert.NotEqual(hashCode1, hashCode2);
         }
 
         private Mock<IEnergyObservation> GetEnergyObservationMock(double estimatedValue)

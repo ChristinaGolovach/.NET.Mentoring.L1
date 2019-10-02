@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Collections.Generic;
+using Moq;
 using Xunit;
 using Potestas.Observations.Comparers.OrderComparers;
 
@@ -76,11 +77,42 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
             Assert.Equal(expectedResult, actualResult);
         }
 
+        [Fact]
+        public void CompareTest_SortCollectionAcordingObservationPointComparer_RightOrderOnCollection()
+        {
+            // Arange
+            var sutComparer = new ObservationPointComparer();
+
+            var energyMock1 = GetEnergyObservationMock(2, 2);
+            var energyMock2 = GetEnergyObservationMock(1, 1);
+            var energyMock3 = GetEnergyObservationMock(-0.01, 1);
+            var energyMock4 = GetEnergyObservationMock(-0.1, 1);
+
+            var listActual = new List<IEnergyObservation>();
+            var listExpected = new List<IEnergyObservation>();
+
+            listActual.Add(energyMock1.Object);
+            listActual.Add(energyMock2.Object);
+            listActual.Add(energyMock3.Object);
+            listActual.Add(energyMock4.Object);
+
+            listExpected.Add(energyMock4.Object);
+            listExpected.Add(energyMock3.Object);
+            listExpected.Add(energyMock2.Object);
+            listExpected.Add(energyMock1.Object);
+
+            // Act
+            listActual.Sort(sutComparer);
+
+            // Assert
+            Assert.Equal(listExpected, listActual);
+        }
+
         private Mock<IEnergyObservation> GetEnergyObservationMock(double xCoordinate, double yCoordinate)
         {
             var energyObservationMock = new Mock<IEnergyObservation>();
 
-            energyObservationMock.SetupGet(m => m.ObservationPoint).Returns(new Coordinates() { X = xCoordinate, Y = yCoordinate });
+            energyObservationMock.SetupGet(m => m.ObservationPoint).Returns(new Coordinates(xCoordinate, yCoordinate));
 
             return energyObservationMock;
         }

@@ -4,13 +4,13 @@ namespace Potestas.Observations.Comparers.OrderComparers
 {
     public class ObservationPointComparer : BaseOrderComparer
     {
-        public override int Compare(IEnergyObservation xObservation, IEnergyObservation yObservation)
+        public int Compare<T>(T xObservation, T yObservation) where T: IEnergyObservation
         {
             var baseOrderCompareResult = BaseOrderCompare(xObservation, yObservation);
 
-            if (baseOrderCompareResult != null)
+            if (baseOrderCompareResult.HasValue) 
             {
-                return (int)baseOrderCompareResult;
+                return baseOrderCompareResult.Value;
             }
 
             int xComparingResult = Comparer<double>.Default.Compare(xObservation.ObservationPoint.X, yObservation.ObservationPoint.X);
@@ -18,5 +18,8 @@ namespace Potestas.Observations.Comparers.OrderComparers
 
             return (xComparingResult == 0) ? yComparingResult : (xComparingResult == -1) ? -1 : 1;
         }
+
+        public override int Compare(IEnergyObservation xObservation, IEnergyObservation yObservation) =>
+            Compare<IEnergyObservation>(xObservation, yObservation);
     }
 }

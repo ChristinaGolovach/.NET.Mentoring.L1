@@ -4,7 +4,7 @@ namespace Potestas.Observations.Comparers.EqualityComparers
 {
     public class ObservationTimeEqualityComparer : BaseEqualityComparer
     {
-        public override bool Equals(IEnergyObservation xObservation, IEnergyObservation yObservation)
+        public bool Equals<T>(T xObservation, T yObservation) where T : IEnergyObservation
         {
             var baseEqualityCompareResult = BaseEqualityCompare(xObservation, yObservation);
 
@@ -16,14 +16,20 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             return xObservation.ObservationTime == yObservation.ObservationTime;
         }
 
-        public override int GetHashCode(IEnergyObservation observation)
+        public override bool Equals(IEnergyObservation xObservation, IEnergyObservation yObservation) =>
+            Equals<IEnergyObservation>(xObservation, yObservation);
+
+        public int GetHashCode<T>(T observation) where T : IEnergyObservation
         {
-            if (observation == null)
+            if (EqualityComparer<T>.Default.Equals(observation, default(T)))
             {
                 return 0;
             }
 
             return observation.ObservationTime.GetHashCode();
         }
+
+        public override int GetHashCode(IEnergyObservation observation) =>
+            GetHashCode<IEnergyObservation>(observation);
     }
 }
