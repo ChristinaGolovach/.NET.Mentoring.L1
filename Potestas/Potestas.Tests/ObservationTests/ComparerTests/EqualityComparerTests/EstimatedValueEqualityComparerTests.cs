@@ -55,6 +55,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         [InlineData(double.MinValue, double.MinValue, true)]
         [InlineData(double.MaxValue, double.MaxValue, true)]
         [InlineData(double.PositiveInfinity, double.PositiveInfinity, true)]
+        [InlineData(double.NegativeInfinity, double.NegativeInfinity, true)]
         [InlineData(0.001, 0.001, true)]
         [InlineData(-0.001, -0.001, true)]
         [InlineData(0.001, 0.0011, true)]
