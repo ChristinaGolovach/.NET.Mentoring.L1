@@ -13,30 +13,99 @@ namespace Potestas
      * 7. Implement == and != operators for this structure.
      * 8. 
      */
-    public struct Coordinates 
+    public struct Coordinates : IEquatable<Coordinates>
     {
-        private readonly double x;
-
-        private readonly double y;
-
         private static readonly double precision = 0.001;
 
-        public double X { get => x; }
+        private static readonly double xMinValue = -90;
+        private static readonly double xMaxValue = 90;
 
-        public double Y { get => y; }
+        private static readonly double yMinValue = 0;
+        private static readonly double yMaxValue = 180;  
+
+
+        public double X { get; }
+
+        public double Y { get; }
 
         public Coordinates(double xCoordinate, double yCoordinate)
         {
-            x = xCoordinate;
-            y = yCoordinate;
+            //TODO move it to the separate validator
+            if (xCoordinate < xMinValue || xCoordinate > xMaxValue)
+            {
+                throw new ArgumentOutOfRangeException($"The {nameof(xCoordinate)} must be in range between {xMinValue} and {xMaxValue} inclusively.");
+            }
+
+            if (yCoordinate < yMinValue || yCoordinate > yMaxValue)
+            {
+                throw new ArgumentOutOfRangeException($"The {nameof(yCoordinate)} must be in range between {yMinValue} and {yMaxValue} inclusively.");
+            }
+
+            X = xCoordinate;
+            Y = yCoordinate;
+
         }
 
-        // https://stackoverflow.com/questions/371328/why-is-it-important-to-override-gethashcode-when-equals-method-is-overridden
+        public static Coordinates operator +(Coordinates coordinates1, Coordinates coordinates2)
+        {
+            return new Coordinates(coordinates1.X + coordinates2.X, coordinates1.Y + coordinates2.Y);
+        }
+
+        public static Coordinates operator -(Coordinates coordinates1, Coordinates coordinates2)
+        {
+            return new Coordinates(coordinates1.X - coordinates2.X, coordinates1.Y - coordinates2.Y);
+        }
+
+        public static bool operator ==(Coordinates coordinates1, Coordinates coordinates2)
+        {
+            return coordinates1.Equals(coordinates2);
+        }
+
+        public static bool operator !=(Coordinates coordinates1, Coordinates coordinates2)
+        {
+            return !(coordinates1 == coordinates2);
+        }
+
+        public bool Equals(Coordinates other)
+        {
+            if (double.IsNaN(X) && double.IsNaN(Y))
+            {
+                return double.IsNaN(other.X) && double.IsNaN(other.Y);
+            }
+
+            if (double.IsNaN(X) && !double.IsNaN(Y))
+            {
+                return double.IsNaN(other.X) && !double.IsNaN(other.Y);
+            }
+
+            if (!double.IsNaN(X) && double.IsNaN(Y))
+            {
+                return !double.IsNaN(other.X) && double.IsNaN(other.Y);
+            }
+
+            return EqualsCoordinates(other);
+        }
+
+        public override bool Equals(object other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            if (other.GetType() != typeof(Coordinates))
+            {
+                return false;
+            }
+
+            return Equals((Coordinates)other);
+        }
+
         public override int GetHashCode()
         {
             int hash = 3;
-            double x = this.x;
-            double y = this.y;
+            double x = X;
+            double y = Y;
 
             ComparerSettings.GetCanonicalValues(ref x, ref y, precision);
 
@@ -45,7 +114,26 @@ namespace Potestas
 
             return hash;
         }
- 
-        //TODO add IEquatable
+
+        public override string ToString()
+        {
+            return $"X = {X}, Y = {Y}";
+        }
+
+        private bool EqualsCoordinates(Coordinates other)
+        {
+            double x1 = X;
+            double y1 = Y;
+
+            double x2 = other.X;
+            double y2 = other.Y;
+
+            ComparerSettings.GetCanonicalValues(ref x1, ref y1, precision);
+            ComparerSettings.GetCanonicalValues(ref x2, ref y2, precision);
+
+            return x1 == x2 && y1 == y2;
+        }
     }
+
+    // https://stackoverflow.com/questions/371328/why-is-it-important-to-override-gethashcode-when-equals-method-is-overridden
 }

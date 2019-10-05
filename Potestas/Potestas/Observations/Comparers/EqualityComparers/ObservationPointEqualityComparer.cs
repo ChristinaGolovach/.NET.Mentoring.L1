@@ -38,7 +38,16 @@ namespace Potestas.Observations.Comparers.EqualityComparers
                 return 0;
             }
 
-            return observation.ObservationPoint.GetHashCode();
+            int hash = 3;
+            double x = observation.ObservationPoint.X;
+            double y = observation.ObservationPoint.Y;
+
+            ComparerSettings.GetCanonicalValues(ref x, ref y, ComparerSettings.compareEpsilon);
+
+            hash = (hash * 7) + x.GetHashCode();
+            hash = (hash * 7) + y.GetHashCode();
+
+            return hash;
         }
 
         private bool EqualsCoordinatesOfObservations(Coordinates firstObservationCoordinates, Coordinates secondObservationCoordinates)
@@ -49,10 +58,14 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             double x2 = secondObservationCoordinates.X;
             double y2 = secondObservationCoordinates.Y;
 
-            ComparerSettings.GetCanonicalValues(ref x1, ref y1, ComparerSettings.epsilon);
-            ComparerSettings.GetCanonicalValues(ref x2, ref y2, ComparerSettings.epsilon);
+            ComparerSettings.GetCanonicalValues(ref x1, ref y1, ComparerSettings.compareEpsilon);
+            ComparerSettings.GetCanonicalValues(ref x2, ref y2, ComparerSettings.compareEpsilon);
 
             return x1 == x2 && y1 == y2;
         }
     }
+
+    // An equality comparer switches on non standard equality and hashing behavior
+    // and it need not to call logic from ObservationPoint.
+    // Here the logic is implemented as in the structure just for example
 }

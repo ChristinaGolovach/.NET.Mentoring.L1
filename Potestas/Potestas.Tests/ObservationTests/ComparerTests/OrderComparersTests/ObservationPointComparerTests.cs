@@ -53,7 +53,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
 
         [Theory]
         [InlineData(double.NaN, double.NaN, double.NaN, double.NaN, 0)]
-        [InlineData(double.MinValue, double.MaxValue, double.MinValue, double.MaxValue, 0)]
+        // [InlineData(double.MinValue, double.MaxValue, double.MinValue, double.MaxValue, 0)] // limitations has been added in ctor Coordinates
         [InlineData(0.001, 0.001, 0.001, 0.001, 0)]
         [InlineData(0, 1, 0, 1, 0)]
         [InlineData(1, 1, 1, 2, -1)]

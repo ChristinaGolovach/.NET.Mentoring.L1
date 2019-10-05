@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Potestas.Observations.Comparers.EqualityComparers
 {
@@ -21,7 +20,8 @@ namespace Potestas.Observations.Comparers.EqualityComparers
 
             double x = xObservation.EstimatedValue;
             double y = yObservation.EstimatedValue;
-            ComparerSettings.GetCanonicalValues(ref x, ref y, ComparerSettings.epsilon);
+
+            ComparerSettings.GetCanonicalValues(ref x, ref y, ComparerSettings.compareEpsilon);
 
             return (x == y);
         }
@@ -34,7 +34,7 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             }
 
             double x = observation.EstimatedValue;
-            ComparerSettings.GetCanonicalValues(ref x, ComparerSettings.epsilon);
+            ComparerSettings.GetCanonicalValues(ref x, ComparerSettings.compareEpsilon);
 
             return x.GetHashCode();
         }
