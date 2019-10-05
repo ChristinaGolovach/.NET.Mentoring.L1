@@ -10,7 +10,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void EqualsTest_FirstObservationIsNullSecondObservationIsNotNull_ResultIsFalse()
         {
             // Arange
-            var sut = new EstimatedValueEqualityComparer();
+            var sut = new EstimatedValueEqualityComparer<IEnergyObservation>();
             var energyMock = new Mock<IEnergyObservation>();
 
             // Act
@@ -24,7 +24,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void EqualsTest_FirstObservationIsNotNullSecondObservationIsNull_ResultIsFalse()
         {
             // Arange
-            var sut = new EstimatedValueEqualityComparer();
+            var sut = new EstimatedValueEqualityComparer<IEnergyObservation>();
             var energyMock = new Mock<IEnergyObservation>();
 
             // Act
@@ -39,7 +39,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void EqualsTest_ObservationReferencesAreEqual_ResultIsTrue()
         {
             // Arange
-            var sut = new EstimatedValueEqualityComparer();
+            var sut = new EstimatedValueEqualityComparer<IEnergyObservation>();
             var energyMock1 = new Mock<IEnergyObservation>();
             var energyMock2 = energyMock1;
 
@@ -65,7 +65,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void EqualsTest_PassTwoEnergyObservation_ReturnTrueOrFalse(double estimatedValue1, double estimatedValue2, bool expectedResult)
         {
             // Arange
-            var sut = new EstimatedValueEqualityComparer();
+            var sut = new EstimatedValueEqualityComparer<IEnergyObservation>();
             var energyMock1 = GetEnergyObservationMock(estimatedValue1);
             var energyMock2 = GetEnergyObservationMock(estimatedValue2);
 
@@ -89,7 +89,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void GetHashCodeTest_PassTwoEqualEnergyObservationWithThousandPrecision_HashCodesAreEqual(double estimatedValue1, double estimatedValue2)
         {
             // Arange
-            var sut = new EstimatedValueEqualityComparer();
+            var sut = new EstimatedValueEqualityComparer<IEnergyObservation>();
             var energyMock1 = GetEnergyObservationMock(estimatedValue1);
             var energyMock2 = GetEnergyObservationMock(estimatedValue2);
 
@@ -112,7 +112,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void GetHashCodeTest_PassTwoNotEqualEnergyObservationWithThousandPrecision_HashCodeAreNotEqual(double estimatedValue1, double estimatedValue2)
         {
             // Arange
-            var sut = new EstimatedValueEqualityComparer();
+            var sut = new EstimatedValueEqualityComparer<IEnergyObservation>();
             var energyMock1 = GetEnergyObservationMock(estimatedValue1);
             var energyMock2 = GetEnergyObservationMock(estimatedValue2);
 

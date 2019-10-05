@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Moq;
+﻿using Moq;
 using Xunit;
 using Potestas.Observations.Comparers.EqualityComparers;
 
@@ -13,7 +10,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void EqualsTest_FirstObservationIsNullSecondObservationIsNotNull_ResultIsFalse()
         {
             // Arange
-            var sut = new ObservationPointEqualityComparer();
+            var sut = new ObservationPointEqualityComparer<IEnergyObservation>();
             var energyMock = new Mock<IEnergyObservation>();
 
             // Act
@@ -27,7 +24,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void EqualsTest_FirstObservationIsNotNullSecondObservationIsNull_ResultIsFalse()
         {
             // Arange
-            var sut = new ObservationPointEqualityComparer();
+            var sut = new ObservationPointEqualityComparer<IEnergyObservation>();
             var energyMock = new Mock<IEnergyObservation>();
 
             // Act
@@ -42,7 +39,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void EqualsTest_ObservationReferencesAreEqual_ResultIsTrue()
         {
             // Arange
-            var sut = new ObservationPointEqualityComparer();
+            var sut = new ObservationPointEqualityComparer<IEnergyObservation>();
             var energyMock1 = new Mock<IEnergyObservation>();
             var energyMock2 = energyMock1;
 
@@ -69,7 +66,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
                                 double xCoordinate2, double yCoordinate2, bool expectedResult)
         {
             // Arange
-            var sut = new ObservationPointEqualityComparer();
+            var sut = new ObservationPointEqualityComparer<IEnergyObservation>();
             var energyMock1 = GetEnergyObservationMock(xCoordinate1, yCoordinate1);
             var energyMock2 = GetEnergyObservationMock(xCoordinate2, yCoordinate2);
 

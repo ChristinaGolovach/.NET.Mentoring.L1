@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Potestas.Observations.Comparers.EqualityComparers
 {
-    public class ObservationPointEqualityComparer : BaseEqualityComparer
+    public class ObservationPointEqualityComparer<T> : BaseEqualityComparer<T> where T : IEnergyObservation
     {
-        public bool Equals<T>(T xObservation, T yObservation) where T : IEnergyObservation
+        public override bool Equals(T xObservation, T yObservation)
         {
             var baseEqualityCompareResult = BaseEqualityCompare(xObservation, yObservation);
 
@@ -32,10 +31,7 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             return EqualsCoordinatesOfObservations(xObservation.ObservationPoint, yObservation.ObservationPoint);
         }
 
-        public override bool Equals(IEnergyObservation xObservation, IEnergyObservation yObservation) =>
-             Equals<IEnergyObservation>(xObservation, yObservation);
-
-        public int GetHashCode<T>(T observation) where T : IEnergyObservation
+        public override int GetHashCode(T observation)
         {
             if (EqualityComparer<T>.Default.Equals(observation, default(T)))
             {
@@ -45,9 +41,6 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             return observation.ObservationPoint.GetHashCode();
         }
 
-        public override int GetHashCode(IEnergyObservation energyObservation) =>
-            GetHashCode<IEnergyObservation>(energyObservation);
-
         private bool EqualsCoordinatesOfObservations(Coordinates firstObservationCoordinates, Coordinates secondObservationCoordinates)
         {
             double x1 = firstObservationCoordinates.X;
@@ -56,8 +49,8 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             double x2 = secondObservationCoordinates.X;
             double y2 = secondObservationCoordinates.Y;
 
-            ComparerSettings.GetCanonicalValues(ref x1, ref y1);
-            ComparerSettings.GetCanonicalValues(ref x2, ref y2);
+            ComparerSettings.GetCanonicalValues(ref x1, ref y1, ComparerSettings.epsilon);
+            ComparerSettings.GetCanonicalValues(ref x2, ref y2, ComparerSettings.epsilon);
 
             return x1 == x2 && y1 == y2;
         }

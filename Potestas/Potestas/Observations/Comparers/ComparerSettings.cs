@@ -18,16 +18,16 @@ namespace Potestas.Observations.Comparers
             }
         }
 
-        public static void GetCanonicalValues(ref double x, ref double y)
+        public static void GetCanonicalValues(ref double x, ref double y, double precision)
         {
-            GetCanonicalValues(ref x);
-            GetCanonicalValues(ref y);
+            GetCanonicalValues(ref x, precision);
+            GetCanonicalValues(ref y, precision);
         }
 
         // https://stackoverflow.com/questions/12580981/overriding-equals-and-gethashcode-and-double-comparison
-        public static void GetCanonicalValues(ref double x)
+        public static void GetCanonicalValues(ref double x, double precision)
         {
-            x = Math.Floor(x / epsilon) * epsilon;
+            x = Math.Floor(x / precision) * precision;
         }
     }
 }

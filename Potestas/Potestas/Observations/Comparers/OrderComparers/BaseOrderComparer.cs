@@ -2,7 +2,7 @@
 
 namespace Potestas.Observations.Comparers.OrderComparers
 {
-    public abstract class BaseOrderComparer : Comparer<IEnergyObservation>
+    public abstract class BaseOrderComparer<T> : Comparer<T> where T: IEnergyObservation
     {
         public int? BaseOrderCompare<T>(T xObservation, T yObservation) where T: IEnergyObservation
         {

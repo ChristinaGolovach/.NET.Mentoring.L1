@@ -10,7 +10,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
         public void ComparerTest_FirstObservationIsNull_ResultIsMinus1()
         {
             // Arange
-            var sut = new EstimatedValueComparer();
+            var sut = new EstimatedValueComparer<IEnergyObservation>();
             var energyMock = new Mock<IEnergyObservation>();
 
             // Act
@@ -24,7 +24,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
         public void ComparerTest_SecondObservationIsNull_ResultIs1()
         {
             // Arange
-            var sut = new EstimatedValueComparer();
+            var sut = new EstimatedValueComparer<IEnergyObservation>();
             var energyMock = new Mock<IEnergyObservation>();
 
             // Act
@@ -38,7 +38,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
         public void ComparerTest_ObservationReferencesAreEqual_ResultIs0()
         {
             // Arange
-            var sut = new EstimatedValueComparer();
+            var sut = new EstimatedValueComparer<IEnergyObservation>();
             var energyMock1 = new Mock<IEnergyObservation>();
             var energyMock2 = energyMock1;
 
@@ -61,7 +61,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
         public void CompareTest_PassTwoEnergyObservation_Return1OrMinus1Or0(double estimatedValue1, double estimatedValue2, int expectedResult)
         {
             // Arange
-            var sut = new EstimatedValueComparer();
+            var sut = new EstimatedValueComparer<IEnergyObservation>();
             var energyMock1 = GetEnergyObservationMock(estimatedValue1);
             var energyMock2 = GetEnergyObservationMock(estimatedValue2);
 

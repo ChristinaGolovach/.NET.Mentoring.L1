@@ -2,7 +2,7 @@
 
 namespace Potestas.Observations.Comparers.EqualityComparers
 {
-    public abstract class BaseEqualityComparer : EqualityComparer<IEnergyObservation>
+    public abstract class BaseEqualityComparer<T> : EqualityComparer<T> where T: IEnergyObservation
     {
         public bool? BaseEqualityCompare<T>(T xObservation, T yObservation) where T : IEnergyObservation
         {

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Moq;
 using Xunit;
 using Potestas.Observations.Comparers.EqualityComparers;
@@ -13,7 +11,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void Equals_Test_FirstObservationIsNullSecondObservationIsNotNull_ResultIsFalse()
         {
             // Arange
-            var sut = new ObservationTimeEqualityComparer();
+            var sut = new ObservationTimeEqualityComparer<IEnergyObservation>();
             var energyMock = new Mock<IEnergyObservation>();
 
             // Act
@@ -27,7 +25,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void Equals_FirstObservationIsNotNullSecondObservationIsNull_ResultIsFalse()
         {
             // Arange
-            var sut = new ObservationTimeEqualityComparer();
+            var sut = new ObservationTimeEqualityComparer<IEnergyObservation>();
             var energyMock = new Mock<IEnergyObservation>();
 
             // Act
@@ -41,7 +39,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
         public void Equals_ObservationReferencesAreEqual_ResultIsTrue()
         {
             // Arange
-            var sut = new ObservationTimeEqualityComparer();
+            var sut = new ObservationTimeEqualityComparer<IEnergyObservation>();
             var energyMock1 = new Mock<IEnergyObservation>();
             var energyMock2 = energyMock1;
 
@@ -61,7 +59,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
                                  int year2, int month2, int day2, bool expectedResult)
         {
             // Arange
-            var sut = new ObservationTimeEqualityComparer();
+            var sut = new ObservationTimeEqualityComparer<IEnergyObservation>();
             var energyMock1 = GetEnergyObservationMock(year1, month1, day1);
             var energyMock2 = GetEnergyObservationMock(year2, month2, day2);
 

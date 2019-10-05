@@ -11,7 +11,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
         public void ComparerTest_FirstObservationIsNull_ResultIsMinus1()
         {
             // Arange
-            var sut = new ObservationPointComparer();
+            var sut = new ObservationPointComparer<IEnergyObservation>();
             var energyMock = new Mock<IEnergyObservation>();
 
             // Act
@@ -25,7 +25,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
         public void ComparerTest_SecondObservationIsNull_ResultIs1()
         {
             // Arange
-            var sut = new ObservationPointComparer();
+            var sut = new ObservationPointComparer<IEnergyObservation>();
             var energyMock = new Mock<IEnergyObservation>();
 
             // Act
@@ -40,7 +40,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
         public void ComparerTest_ObservationReferencesAreEqual_ResultIs0()
         {
             // Arange
-            var sut = new ObservationPointComparer();
+            var sut = new ObservationPointComparer<IEnergyObservation>();
             var energyMock1 = new Mock<IEnergyObservation>();
             var energyMock2 = energyMock1;
 
@@ -65,7 +65,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
                                  double xCoordinate2, double yCoordinate2, int expectedResult)
         {
             // Arange
-            var sut = new ObservationPointComparer();
+            var sut = new ObservationPointComparer<IEnergyObservation>();
             var energyMock1 = GetEnergyObservationMock(xCoordinate1, yCoordinate1);
             var energyMock2 = GetEnergyObservationMock(xCoordinate2, yCoordinate2);
 
@@ -81,7 +81,7 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.OrderComparersTests
         public void CompareTest_SortCollectionAcordingObservationPointComparer_RightOrderOnCollection()
         {
             // Arange
-            var sutComparer = new ObservationPointComparer();
+            var sutComparer = new ObservationPointComparer<IEnergyObservation>();
 
             var energyMock1 = GetEnergyObservationMock(2, 2);
             var energyMock2 = GetEnergyObservationMock(1, 1);

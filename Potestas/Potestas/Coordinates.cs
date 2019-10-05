@@ -19,6 +19,8 @@ namespace Potestas
 
         private readonly double y;
 
+        private static readonly double precision = 0.001;
+
         public double X { get => x; }
 
         public double Y { get => y; }
@@ -29,33 +31,21 @@ namespace Potestas
             y = yCoordinate;
         }
 
+        // https://stackoverflow.com/questions/371328/why-is-it-important-to-override-gethashcode-when-equals-method-is-overridden
         public override int GetHashCode()
         {
             int hash = 3;
             double x = this.x;
             double y = this.y;
 
-            GetCanonicalValues(ref x, ref y);
+            ComparerSettings.GetCanonicalValues(ref x, ref y, precision);
 
             hash = (hash * 7) + x.GetHashCode();
             hash = (hash * 7) + y.GetHashCode();
 
             return hash;
         }
-
-        private void GetCanonicalValues(ref double x, ref double y)
-        {
-            GetCanonicalValues(ref x);
-            GetCanonicalValues(ref y);
-        }
-
-        // https://stackoverflow.com/questions/12580981/overriding-equals-and-gethashcode-and-double-comparison
-        // https://stackoverflow.com/questions/371328/why-is-it-important-to-override-gethashcode-when-equals-method-is-overridden
-        private void GetCanonicalValues(ref double x)
-        {
-            x = Math.Floor(x / ComparerSettings.epsilon) * ComparerSettings.epsilon;
-        }
-
+ 
         //TODO add IEquatable
     }
 }
