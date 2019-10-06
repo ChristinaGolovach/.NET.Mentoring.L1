@@ -2,11 +2,11 @@
 
 namespace Potestas.Observations.Comparers
 {
-    internal static class ComparerSettings
+    internal static class ComparerUtils
     {
-        internal static readonly double compareEpsilon;
+        internal static readonly double comparePrecision;
 
-        static ComparerSettings()
+        static ComparerUtils()
         {
             //TODO ConfigurationManager.AppSettings does not work 
             //try it later
@@ -15,7 +15,7 @@ namespace Potestas.Observations.Comparers
             //    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             //    .Build();
 
-            compareEpsilon = 0.001;
+            comparePrecision = 0.001;
 
             //try
             //{

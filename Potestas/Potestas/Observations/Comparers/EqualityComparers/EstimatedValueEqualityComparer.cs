@@ -21,7 +21,7 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             double x = xObservation.EstimatedValue;
             double y = yObservation.EstimatedValue;
 
-            ComparerSettings.GetCanonicalValues(ref x, ref y, ComparerSettings.compareEpsilon);
+            ComparerUtils.GetCanonicalValues(ref x, ref y, ComparerUtils.comparePrecision);
 
             return (x == y);
         }
@@ -34,7 +34,7 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             }
 
             double x = observation.EstimatedValue;
-            ComparerSettings.GetCanonicalValues(ref x, ComparerSettings.compareEpsilon);
+            ComparerUtils.GetCanonicalValues(ref x, ComparerUtils.comparePrecision);
 
             return x.GetHashCode();
         }

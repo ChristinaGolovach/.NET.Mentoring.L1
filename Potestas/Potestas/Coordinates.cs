@@ -30,7 +30,7 @@ namespace Potestas
 
         public Coordinates(double xCoordinate, double yCoordinate)
         {
-            //TODO move it to the separate validator
+            //TODO ask move it to the separate validator
             if (xCoordinate < xMinValue || xCoordinate > xMaxValue)
             {
                 throw new ArgumentOutOfRangeException($"The {nameof(xCoordinate)} must be in range between {xMinValue} and {xMaxValue} inclusively.");
@@ -107,7 +107,7 @@ namespace Potestas
             double x = X;
             double y = Y;
 
-            ComparerSettings.GetCanonicalValues(ref x, ref y, precision);
+            ComparerUtils.GetCanonicalValues(ref x, ref y, precision);
 
             hash = (hash * 7) + x.GetHashCode();
             hash = (hash * 7) + y.GetHashCode();
@@ -128,8 +128,8 @@ namespace Potestas
             double x2 = other.X;
             double y2 = other.Y;
 
-            ComparerSettings.GetCanonicalValues(ref x1, ref y1, precision);
-            ComparerSettings.GetCanonicalValues(ref x2, ref y2, precision);
+            ComparerUtils.GetCanonicalValues(ref x1, ref y1, precision);
+            ComparerUtils.GetCanonicalValues(ref x2, ref y2, precision);
 
             return x1 == x2 && y1 == y2;
         }

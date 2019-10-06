@@ -42,7 +42,7 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             double x = observation.ObservationPoint.X;
             double y = observation.ObservationPoint.Y;
 
-            ComparerSettings.GetCanonicalValues(ref x, ref y, ComparerSettings.compareEpsilon);
+            ComparerUtils.GetCanonicalValues(ref x, ref y, ComparerUtils.comparePrecision);
 
             hash = (hash * 7) + x.GetHashCode();
             hash = (hash * 7) + y.GetHashCode();
@@ -58,8 +58,8 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             double x2 = secondObservationCoordinates.X;
             double y2 = secondObservationCoordinates.Y;
 
-            ComparerSettings.GetCanonicalValues(ref x1, ref y1, ComparerSettings.compareEpsilon);
-            ComparerSettings.GetCanonicalValues(ref x2, ref y2, ComparerSettings.compareEpsilon);
+            ComparerUtils.GetCanonicalValues(ref x1, ref y1, ComparerUtils.comparePrecision);
+            ComparerUtils.GetCanonicalValues(ref x2, ref y2, ComparerUtils.comparePrecision);
 
             return x1 == x2 && y1 == y2;
         }

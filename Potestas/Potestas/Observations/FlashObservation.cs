@@ -22,7 +22,7 @@ namespace Potestas.Observations
     */
     public struct FlashObservation : IEnergyObservation, IEquatable<FlashObservation>
     {
-        private static readonly double precision = 0.1;
+        private static readonly double precision = 0.01;
         private static readonly int minIntensity = 0;
         private static readonly int maxIntensity = 2000000000;
 
@@ -41,7 +41,7 @@ namespace Potestas.Observations
 
         public FlashObservation(int durationMs, double intensity, Coordinates observationPoint, DateTime observationTime)
         {
-            //TODO move it to the separate validator
+            //TODO ask:  move it to the separate validator
             if (intensity < minIntensity || intensity > maxIntensity)
             {
                 throw new ArgumentOutOfRangeException($"The {nameof(intensity)} must be between {minIntensity} and {maxIntensity}.");
@@ -68,7 +68,7 @@ namespace Potestas.Observations
             double thisEstimatedValue = EstimatedValue;
             double otherEstimatedValue = other.EstimatedValue;
 
-            ComparerSettings.GetCanonicalValues(ref thisEstimatedValue, ref otherEstimatedValue, precision);
+            ComparerUtils.GetCanonicalValues(ref thisEstimatedValue, ref otherEstimatedValue, precision);
 
             return ObservationTime.Equals(other.ObservationTime) &&
                    ObservationPoint.Equals(other.ObservationPoint) && 
@@ -92,7 +92,16 @@ namespace Potestas.Observations
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            int hash = 3;
+            double thisEstimatedValue = EstimatedValue;
+
+            ComparerUtils.GetCanonicalValues(ref thisEstimatedValue, precision);
+
+            hash = (hash * 7) + ObservationTime.GetHashCode();
+            hash = (hash * 7) + ObservationPoint.GetHashCode();
+            hash = (hash * 7) + thisEstimatedValue.GetHashCode();
+
+            return hash;
         }
 
         public override string ToString()
