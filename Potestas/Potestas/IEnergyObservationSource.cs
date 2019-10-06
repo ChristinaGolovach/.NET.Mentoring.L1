@@ -11,19 +11,22 @@ namespace Potestas
      * 3. Compare IEnergyObservationSource and IEnergyObservationEventSource. 
      * Why IEnergyObservationSource is enough to implement Observable? Which option do you prefere? 
      */
-    public interface IEnergyObservationSource : IObservable<IEnergyObservation>
+    public interface IEnergyObservationSource<T> : IObservable<T> where T: IEnergyObservation
     {
         string Description { get; }
 
         Task Run(CancellationToken cancellationToken);
     }
 
-    public interface IEnergyObservationEventSource : IEnergyObservationSource
+    public interface IEnergyObservationEventSource<T> : IEnergyObservationSource<T> where T: IEnergyObservation
     {
-        event EventHandler<IEnergyObservation> NewValueObserved;
+        event EventHandler<T> NewValueObserved;
 
         event EventHandler<Exception> ObservationError;
 
         event EventHandler ObservationEnd;
     }
+
+    //https://yizhang82.dev/value-type-boxing
+    //https://adamsitnik.com/Value-Types-vs-Reference-Types/
 }
