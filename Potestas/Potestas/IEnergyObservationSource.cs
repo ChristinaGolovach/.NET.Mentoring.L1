@@ -20,7 +20,7 @@ namespace Potestas
 
     public interface IEnergyObservationEventSource : IEnergyObservationSource
     {
-        event EventHandler<IEnergyObservationSource> NewValueObserved;
+        event EventHandler<IEnergyObservation> NewValueObserved;
 
         event EventHandler<Exception> ObservationError;
 
