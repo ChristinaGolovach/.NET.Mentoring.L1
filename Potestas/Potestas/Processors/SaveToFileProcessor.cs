@@ -8,7 +8,7 @@ namespace Potestas.Processors
      * Which bonuses does decoration have?
      * TEST: Which kind of tests should be written for this class?
      */
-    public class SaveToFileProcessor : IEnergyObservationProcessor
+    public class SaveToFileProcessor<T> : IEnergyObservationProcessor<T> where T: IEnergyObservation
     {
         public string Description => throw new NotImplementedException();
 
@@ -22,7 +22,7 @@ namespace Potestas.Processors
             throw new NotImplementedException();
         }
 
-        public void OnNext(IEnergyObservation value)
+        public void OnNext(T value)
         {
             throw new NotImplementedException();
         }

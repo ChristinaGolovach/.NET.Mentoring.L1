@@ -50,7 +50,7 @@ namespace Potestas.Apps.Terminal
             return new LINQAnalizer();
         }
 
-        public IEnergyObservationProcessor CreateProcessor()
+        public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()
         {
             return new ConsoleProcessor();
         }

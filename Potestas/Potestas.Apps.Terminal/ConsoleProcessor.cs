@@ -2,7 +2,7 @@
 
 namespace Potestas.Apps.Terminal
 {
-    class ConsoleProcessor : IEnergyObservationProcessor
+    class ConsoleProcessor : IEnergyObservationProcessor<IEnergyObservation>
     {
         public string Description => "Logs all observations to console";
 

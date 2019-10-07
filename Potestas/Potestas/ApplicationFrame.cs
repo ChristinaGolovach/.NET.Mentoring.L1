@@ -34,7 +34,7 @@ namespace Potestas
 
     public interface IProcessingGroup
     {
-        IEnergyObservationProcessor Processor { get; }
+        IEnergyObservationProcessor<IEnergyObservation> Processor { get; }
 
         IEnergyObservationStorage Storage { get; }
 
@@ -61,7 +61,7 @@ namespace Potestas
         private readonly RegisteredEnergyObservationSourceWrapper _sourceRegistration;
         private readonly IDisposable _processorSubscription;
 
-        public IEnergyObservationProcessor Processor { get; }
+        public IEnergyObservationProcessor<IEnergyObservation> Processor { get; }
 
         public IEnergyObservationStorage Storage { get; }
 
@@ -84,7 +84,7 @@ namespace Potestas
         }
     }
 
-    class RegisteredEnergyObservationSourceWrapper : ISourceRegistration, IEnergyObservationProcessor
+    class RegisteredEnergyObservationSourceWrapper : ISourceRegistration, IEnergyObservationProcessor<IEnergyObservation>
     {
         private readonly ApplicationFrame _app;
         private readonly IEnergyObservationSource _inner;
@@ -106,7 +106,7 @@ namespace Potestas
 
         public string Description => "Internal application listener to track Sources State";
 
-        internal IDisposable Subscribe(IEnergyObservationProcessor processor)
+        internal IDisposable Subscribe(IEnergyObservationProcessor<IEnergyObservation> processor)
         {
             return _inner.Subscribe(processor);
         }

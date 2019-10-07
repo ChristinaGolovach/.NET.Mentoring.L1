@@ -14,7 +14,7 @@
 
     public interface IProcessingFactory
     {
-        IEnergyObservationProcessor CreateProcessor();
+        IEnergyObservationProcessor<IEnergyObservation> CreateProcessor();
 
         IEnergyObservationStorage CreateStorage();
 
