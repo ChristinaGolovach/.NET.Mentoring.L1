@@ -1,4 +1,5 @@
 ﻿using Potestas.Analizers;
+using Potestas.Sources;
 using Potestas.Storages;
 using System;
 
@@ -39,7 +40,8 @@ namespace Potestas.Apps.Terminal
 
         public IEnergyObservationSource CreateSource()
         {
-            return new ConsoleSource();
+            //return new ConsoleSource();
+            return new RandomEnergySource(); // for the testing of task 3 
         }
     }
 

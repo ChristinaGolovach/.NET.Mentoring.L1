@@ -11,37 +11,37 @@ namespace Potestas.Sources
      * 1. Implement both IEnergyObservationSource and IEnergyObservationSourceEventSource interfaces.
      * 2. Try to implement it with abstract class or delegate parameters to make it universal.
      */
+    // TODO ask refactoring RandomEnergySource (ConsoleSource has the similar implementation. template method?)  
     public class RandomEnergySource : IEnergyObservationSource, IEnergyObservationEventSource
     {
         private readonly List<IObserver<IEnergyObservation>> _observers;
-
-        public RandomEnergySource()
-        {
-            _observers = new List<IObserver<IEnergyObservation>>();
-        }
-        public string Description => "Random energy observation source.";
 
         public event EventHandler<IEnergyObservation> NewValueObserved = delegate { };
         public event EventHandler<Exception> ObservationError = delegate { };
         public event EventHandler ObservationEnd = delegate { };
 
-        public async Task Run(CancellationToken cancellationToken)
+        public RandomEnergySource()
+        {
+            _observers = new List<IObserver<IEnergyObservation>>();
+        }
+
+        public string Description => "Random energy observation source.";
+
+        public async Task Run(CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested(); //ask 
 
-            await Task.WhenAny(
-                SimulateObservationNewDataAsync(cancellationToken),
-                CheckCancellationAsync(cancellationToken));
+            await SimulateNewObservationDataAsync(cancellationToken);
         }
 
         public IDisposable Subscribe(IObserver<IEnergyObservation> observer)
         {
-            if (observer == null)
-            {
-                throw new ArgumentNullException($"The {nameof(observer)} can not be null.");
-            }
+            observer = observer ?? throw new ArgumentNullException($"The {nameof(observer)} can not be null.");
 
-            _observers.Add(observer);
+            if (!_observers.Contains(observer))
+            {
+                _observers.Add(observer);
+            }                 
 
             return new RandomEnergySourceSubscription(this, observer);
         }
@@ -51,7 +51,7 @@ namespace Potestas.Sources
             _observers.Remove(observer);
         }
 
-        private async Task SimulateObservationNewDataAsync(CancellationToken cancellationToken)
+        private async Task SimulateNewObservationDataAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {
@@ -64,20 +64,14 @@ namespace Potestas.Sources
                     catch (Exception exception)
                     {
                         PublishException(exception);
-                        // ask ?? throw;
+                        //ask
+                        throw;
                     }
                 }
+
+                Done();
+
             });
-        }
-
-        private async Task CheckCancellationAsync(CancellationToken cancellationToken)
-        {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                await Task.Delay(500);
-            }
-
-            Done();
         }
 
         private void Done()
