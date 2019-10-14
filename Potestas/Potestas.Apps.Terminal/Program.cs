@@ -1,7 +1,10 @@
-﻿using Potestas.Analizers;
+﻿using System;
+using System.IO;
+using Potestas.Analizers;
+using Potestas.Processors;
 using Potestas.Sources;
 using Potestas.Storages;
-using System;
+using Potestas.Serializers;
 
 namespace Potestas.Apps.Terminal
 {
@@ -54,12 +57,18 @@ namespace Potestas.Apps.Terminal
 
         public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()
         {
-            return new ConsoleProcessor();
+            //return new ConsoleProcessor();
+
+            return new SaveToFileProcessor<IEnergyObservation>(new SerializeProcessor<IEnergyObservation>(), @"D:\task4.txt"); //for testing task 4 (SaveToFileProcessor + SerializeProcessor)
+
+            //return new SaveToStorageProcessor<IEnergyObservation>(CreateStorage()); // for testing task 4 (SaveToStorageProcessor) + 5 (FileStorage)
         }
 
         public IEnergyObservationStorage<IEnergyObservation> CreateStorage()
         {
             return new ListStorage();
+
+            //return new FileStorage<IEnergyObservation>(@"D:\task5.txt", new JsonSerializer<IEnergyObservation>()); // for testing task 5
         }
     }
 }

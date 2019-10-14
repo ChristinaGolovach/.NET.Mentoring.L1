@@ -9,17 +9,19 @@ namespace Potestas.Storages
 {
     /* TASK. Implement file storage
      */
-    class FileStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
+    public class FileStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
     {
         private FileInfo _fileInfo;
         private string _filePath;
         private List<T> _energyObservations;
-        private ISerializer<T> _serializer;
-
+        private ISerializer<T> _serializer;       
 
         public string Description => "File storage of energy observations";
 
-        public int Count => throw new NotImplementedException();
+        public int Count => _energyObservations.Count;  // data in observation List can be not actual (and in general, storing all data from a file in memory is not a good idea)  
+                                                        // and it needs each time call ReadFromFile -> Deserialize 
+                                                        // we can add file storage last access field and check time/data and depend on it call ReadFromFile or think about another solution
+                                                        // but I supouse that goal of this task is learn to work with files and not make an optimized database based on a file
 
         public bool IsReadOnly => _fileInfo.IsReadOnly;
 
@@ -32,15 +34,28 @@ namespace Potestas.Storages
 
             _serializer = serializer ?? throw new ArgumentNullException($"The {nameof(serializer)} can not be null.");
 
+            if (!File.Exists(filePath))
+            {
+                using (File.Create(filePath)) { }
+            }
+
             _filePath = filePath;
             _fileInfo = new FileInfo(filePath);
 
-            //TODO _energyObservations = read from file
+            _energyObservations = ReadFromStorage();
         }
 
         public void Add(T item)
         {
-            //TODO add in list and file
+            try
+            {
+                SaveToStorage(item);
+                _energyObservations.Add(item);
+            }
+            catch (Exception exception)
+            {
+                throw new FileStorageExcepion($"Exception occurred during add item {item} in file.", exception);
+            }
         }
 
         public void Clear()
@@ -64,8 +79,15 @@ namespace Potestas.Storages
             }
             else
             {
-                //TODO read from file (somebody can add) and check 
-                return true; 
+                try
+                {
+                    _energyObservations = ReadFromStorage();
+                    return _energyObservations.Contains(item);
+                }
+                catch
+                {
+                    return false;
+                }                   
             }
         }
 
@@ -83,17 +105,60 @@ namespace Potestas.Storages
                 throw new ArgumentException($"The available space in {nameof(array)} is not enough.");
             }
 
-            _energyObservations.CopyTo(array, arrayIndex);
+            try
+            {
+                ReadFromStorage().CopyTo(array, arrayIndex);
+            }
+            catch (Exception exception)
+            {
+                throw new FileStorageExcepion($"Exception occurred during copy data from the file to array.", exception);
+            }
         }
 
         public bool Remove(T item)
         {
-            throw new NotImplementedException();
-            //TODO remove from list and file
+            try
+            {
+                var actualObservations = ReadFromStorage();
+                var isRemoved = actualObservations.Remove(item);
+
+                if (isRemoved)
+                {
+                    Clear();
+                    actualObservations.ForEach(observation => SaveToStorage(observation));
+                    _energyObservations = actualObservations;
+
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;               
+            }
         }
 
         public IEnumerator<T> GetEnumerator() => _energyObservations.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        private List<T> ReadFromStorage()
+        {
+            using (var stream = new FileStream(_filePath, FileMode.Open)) // == File.OpenRead()
+            {
+                return new List<T>(_serializer.Deserialize(stream)); 
+            }
+        }
+
+        private void SaveToStorage(T item)
+        {
+            using (var stream = new FileStream(_filePath, FileMode.Append))
+            using (var streamWriter = new StreamWriter(stream))
+            {
+                _serializer.Serialize(stream, item);
+                streamWriter.Write(Environment.NewLine);
+            }
+        }
     }
 }

@@ -30,19 +30,19 @@ namespace Potestas.Processors
         /// </exception>
         public SaveToFileProcessor(IStreamProcessor<T> streamProcessor, string filePath)
         {
+            _streamProcessor = streamProcessor ?? throw new ArgumentNullException($"The {nameof(streamProcessor)} can not be null.");
+
             if (!File.Exists(filePath))
             {
-                throw new ArgumentException($"File does not exist for the path {filePath} or you does not have permission to read this file.");
+                using (File.Create(filePath)) { }
             }
-
-            _streamProcessor = streamProcessor ?? throw new ArgumentNullException($"The {nameof(streamProcessor)} can not be null.");
 
             _filePath = filePath;
         }
 
         public void OnCompleted()
         {
-            // or add loger 
+            // or add loger
             using (var stream = new FileStream(_filePath, FileMode.Append))
             using (var writer = new StreamWriter(stream))
             {

@@ -5,7 +5,7 @@ namespace Potestas.Serializers
 {
     public interface ISerializer<T>
     {
-        void Serialize(Stream stream, T data);
+        void Serialize(Stream stream, T item);
         IList<T> Deserialize(Stream stream);
     }
 }

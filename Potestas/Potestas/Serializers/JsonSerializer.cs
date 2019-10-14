@@ -9,7 +9,7 @@ namespace Potestas.Serializers
 {
     public class JsonSerializer<T> : ISerializer<T>
     {
-        public void Serialize(Stream stream, T value)
+        public void Serialize(Stream stream, T item)
         {
             stream = stream ?? throw new ArgumentNullException($"The {nameof(stream)} can not be null.");
 
@@ -17,15 +17,15 @@ namespace Potestas.Serializers
 
             try
             {
-                jsonValue = JsonConvert.SerializeObject(value);
+                jsonValue = JsonConvert.SerializeObject(item);
             }
             catch (JsonException jsonException)
             {
-                throw new JsonSerializerException($"Can not serialize value: {value} to the Json format.", jsonException);
+                throw new JsonSerializerException($"Can not serialize value: {item} to the Json format.", jsonException);
             }
             catch (Exception exception)
             {
-                throw new JsonSerializerException($"Some exception occurred during serializing value: {value}.", exception);
+                throw new JsonSerializerException($"Some exception occurred during serializing value: {item}.", exception);
             }
 
             using (var memoryStream = new MemoryStream())
@@ -42,7 +42,7 @@ namespace Potestas.Serializers
             stream = stream ?? throw new ArgumentNullException($"The {nameof(stream)} can not be null.");
 
             var serializer = new JsonSerializer();
-            var resultValues = new List<T>();
+            var resultItems = new List<T>();
             var memoryStream = new MemoryStream();
 
             stream.Seek(0, SeekOrigin.Begin);
@@ -55,11 +55,11 @@ namespace Potestas.Serializers
                 jsonReader.SupportMultipleContent = true;
                 while (jsonReader.Read())
                 {
-                    resultValues.Add(serializer.Deserialize<T>(jsonReader)); //TODO try-catch
+                    resultItems.Add(serializer.Deserialize<T>(jsonReader));
                 }
             }
 
-            return resultValues;
+            return resultItems;
         }
     }
 }
