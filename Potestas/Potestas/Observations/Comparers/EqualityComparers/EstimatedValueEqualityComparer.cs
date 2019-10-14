@@ -6,7 +6,7 @@ namespace Potestas.Observations.Comparers.EqualityComparers
     {
         public override bool Equals(T xObservation, T yObservation)
         {
-            var baseEqualityCompareResult = BaseEqualityCompare(xObservation, yObservation);
+            var baseEqualityCompareResult = DefaulValueEquals(xObservation, yObservation);
 
             if (baseEqualityCompareResult.HasValue)
             {
@@ -21,7 +21,8 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             double x = xObservation.EstimatedValue;
             double y = yObservation.EstimatedValue;
 
-            ComparerUtils.GetCanonicalValues(ref x, ref y, ComparerUtils.comparePrecision);
+            x = ComparerUtils.GetCanonicalValues(x, ComparerUtils.comparePrecision);
+            y = ComparerUtils.GetCanonicalValues(y, ComparerUtils.comparePrecision);
 
             return (x == y);
         }
@@ -34,7 +35,7 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             }
 
             double x = observation.EstimatedValue;
-            ComparerUtils.GetCanonicalValues(ref x, ComparerUtils.comparePrecision);
+            x = ComparerUtils.GetCanonicalValues(x, ComparerUtils.comparePrecision);
 
             return x.GetHashCode();
         }

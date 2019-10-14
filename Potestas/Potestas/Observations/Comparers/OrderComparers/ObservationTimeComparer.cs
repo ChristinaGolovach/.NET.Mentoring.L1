@@ -7,7 +7,7 @@ namespace Potestas.Observations.Comparers.OrderComparers
     {
         public override int Compare(T xObservation, T yObservation)
         {
-            return BaseOrderCompare(xObservation, yObservation) ??
+            return DefaultValueOrderCompare(xObservation, yObservation) ??
                    Comparer<DateTime>.Default.Compare(xObservation.ObservationTime, yObservation.ObservationTime);
         }
     }

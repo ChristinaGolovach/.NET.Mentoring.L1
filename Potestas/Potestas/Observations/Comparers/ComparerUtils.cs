@@ -26,16 +26,30 @@ namespace Potestas.Observations.Comparers
             //    compareEpsilon = 0.001;
             //}
         }
-
-        public static void GetCanonicalValues(ref double x, ref double y, double precision)
-        {
-            GetCanonicalValues(ref x, precision);
-            GetCanonicalValues(ref y, precision);
-        }
         
-        public static void GetCanonicalValues(ref double x, double precision)
+        public static double GetCanonicalValues(double x, double precision)
         {
-            x = Math.Floor(x / precision) * precision;
+            return x = Math.Floor(x / precision) * precision;
+        }
+
+        public static bool? IsNaNPointComparer(Coordinates poin1, Coordinates point2, Func<double, double, bool> EqualsCoordinates)
+        {
+            if (double.IsNaN(poin1.X) && double.IsNaN(poin1.Y))
+            {
+                return double.IsNaN(point2.X) && double.IsNaN(point2.Y);
+            }
+
+            if (double.IsNaN(poin1.X) && !double.IsNaN(poin1.Y))
+            {
+                return double.IsNaN(point2.X) && !double.IsNaN(point2.Y) && EqualsCoordinates(poin1.Y, point2.Y);
+            }
+
+            if (!double.IsNaN(poin1.X) && double.IsNaN(point2.Y))
+            {
+                return !double.IsNaN(point2.X) && double.IsNaN(point2.Y) && EqualsCoordinates(poin1.X, point2.X);
+            }
+
+            return null;
         }
     }
 

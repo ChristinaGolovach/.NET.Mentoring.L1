@@ -102,6 +102,9 @@ namespace Potestas.Tests
         [Theory]
         [InlineData(0.222, 0.222, 0.02, 0.02, false)]
         [InlineData(0.221, 0.222, 0.02, 0.02, false)]
+        [InlineData(double.NaN, 0.3, double.NaN, 0.2, false)]
+        [InlineData(double.NaN, double.NaN, double.NaN, double.NaN, true)]
+        [InlineData(double.NaN, 23.122, double.NaN, 23.122, true)]
         [InlineData(0.0011, 23.122, 0.0012, 23.1223, true)]
         [InlineData(23.0001, 23.0003, 23.0007, 23.0009, true)]
         public void EqualsTests_TwoPoints_EqualtyResult(double p1XCoordinate, double p1YCoordinate,

@@ -6,26 +6,18 @@ namespace Potestas.Observations.Comparers.EqualityComparers
     {
         public override bool Equals(T xObservation, T yObservation)
         {
-            var baseEqualityCompareResult = BaseEqualityCompare(xObservation, yObservation);
+            var baseEqualityCompareResult = DefaulValueEquals(xObservation, yObservation);
 
             if (baseEqualityCompareResult.HasValue)
             {
                 return baseEqualityCompareResult.Value;
             }
 
-            if (double.IsNaN(xObservation.ObservationPoint.X) && double.IsNaN(xObservation.ObservationPoint.Y))
-            {
-                return double.IsNaN(yObservation.ObservationPoint.X) && double.IsNaN(yObservation.ObservationPoint.Y);
-            }
+            var resultOfNaNCheck = ComparerUtils.IsNaNPointComparer(xObservation.ObservationPoint, yObservation.ObservationPoint, EqualsCoordinatesOfObservations);
 
-            if (double.IsNaN(xObservation.ObservationPoint.X) && !double.IsNaN(xObservation.ObservationPoint.Y))
+            if (resultOfNaNCheck.HasValue)
             {
-                return double.IsNaN(yObservation.ObservationPoint.X) && !double.IsNaN(yObservation.ObservationPoint.Y);
-            }
-
-            if (!double.IsNaN(xObservation.ObservationPoint.X) && double.IsNaN(xObservation.ObservationPoint.Y))
-            {
-                return !double.IsNaN(yObservation.ObservationPoint.X) && double.IsNaN(yObservation.ObservationPoint.Y);
+                return resultOfNaNCheck.Value;
             }
 
             return EqualsCoordinatesOfObservations(xObservation.ObservationPoint, yObservation.ObservationPoint);
@@ -42,10 +34,12 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             double x = observation.ObservationPoint.X;
             double y = observation.ObservationPoint.Y;
 
-            ComparerUtils.GetCanonicalValues(ref x, ref y, ComparerUtils.comparePrecision);
+            x = ComparerUtils.GetCanonicalValues(x, ComparerUtils.comparePrecision);
+            y = ComparerUtils.GetCanonicalValues(y, ComparerUtils.comparePrecision);
 
-                hash = (hash * 7) + x.GetHashCode();
-                hash = (hash * 7) + y.GetHashCode();
+
+            hash = (hash * 7) + x.GetHashCode();
+            hash = (hash * 7) + y.GetHashCode();
 
             return hash;
         }
@@ -58,10 +52,24 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             double x2 = secondObservationCoordinates.X;
             double y2 = secondObservationCoordinates.Y;
 
-            ComparerUtils.GetCanonicalValues(ref x1, ref y1, ComparerUtils.comparePrecision);
-            ComparerUtils.GetCanonicalValues(ref x2, ref y2, ComparerUtils.comparePrecision);
+            x1 = ComparerUtils.GetCanonicalValues(x1, ComparerUtils.comparePrecision);
+            y1 = ComparerUtils.GetCanonicalValues(y1, ComparerUtils.comparePrecision);
+
+            x2 = ComparerUtils.GetCanonicalValues(x2, ComparerUtils.comparePrecision);
+            y2 = ComparerUtils.GetCanonicalValues(y2, ComparerUtils.comparePrecision);
 
             return x1 == x2 && y1 == y2;
+        }
+
+        private bool EqualsCoordinatesOfObservations(double point1XorY, double point2XorY)
+        {
+            double p1 = point1XorY;
+            double p2 = point2XorY;
+
+            p1 = ComparerUtils.GetCanonicalValues(p1, ComparerUtils.comparePrecision);
+            p2 = ComparerUtils.GetCanonicalValues(p2, ComparerUtils.comparePrecision);
+
+            return p1 == p2;
         }
     }
 

@@ -52,6 +52,8 @@ namespace Potestas.Tests.ObservationTests.ComparerTests.EqualityComparerTests
 
         [Theory]
         [InlineData(double.NaN, double.NaN, double.NaN, double.NaN, true)]
+        [InlineData(double.NaN, 0.2, double.NaN, 0.2, true)]
+        [InlineData(double.NaN, 0.002, double.NaN, 0.3, false)]
         //[InlineData(double.MinValue, double.MaxValue, double.MinValue, double.MaxValue, true)] // limitations has been added in ctor Coordinates
         [InlineData(0.001, 0.001, 0.001, 0.001, true)]
         [InlineData(0.001, 0.0011, 0.001, 0.001, true)]

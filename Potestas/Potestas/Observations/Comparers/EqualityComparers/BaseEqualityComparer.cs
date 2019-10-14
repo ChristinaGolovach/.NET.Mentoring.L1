@@ -4,7 +4,7 @@ namespace Potestas.Observations.Comparers.EqualityComparers
 {
     public abstract class BaseEqualityComparer<T> : EqualityComparer<T> where T: IEnergyObservation
     {
-        public bool? BaseEqualityCompare(T xObservation, T yObservation)
+        public bool? DefaulValueEquals(T xObservation, T yObservation)
         {
             if (EqualityComparer<T>.Default.Equals(xObservation, default(T)))
             {

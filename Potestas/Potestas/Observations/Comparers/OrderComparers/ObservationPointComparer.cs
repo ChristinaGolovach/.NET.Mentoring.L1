@@ -6,7 +6,7 @@ namespace Potestas.Observations.Comparers.OrderComparers
     {
         public override int Compare(T xObservation, T yObservation)
         {
-            var baseOrderCompareResult = BaseOrderCompare(xObservation, yObservation);
+            var baseOrderCompareResult = DefaultValueOrderCompare(xObservation, yObservation);
 
             if (baseOrderCompareResult.HasValue) 
             {

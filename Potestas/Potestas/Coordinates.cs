@@ -15,13 +15,13 @@ namespace Potestas
      */
     public struct Coordinates : IEquatable<Coordinates>
     {
-        private static readonly double precision = 0.001;
+        public static readonly double precision = 0.001;
 
-        private static readonly double xMinValue = -90;
-        private static readonly double xMaxValue = 90;
+        public static readonly double xMinValue = -90;
+        public static readonly double xMaxValue = 90;
 
-        private static readonly double yMinValue = 0;
-        private static readonly double yMaxValue = 180;  
+        public static readonly double yMinValue = 0;
+        public static readonly double yMaxValue = 180;  
 
 
         public double X { get; }
@@ -30,8 +30,7 @@ namespace Potestas
 
         public Coordinates(double xCoordinate, double yCoordinate)
         {
-            //TODO ask move it to the separate validator
-            if (xCoordinate < xMinValue || xCoordinate > xMaxValue)
+            if (xCoordinate < xMinValue || xMaxValue < xCoordinate)
             {
                 throw new ArgumentOutOfRangeException($"The {nameof(xCoordinate)} must be in range between {xMinValue} and {xMaxValue} inclusively.");
             }
@@ -68,19 +67,11 @@ namespace Potestas
 
         public bool Equals(Coordinates other)
         {
-            if (double.IsNaN(X) && double.IsNaN(Y))
-            {
-                return double.IsNaN(other.X) && double.IsNaN(other.Y);
-            }
+            var resultOfNaNCheck = ComparerUtils.IsNaNPointComparer(this, other, EqualsCoordinates);
 
-            if (double.IsNaN(X) && !double.IsNaN(Y))
+            if (resultOfNaNCheck.HasValue)
             {
-                return double.IsNaN(other.X) && !double.IsNaN(other.Y);
-            }
-
-            if (!double.IsNaN(X) && double.IsNaN(Y))
-            {
-                return !double.IsNaN(other.X) && double.IsNaN(other.Y);
+                return resultOfNaNCheck.Value;
             }
 
             return EqualsCoordinates(other);
@@ -93,7 +84,7 @@ namespace Potestas
                 return false;
             }
 
-            if (other.GetType() != typeof(Coordinates))
+            if (!(other is Coordinates))
             {
                 return false;
             }
@@ -107,7 +98,8 @@ namespace Potestas
             double x = X;
             double y = Y;
 
-            ComparerUtils.GetCanonicalValues(ref x, ref y, precision);
+            x = ComparerUtils.GetCanonicalValues(x, precision);
+            y = ComparerUtils.GetCanonicalValues(y, precision);
 
             hash = (hash * 7) + x.GetHashCode();
             hash = (hash * 7) + y.GetHashCode();
@@ -128,10 +120,24 @@ namespace Potestas
             double x2 = other.X;
             double y2 = other.Y;
 
-            ComparerUtils.GetCanonicalValues(ref x1, ref y1, precision);
-            ComparerUtils.GetCanonicalValues(ref x2, ref y2, precision);
+            x1 = ComparerUtils.GetCanonicalValues(x1, precision);
+            y1 = ComparerUtils.GetCanonicalValues(y1, precision);
+
+            x2 = ComparerUtils.GetCanonicalValues(x2, precision);
+            y2 = ComparerUtils.GetCanonicalValues(y2, precision);
 
             return x1 == x2 && y1 == y2;
+        }
+
+        private bool EqualsCoordinates(double point1XorY, double point2XorY)
+        {
+            double p1 = point1XorY;
+            double p2 = point2XorY;
+
+            p1 = ComparerUtils.GetCanonicalValues(p1, precision);
+            p2 = ComparerUtils.GetCanonicalValues(p2, precision);
+
+            return p1 == p2;
         }
     }
 

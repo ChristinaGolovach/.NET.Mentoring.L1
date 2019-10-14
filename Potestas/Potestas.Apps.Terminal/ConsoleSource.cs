@@ -39,7 +39,7 @@ namespace Potestas.Apps.Terminal
             cancellationToken.ThrowIfCancellationRequested();
             await Task.WhenAny(
                 ReadInput(cancellationToken),
-                CheckCancellation(cancellationToken) //ask
+                CheckCancellation(cancellationToken)
                 );
         }
 

@@ -6,7 +6,7 @@ namespace Potestas.Observations.Comparers.EqualityComparers
     {
         public override bool Equals(T xObservation, T yObservation)
         {
-            var baseEqualityCompareResult = BaseEqualityCompare(xObservation, yObservation);
+            var baseEqualityCompareResult = DefaulValueEquals(xObservation, yObservation);
 
             if (baseEqualityCompareResult != null)
             {
