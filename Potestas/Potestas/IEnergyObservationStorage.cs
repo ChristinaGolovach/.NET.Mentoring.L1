@@ -8,7 +8,7 @@ namespace Potestas
     /// <remarks>
     /// Usually repositories are implemented by another way.
     /// </remarks>
-    public interface IEnergyObservationStorage : ICollection<IEnergyObservation>
+    public interface IEnergyObservationStorage<T> : ICollection<T> where T: IEnergyObservation
     {
         string Description { get; }
     }

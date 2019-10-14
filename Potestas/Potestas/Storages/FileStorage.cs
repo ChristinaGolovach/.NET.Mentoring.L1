@@ -1,52 +1,99 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using Potestas.Exceptions;
+using Potestas.Serializers;
 
 namespace Potestas.Storages
 {
     /* TASK. Implement file storage
      */
-    class FileStorage : IEnergyObservationStorage
+    class FileStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
     {
-        public string Description => throw new NotImplementedException();
+        private FileInfo _fileInfo;
+        private string _filePath;
+        private List<T> _energyObservations;
+        private ISerializer<T> _serializer;
+
+
+        public string Description => "File storage of energy observations";
 
         public int Count => throw new NotImplementedException();
 
-        public bool IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly => _fileInfo.IsReadOnly;
 
-        public void Add(IEnergyObservation item)
+        public FileStorage(string filePath, ISerializer<T> serializer)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new ArgumentException($"The {nameof(filePath)} can not bw null or empty.");
+            }
+
+            _serializer = serializer ?? throw new ArgumentNullException($"The {nameof(serializer)} can not be null.");
+
+            _filePath = filePath;
+            _fileInfo = new FileInfo(filePath);
+
+            //TODO _energyObservations = read from file
+        }
+
+        public void Add(T item)
+        {
+            //TODO add in list and file
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            try
+            {
+                File.WriteAllText(_filePath, String.Empty);
+                _energyObservations.Clear();
+            }
+            catch (Exception exception)
+            {
+                throw new FileStorageExcepion($"Exception occurred during clear the file {nameof(_filePath)}.", exception);
+            }
         }
 
-        public bool Contains(IEnergyObservation item)
+        public bool Contains(T item)
         {
-            throw new NotImplementedException();
+            if (_energyObservations.Contains(item))
+            {
+                return true;
+            }
+            else
+            {
+                //TODO read from file (somebody can add) and check 
+                return true; 
+            }
         }
 
-        public void CopyTo(IEnergyObservation[] array, int arrayIndex)
+        public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            array = array ?? throw new ArgumentNullException($"The {nameof(array)} can not be null.");
+
+            if (arrayIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException($"The {nameof(arrayIndex)} can not be less than 0.");
+            }
+
+            if (array.Length - arrayIndex < _energyObservations.Capacity)
+            {
+                throw new ArgumentException($"The available space in {nameof(array)} is not enough.");
+            }
+
+            _energyObservations.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<IEnergyObservation> GetEnumerator()
+        public bool Remove(T item)
         {
             throw new NotImplementedException();
+            //TODO remove from list and file
         }
 
-        public bool Remove(IEnergyObservation item)
-        {
-            throw new NotImplementedException();
-        }
+        public IEnumerator<T> GetEnumerator() => _energyObservations.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

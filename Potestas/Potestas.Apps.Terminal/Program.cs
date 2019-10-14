@@ -31,14 +31,14 @@ namespace Potestas.Apps.Terminal
         }
     }
 
-    class ConsoleSourceFactory : ISourceFactory
+    class ConsoleSourceFactory : ISourceFactory<IEnergyObservation>
     {
-        public IEnergyObservationEventSource CreateEventSource()
+        public IEnergyObservationEventSource<IEnergyObservation> CreateEventSource()
         {
             throw new NotImplementedException();
         }
 
-        public IEnergyObservationSource CreateSource()
+        public IEnergyObservationSource<IEnergyObservation> CreateSource()
         {
             //return new ConsoleSource();
             return new RandomEnergySource(); // for the testing of task 3 
@@ -57,7 +57,7 @@ namespace Potestas.Apps.Terminal
             return new ConsoleProcessor();
         }
 
-        public IEnergyObservationStorage CreateStorage()
+        public IEnergyObservationStorage<IEnergyObservation> CreateStorage()
         {
             return new ListStorage();
         }

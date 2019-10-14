@@ -11,7 +11,7 @@ namespace Potestas
      */
     class FactoriesLoader
     {
-        public (ISourceFactory[], IProcessingFactory[]) Load(Assembly assembly)
+        public (ISourceFactory<IEnergyObservation>[], IProcessingFactory[]) Load(Assembly assembly)
         {
             throw new NotImplementedException();
         }

@@ -12,7 +12,7 @@ namespace Potestas.Sources
      * 2. Try to implement it with abstract class or delegate parameters to make it universal.
      */
     // TODO ask refactoring RandomEnergySource (ConsoleSource has the similar implementation. template method?)  
-    public class RandomEnergySource : IEnergyObservationSource, IEnergyObservationEventSource
+    public class RandomEnergySource : IEnergyObservationSource<IEnergyObservation>, IEnergyObservationEventSource<IEnergyObservation>
     {
         private readonly List<IObserver<IEnergyObservation>> _observers;
 
@@ -20,12 +20,12 @@ namespace Potestas.Sources
         public event EventHandler<Exception> ObservationError = delegate { };
         public event EventHandler ObservationEnd = delegate { };
 
+        public string Description => "Random energy observation source.";
+
         public RandomEnergySource()
         {
             _observers = new List<IObserver<IEnergyObservation>>();
         }
-
-        public string Description => "Random energy observation source.";
 
         public async Task Run(CancellationToken cancellationToken = default(CancellationToken))
         {

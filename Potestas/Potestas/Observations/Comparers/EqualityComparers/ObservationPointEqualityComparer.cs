@@ -44,8 +44,8 @@ namespace Potestas.Observations.Comparers.EqualityComparers
 
             ComparerUtils.GetCanonicalValues(ref x, ref y, ComparerUtils.comparePrecision);
 
-            hash = (hash * 7) + x.GetHashCode();
-            hash = (hash * 7) + y.GetHashCode();
+                hash = (hash * 7) + x.GetHashCode();
+                hash = (hash * 7) + y.GetHashCode();
 
             return hash;
         }

@@ -36,7 +36,7 @@ namespace Potestas
     {
         IEnergyObservationProcessor<IEnergyObservation> Processor { get; }
 
-        IEnergyObservationStorage Storage { get; }
+        IEnergyObservationStorage<IEnergyObservation> Storage { get; }
 
         IEnergyObservationAnalizer Analizer { get; }
 
@@ -45,7 +45,7 @@ namespace Potestas
 
     public interface IEnergyObservationApplicationModel
     {
-        IReadOnlyCollection<ISourceFactory> SourceFactories { get; }
+        IReadOnlyCollection<ISourceFactory<IEnergyObservation>> SourceFactories { get; }
 
         IReadOnlyCollection<IProcessingFactory> ProcessingFactories { get; }
 
@@ -53,7 +53,7 @@ namespace Potestas
 
         void LoadPlugin(Assembly assembly);
 
-        ISourceRegistration CreateAndRegisterSource(ISourceFactory factory);
+        ISourceRegistration CreateAndRegisterSource(ISourceFactory<IEnergyObservation> factory);
     }
 
     class RegisteredSourceProcessingGroup : IProcessingGroup
@@ -63,7 +63,7 @@ namespace Potestas
 
         public IEnergyObservationProcessor<IEnergyObservation> Processor { get; }
 
-        public IEnergyObservationStorage Storage { get; }
+        public IEnergyObservationStorage<IEnergyObservation> Storage { get; }
 
         public IEnergyObservationAnalizer Analizer { get; }
 
@@ -87,12 +87,12 @@ namespace Potestas
     class RegisteredEnergyObservationSourceWrapper : ISourceRegistration, IEnergyObservationProcessor<IEnergyObservation>
     {
         private readonly ApplicationFrame _app;
-        private readonly IEnergyObservationSource _inner;
+        private readonly IEnergyObservationSource<IEnergyObservation> _inner;
         private readonly IDisposable _internalSubscription;
         private readonly List<IProcessingGroup> _processingGroups;
         private CancellationTokenSource _cts;
 
-        public RegisteredEnergyObservationSourceWrapper(ApplicationFrame app, IEnergyObservationSource inner)
+        public RegisteredEnergyObservationSourceWrapper(ApplicationFrame app, IEnergyObservationSource<IEnergyObservation> inner)
         {
             _app = app;
             _inner = inner;
@@ -152,11 +152,11 @@ namespace Potestas
     {
         private readonly static FactoriesLoader _factoriesLoader = new FactoriesLoader();
 
-        private readonly List<ISourceFactory> _sourceFactories;
+        private readonly List<ISourceFactory<IEnergyObservation>> _sourceFactories;
         private readonly List<IProcessingFactory> _processingFactories;
         private readonly List<RegisteredEnergyObservationSourceWrapper> _registeredSources;
 
-        public IReadOnlyCollection<ISourceFactory> SourceFactories => _sourceFactories.AsReadOnly();
+        public IReadOnlyCollection<ISourceFactory<IEnergyObservation>> SourceFactories => _sourceFactories.AsReadOnly();
         public IReadOnlyCollection<IProcessingFactory> ProcessingFactories => _processingFactories.AsReadOnly();
         public IReadOnlyCollection<ISourceRegistration> RegisteredSources => _registeredSources.AsReadOnly();
 
@@ -164,7 +164,7 @@ namespace Potestas
         {
             _registeredSources = new List<RegisteredEnergyObservationSourceWrapper>();
             _processingFactories = new List<IProcessingFactory>();
-            _sourceFactories = new List<ISourceFactory>();
+            _sourceFactories = new List<ISourceFactory<IEnergyObservation>>();
         }
 
         public void LoadPlugin(Assembly assembly)
@@ -174,7 +174,7 @@ namespace Potestas
             _sourceFactories.AddRange(sourceFactories);
         }
 
-        public ISourceRegistration CreateAndRegisterSource(ISourceFactory factory)
+        public ISourceRegistration CreateAndRegisterSource(ISourceFactory<IEnergyObservation> factory)
         {
             var source = factory.CreateSource();
             var registration = new RegisteredEnergyObservationSourceWrapper(this, source);
