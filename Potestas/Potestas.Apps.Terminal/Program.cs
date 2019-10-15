@@ -50,9 +50,9 @@ namespace Potestas.Apps.Terminal
 
     class ConsoleProcessingFactory : IProcessingFactory
     {
-        public IEnergyObservationAnalizer CreateAnalizer()
+        public IEnergyObservationAnalizer CreateAnalizer(IEnergyObservationStorage<IEnergyObservation> observationStorage)
         {
-            return new LINQAnalizer();
+            return new LINQAnalizer(observationStorage);
         }
 
         public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()

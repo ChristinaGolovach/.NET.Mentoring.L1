@@ -72,7 +72,7 @@ namespace Potestas
             _sourceRegistration = sourceRegistration;
             Processor = factory.CreateProcessor();
             Storage = factory.CreateStorage();
-            Analizer = factory.CreateAnalizer();
+            Analizer = factory.CreateAnalizer(Storage);
 
             _processorSubscription = _sourceRegistration.Subscribe(Processor);
         }

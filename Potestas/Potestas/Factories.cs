@@ -18,6 +18,6 @@
 
         IEnergyObservationStorage<IEnergyObservation> CreateStorage();
 
-        IEnergyObservationAnalizer CreateAnalizer();
+        IEnergyObservationAnalizer CreateAnalizer(IEnergyObservationStorage<IEnergyObservation> observationStorage);
     }
 }
