@@ -21,10 +21,7 @@ namespace Potestas.Processors
             _storage = storage ?? throw new ArgumentNullException($"The {nameof(storage)} can not be null.");
         }
 
-        public void OnCompleted()
-        {
-            _storage.Clear(); // ask 
-        }
+        public void OnCompleted() { }
 
         public void OnError(Exception error)
         {

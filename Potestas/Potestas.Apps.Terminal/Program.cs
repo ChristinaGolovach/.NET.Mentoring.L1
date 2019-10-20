@@ -5,6 +5,9 @@ using Potestas.Processors;
 using Potestas.Sources;
 using Potestas.Storages;
 using Potestas.Serializers;
+using Potestas.Factories;
+using Potestas.Factories.AnalizerFactories;
+using System.Reflection;
 
 namespace Potestas.Apps.Terminal
 {
@@ -21,8 +24,10 @@ namespace Potestas.Apps.Terminal
         static void Main()
         {
             Console.CancelKeyPress += Console_CancelKeyPress;
+            //_app.LoadPlugin(Assembly.Load("Potestas.dll"));
+            _app.LoadPlugin(Assembly.LoadFrom("Potestas.dll"));
             _testRegistration = _app.CreateAndRegisterSource(new ConsoleSourceFactory());
-            _testRegistration.AttachProcessingGroup(new ConsoleProcessingFactory());
+            _testRegistration.AttachProcessingGroup(new ConsoleProcessingFactory(), new StorageFactory(), new LINQAnalizerFactory());
             _testRegistration.Start().Wait();
         }
 
@@ -48,27 +53,21 @@ namespace Potestas.Apps.Terminal
         }
     }
 
-    class ConsoleProcessingFactory : IProcessingFactory
+    class ConsoleProcessingFactory : IProcessingFactory<IEnergyObservation>
     {
-        public IEnergyObservationAnalizer CreateAnalizer(IEnergyObservationStorage<IEnergyObservation> observationStorage)
+        public IEnergyObservationProcessor<IEnergyObservation> CreateSaveToFileProcessor(IStreamProcessor<IEnergyObservation> streamProcessor, string filePath)
         {
-            return new LINQAnalizer(observationStorage);
+            return new SaveToFileProcessor<IEnergyObservation>(new SerializeProcessor<IEnergyObservation>(), @"D:\task4.txt");
         }
 
-        public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()
+        public IEnergyObservationProcessor<IEnergyObservation> CreateSaveToStorageProcessor(IEnergyObservationStorage<IEnergyObservation> storage)
         {
-            //return new ConsoleProcessor();
-
-            return new SaveToFileProcessor<IEnergyObservation>(new SerializeProcessor<IEnergyObservation>(), @"D:\task4.txt"); //for testing task 4 (SaveToFileProcessor + SerializeProcessor)
-
-            //return new SaveToStorageProcessor<IEnergyObservation>(CreateStorage()); // for testing task 4 (SaveToStorageProcessor) + 5 (FileStorage)
+            return new SaveToStorageProcessor<IEnergyObservation>(new FileStorage<IEnergyObservation>(@"D:\task5.txt", new JsonSerializer<IEnergyObservation>()));
         }
 
-        public IEnergyObservationStorage<IEnergyObservation> CreateStorage()
+        public IEnergyObservationProcessor<IEnergyObservation> CreateSerializeProcessor(Stream stream)
         {
-            return new ListStorage();
-
-            //return new FileStorage<IEnergyObservation>(@"D:\task5.txt", new JsonSerializer<IEnergyObservation>()); // for testing task 5
+            return new SerializeProcessor<IEnergyObservation>(stream);
         }
     }
 }

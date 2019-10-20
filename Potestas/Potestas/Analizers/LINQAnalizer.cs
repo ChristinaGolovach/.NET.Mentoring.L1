@@ -9,6 +9,7 @@ namespace Potestas.Analizers
     public class LINQAnalizer : IEnergyObservationAnalizer
     {
         private IEnergyObservationStorage<IEnergyObservation> _observationStorage;
+
         public LINQAnalizer(IEnergyObservationStorage<IEnergyObservation> observationStorage)
         {
             _observationStorage = observationStorage ?? throw new ArgumentNullException($"The {nameof(observationStorage)} can not be null.");
