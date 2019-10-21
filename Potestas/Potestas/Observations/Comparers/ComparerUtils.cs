@@ -29,7 +29,7 @@ namespace Potestas.Observations.Comparers
         
         public static double GetCanonicalValues(double x, double precision)
         {
-            return x = Math.Floor(x / precision) * precision;
+            return Math.Floor(x / precision) * precision;
         }
 
         public static bool? IsNaNPointComparer(Coordinates poin1, Coordinates point2, Func<double, double, bool> EqualsCoordinates)

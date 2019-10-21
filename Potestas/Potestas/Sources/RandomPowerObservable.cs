@@ -1,4 +1,5 @@
 ﻿using Potestas.Observations;
+using Potestas.Sources.ObservationCreators;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -27,9 +28,9 @@ namespace Potestas.Sources
             _observers = new List<IObserver<IEnergyObservation>>();
         }
 
-        public async Task Run(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task Run(CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested(); //ask 
+            cancellationToken.ThrowIfCancellationRequested();
 
             await SimulateNewObservationDataAsync(cancellationToken);
         }
@@ -64,7 +65,6 @@ namespace Potestas.Sources
                     catch (Exception exception)
                     {
                         PublishException(exception);
-                        //ask
                         throw;
                     }
                 }
@@ -90,13 +90,7 @@ namespace Potestas.Sources
 
         private void GenerateRandomObservation()
         {
-            var random = new Random();
-
-            int durationMs = random.Next(1, 20);
-            double intensity = random.Next(0, 1000000000);
-            Coordinates observationPoint = new Coordinates(random.Next(-90, 90), random.Next(0, 180));
-
-            var flashObservation = new FlashObservation(durationMs, intensity, observationPoint);
+            var flashObservation = RandomObservationCreator.CreateObservation();
 
             _observers.ForEach(observer => observer.OnNext(flashObservation));
 

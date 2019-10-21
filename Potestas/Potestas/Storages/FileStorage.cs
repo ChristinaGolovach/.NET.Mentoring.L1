@@ -13,15 +13,11 @@ namespace Potestas.Storages
     {
         private FileInfo _fileInfo;
         private string _filePath;
-        private List<T> _energyObservations;
         private ISerializer<T> _serializer;       
 
         public string Description => "File storage of energy observations";
 
-        public int Count => _energyObservations.Count;  // data in observation List can be not actual (and in general, storing all data from a file in memory is not a good idea)  
-                                                        // and it needs each time call ReadFromFile -> Deserialize 
-                                                        // we can add file storage last access field and check time/data and depend on it call ReadFromFile or think about another solution
-                                                        // but I supouse that goal of this task is learn to work with files and not make an optimized database based on a file
+        public int Count => ReadFromStorage().Count;
 
         public bool IsReadOnly => _fileInfo.IsReadOnly;
 
@@ -41,8 +37,6 @@ namespace Potestas.Storages
 
             _filePath = filePath;
             _fileInfo = new FileInfo(filePath);
-
-            _energyObservations = ReadFromStorage();
         }
 
         public void Add(T item)
@@ -50,7 +44,6 @@ namespace Potestas.Storages
             try
             {
                 SaveToStorage(item);
-                _energyObservations.Add(item);
             }
             catch (Exception exception)
             {
@@ -63,7 +56,6 @@ namespace Potestas.Storages
             try
             {
                 File.WriteAllText(_filePath, String.Empty);
-                _energyObservations.Clear();
             }
             catch (Exception exception)
             {
@@ -73,21 +65,14 @@ namespace Potestas.Storages
 
         public bool Contains(T item)
         {
-            if (_energyObservations.Contains(item))
+            try
             {
-                return true;
+                var energyObservations = ReadFromStorage();
+                return energyObservations.Contains(item);
             }
-            else
+            catch
             {
-                try
-                {
-                    _energyObservations = ReadFromStorage();
-                    return _energyObservations.Contains(item);
-                }
-                catch
-                {
-                    return false;
-                }                   
+                return false;
             }
         }
 
@@ -100,7 +85,7 @@ namespace Potestas.Storages
                 throw new ArgumentOutOfRangeException($"The {nameof(arrayIndex)} can not be less than 0.");
             }
 
-            if (array.Length - arrayIndex < _energyObservations.Capacity)
+            if (array.Length - arrayIndex < ReadFromStorage().Capacity)
             {
                 throw new ArgumentException($"The available space in {nameof(array)} is not enough.");
             }
@@ -126,7 +111,6 @@ namespace Potestas.Storages
                 {
                     Clear();
                     actualObservations.ForEach(observation => SaveToStorage(observation));
-                    _energyObservations = actualObservations;
 
                     return true;
                 }
@@ -139,7 +123,7 @@ namespace Potestas.Storages
             }
         }
 
-        public IEnumerator<T> GetEnumerator() => _energyObservations.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => ReadFromStorage().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

@@ -18,11 +18,8 @@ namespace Potestas.Observations.Comparers.EqualityComparers
                 return double.IsNaN(yObservation.EstimatedValue);
             }
 
-            double x = xObservation.EstimatedValue;
-            double y = yObservation.EstimatedValue;
-
-            x = ComparerUtils.GetCanonicalValues(x, ComparerUtils.comparePrecision);
-            y = ComparerUtils.GetCanonicalValues(y, ComparerUtils.comparePrecision);
+            double x = ComparerUtils.GetCanonicalValues(xObservation.EstimatedValue, ComparerUtils.comparePrecision);
+            double y = ComparerUtils.GetCanonicalValues(yObservation.EstimatedValue, ComparerUtils.comparePrecision);
 
             return (x == y);
         }
@@ -33,9 +30,8 @@ namespace Potestas.Observations.Comparers.EqualityComparers
             {
                 return 0;
             }
-
-            double x = observation.EstimatedValue;
-            x = ComparerUtils.GetCanonicalValues(x, ComparerUtils.comparePrecision);
+            
+            double x = ComparerUtils.GetCanonicalValues(observation.EstimatedValue, ComparerUtils.comparePrecision);
 
             return x.GetHashCode();
         }

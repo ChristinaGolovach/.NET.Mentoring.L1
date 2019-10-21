@@ -63,13 +63,8 @@ namespace Potestas.Observations.Comparers.EqualityComparers
 
         private bool EqualsCoordinatesOfObservations(double point1XorY, double point2XorY)
         {
-            double p1 = point1XorY;
-            double p2 = point2XorY;
-
-            p1 = ComparerUtils.GetCanonicalValues(p1, ComparerUtils.comparePrecision);
-            p2 = ComparerUtils.GetCanonicalValues(p2, ComparerUtils.comparePrecision);
-
-            return p1 == p2;
+            return ComparerUtils.GetCanonicalValues(point1XorY, ComparerUtils.comparePrecision) 
+                   == ComparerUtils.GetCanonicalValues(point2XorY, ComparerUtils.comparePrecision);
         }
     }
 

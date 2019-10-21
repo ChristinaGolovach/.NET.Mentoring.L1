@@ -22,9 +22,9 @@ namespace Potestas.Observations
     */
     public struct FlashObservation : IEnergyObservation, IEquatable<FlashObservation>
     {
-        public static readonly double precision = 0.01;
-        public static readonly int minIntensity = 0;
-        public static readonly int maxIntensity = 2000000000;
+        public static readonly double PRECISION = 0.01;
+        public static readonly int MININTENSITY = 0;
+        public static readonly int MAXINTENSITY = 2000000000;
 
         public int DurationMs { get; }
 
@@ -41,9 +41,9 @@ namespace Potestas.Observations
 
         public FlashObservation(int durationMs, double intensity, Coordinates observationPoint, DateTime observationTime)
         {
-            if (intensity < minIntensity || maxIntensity < intensity)
+            if (intensity < MININTENSITY || MAXINTENSITY < intensity)
             {
-                throw new ArgumentOutOfRangeException($"The {nameof(intensity)} must be between {minIntensity} and {maxIntensity}.");
+                throw new ArgumentOutOfRangeException($"The {nameof(intensity)} must be between {MININTENSITY} and {MAXINTENSITY}.");
             }
 
             DurationMs = durationMs;
@@ -67,8 +67,8 @@ namespace Potestas.Observations
             double thisEstimatedValue = EstimatedValue;
             double otherEstimatedValue = other.EstimatedValue;
 
-            thisEstimatedValue = ComparerUtils.GetCanonicalValues(thisEstimatedValue, precision);
-            otherEstimatedValue = ComparerUtils.GetCanonicalValues(otherEstimatedValue, precision);
+            thisEstimatedValue = ComparerUtils.GetCanonicalValues(thisEstimatedValue, PRECISION);
+            otherEstimatedValue = ComparerUtils.GetCanonicalValues(otherEstimatedValue, PRECISION);
 
             return ObservationTime.Equals(other.ObservationTime) &&
                    ObservationPoint.Equals(other.ObservationPoint) && 
@@ -95,7 +95,7 @@ namespace Potestas.Observations
             int hash = 3;
             double thisEstimatedValue = EstimatedValue;
 
-            thisEstimatedValue = ComparerUtils.GetCanonicalValues(thisEstimatedValue, precision);
+            thisEstimatedValue = ComparerUtils.GetCanonicalValues(thisEstimatedValue, PRECISION);
 
             hash = (hash * 7) + ObservationTime.GetHashCode();
             hash = (hash * 7) + ObservationPoint.GetHashCode();

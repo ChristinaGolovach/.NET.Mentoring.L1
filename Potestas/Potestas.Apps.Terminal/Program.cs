@@ -46,7 +46,7 @@ namespace Potestas.Apps.Terminal
             throw new NotImplementedException();
         }
 
-        public IEnergyObservationSource<IEnergyObservation> CreateSource()
+        public IEnergyObservationSource<IEnergyObservation> CreateSource( )
         {
             //return new ConsoleSource();
             return new RandomEnergySource(); // for the testing of task 3 
