@@ -11,9 +11,24 @@ namespace Potestas
      * 3. Consider refactoring of factory interfaces.
      * 4. Consider making an extension for Assembly class.
      */
+    // class FactoriesLoader
+    //{
+    //    public (ISourceFactory<IEnergyObservation>[],
+    //            IProcessingFactory<IEnergyObservation>[],
+    //            IStorageFactory<IEnergyObservation>[],
+    //            IAnalizerFactory<IEnergyObservation>[],
+    //            ISerializerFactory<IEnergyObservation>[],
+    //            IStreamProcessingFactory<IEnergyObservation>[]) Load(Assembly assembly)
+    //    {
+
+    //    }
+
+    //}
+
+    #region when task 7 was implemented in first attempt
     class FactoriesLoader
     {
-        public (ISourceFactory<IEnergyObservation>[], 
+        public (ISourceFactory<IEnergyObservation>[],
                 IProcessingFactory<IEnergyObservation>[],
                 IStorageFactory<IEnergyObservation>[],
                 IAnalizerFactory<IEnergyObservation>[],
@@ -66,4 +81,5 @@ namespace Potestas
             return type.IsClass && type.IsPublic && !type.IsAbstract;
         }
     }
+    #endregion when task 7 was implemented in first attempt
 }

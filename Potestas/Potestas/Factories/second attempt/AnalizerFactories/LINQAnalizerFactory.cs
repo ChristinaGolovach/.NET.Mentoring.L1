@@ -1,6 +1,6 @@
 ﻿using Potestas.Analizers;
 
-namespace Potestas.Factories.AnalizerFactories
+namespace Potestas.Factories.second_attempt.AnalizerFactories
 {
     public class LINQAnalizerFactory : IAnalizerFactory<IEnergyObservation>
     {

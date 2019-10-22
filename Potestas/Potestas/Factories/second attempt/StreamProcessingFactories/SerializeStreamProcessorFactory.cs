@@ -1,8 +1,8 @@
 ﻿using Potestas.Processors;
 
-namespace Potestas.Factories.StreamProcessingFactories
+namespace Potestas.Factories.second_attempt.SerializeStreamProcessorFactory
 {
-    public class SerializeProcessorFactory : IStreamProcessingFactory<IEnergyObservation>
+    public class SerializeStreamProcessorFactory : IStreamProcessingFactory<IEnergyObservation>
     {
         public IStreamProcessor<IEnergyObservation> CreateStreamProcessor()
         {

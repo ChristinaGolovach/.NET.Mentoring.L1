@@ -1,6 +1,6 @@
 ﻿using Potestas.Serializers;
 
-namespace Potestas.Factories.SerializerFactories
+namespace Potestas.Factories.second_attempt.SerializerFactories
 {
     public class EnergyObservationJsonSerializerFactory : ISerializerFactory<IEnergyObservation>
     {

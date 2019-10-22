@@ -1,14 +1,12 @@
-﻿using System;
-using Potestas.Sources;
+﻿using Potestas.Sources;
 
-namespace Potestas.Factories
+namespace Potestas.Factories.second_attempt
 {
     public class RandomEnergySourceFactory : ISourceFactory<IEnergyObservation>
     {
         public IEnergyObservationEventSource<IEnergyObservation> CreateEventSource()
         {
-            //return new RandomEnergySource();
-            throw new NotImplementedException();
+            return new RandomEnergySource();
         }
 
         public IEnergyObservationSource<IEnergyObservation> CreateSource()
