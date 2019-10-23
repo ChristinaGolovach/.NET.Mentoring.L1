@@ -50,6 +50,7 @@ namespace Potestas
             var streamProcessingFactoryTypes = allowedTypes.Where(t => t.GetInterfaces()
                                                                         .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStreamProcessingFactory<>)).ToList().Count > 0).ToList();
 
+            //TODO add Lazy
             sourceFactoryTypes.ForEach(t => sourceFactoryInstances.Add((ISourceFactory<IEnergyObservation>)Activator.CreateInstance(t)));
             processingFactoryTypes.ForEach(t => processingFactoryInstances.Add((IProcessingFactory<IEnergyObservation>)Activator.CreateInstance(t)));
             storageFactoryTypes.ForEach(t => storageFactoryInstances.Add((IStorageFactory<IEnergyObservation>)Activator.CreateInstance(t)));
