@@ -2,6 +2,8 @@
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using Potestas.Extensions;
+using Potestas.Attributes;
 
 namespace Potestas
 {
@@ -14,23 +16,14 @@ namespace Potestas
 
     class FactoriesLoader
     {
-        public (ISourceFactory<IEnergyObservation>[],
-                IProcessingFactory<IEnergyObservation>[],
-                IStorageFactory<IEnergyObservation>[],
-                IAnalizerFactory<IEnergyObservation>[],
-                ISerializerFactory<IEnergyObservation>[],
-                IStreamProcessingFactory<IEnergyObservation>[]) Load(Assembly assembly)
+        public (ISourceFactory<IEnergyObservation>[], IProcessingFactory<IEnergyObservation>[]) Load(Assembly assembly)
         {
             assembly = assembly ?? throw new ArgumentNullException($"The {nameof(assembly)} can not be null.");
 
             var sourceFactoryInstances = new List<ISourceFactory<IEnergyObservation>>();
             var processingFactoryInstances = new List<IProcessingFactory<IEnergyObservation>>();
-            var storageFactoryInstances = new List<IStorageFactory<IEnergyObservation>>();
-            var analizerFactoryInstances = new List<IAnalizerFactory<IEnergyObservation>>();
-            var serializerFactoryInstances = new List<ISerializerFactory<IEnergyObservation>>();
-            var streamProcessingFactoryInstances = new List<IStreamProcessingFactory<IEnergyObservation>>();
 
-            var allowedTypes = assembly.GetTypes().Where(t => IsAllowedType(t)).ToList();
+            var allowedTypes = assembly.GetTypes(t => IsAllowedType(t));
 
             var sourceFactoryTypes = allowedTypes.Where(t => t.GetInterfaces()
                                                               .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISourceFactory<>)).ToList().Count > 0).ToList();
@@ -38,34 +31,16 @@ namespace Potestas
             var processingFactoryTypes = allowedTypes.Where(t => t.GetInterfaces()
                                                                   .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IProcessingFactory<>)).ToList().Count > 0).ToList();
 
-            var storageFactoryTypes = allowedTypes.Where(t => t.GetInterfaces()
-                                                               .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStorageFactory<>)).ToList().Count > 0).ToList();
-
-            var analizerFactoryTypes = allowedTypes.Where(t => t.GetInterfaces()
-                                                                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IAnalizerFactory<>)).ToList().Count > 0).ToList();
-
-            var serializerFactoryTypes = allowedTypes.Where(t => t.GetInterfaces()
-                                                                  .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISerializerFactory<>)).ToList().Count > 0).ToList();
-
-            var streamProcessingFactoryTypes = allowedTypes.Where(t => t.GetInterfaces()
-                                                                        .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStreamProcessingFactory<>)).ToList().Count > 0).ToList();
-
-            //TODO add Lazy
             sourceFactoryTypes.ForEach(t => sourceFactoryInstances.Add((ISourceFactory<IEnergyObservation>)Activator.CreateInstance(t)));
             processingFactoryTypes.ForEach(t => processingFactoryInstances.Add((IProcessingFactory<IEnergyObservation>)Activator.CreateInstance(t)));
-            storageFactoryTypes.ForEach(t => storageFactoryInstances.Add((IStorageFactory<IEnergyObservation>)Activator.CreateInstance(t)));
-            analizerFactoryTypes.ForEach(t => analizerFactoryInstances.Add((IAnalizerFactory<IEnergyObservation>)Activator.CreateInstance(t)));
-            serializerFactoryTypes.ForEach(t => serializerFactoryInstances.Add((ISerializerFactory<IEnergyObservation>)Activator.CreateInstance(t)));
-            streamProcessingFactoryTypes.ForEach(t => streamProcessingFactoryInstances.Add((IStreamProcessingFactory<IEnergyObservation>)Activator.CreateInstance(t)));
 
-            return (sourceFactoryInstances.ToArray(), processingFactoryInstances.ToArray(),
-                    storageFactoryInstances.ToArray(), analizerFactoryInstances.ToArray(),
-                    serializerFactoryInstances.ToArray(), streamProcessingFactoryInstances.ToArray());
+
+            return (sourceFactoryInstances.ToArray(), processingFactoryInstances.ToArray());
         }
 
         private bool IsAllowedType(Type type)
         {
-            return type.IsClass && type.IsPublic && !type.IsAbstract;
+            return type.IsClass && type.IsPublic && !type.IsAbstract && !type.GetCustomAttributes(typeof(ExcludeFromFactoryLoaderAttribute)).Any();
         }
     }
 }

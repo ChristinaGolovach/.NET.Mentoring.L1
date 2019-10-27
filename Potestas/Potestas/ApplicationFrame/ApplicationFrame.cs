@@ -25,7 +25,7 @@ namespace Potestas.ApplicationFrame
 
         public void LoadPlugin(Assembly assembly)
         {
-            var (sourceFactories, processingFactories, storageFactories, analizerFactories, serializerFactories, streamProcessingFactories) = _factoriesLoader.Load(assembly);
+            var (sourceFactories, processingFactories) = _factoriesLoader.Load(assembly);
             _processingFactories.AddRange(processingFactories);
             _sourceFactories.AddRange(sourceFactories);
         }

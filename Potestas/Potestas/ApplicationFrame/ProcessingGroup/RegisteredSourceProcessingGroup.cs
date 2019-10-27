@@ -1,8 +1,5 @@
 ﻿using System;
-using System.IO;
 using Potestas.ApplicationFrame.SourceRegistration;
-using Potestas.Processors;
-using Potestas.Serializers;
 
 namespace Potestas.ApplicationFrame.ProcessingGroup
 {
@@ -13,13 +10,18 @@ namespace Potestas.ApplicationFrame.ProcessingGroup
 
         public IEnergyObservationProcessor<IEnergyObservation> Processor { get; }
 
+        public IEnergyObservationStorage<IEnergyObservation> Storage { get; }
+
+        public IEnergyObservationAnalizer Analizer { get; }
+
         public RegisteredSourceProcessingGroup(RegisteredEnergyObservationSourceWrapper sourceRegistration,
-                                               IProcessingFactory<IEnergyObservation> processingFactory,
-                                               IStreamProcessor<IEnergyObservation> streamProcessor = null, string filePath = null,
-                                               IEnergyObservationStorage<IEnergyObservation> storage = null, Stream stream = null)
+                                               IProcessingFactory<IEnergyObservation> processingFactory)
         {
             _sourceRegistration = sourceRegistration;
-            Processor = processingFactory.CreateProcessor(streamProcessor, filePath, storage, stream);
+            Processor = processingFactory.CreateProcessor();
+            Storage = processingFactory.CreateStorage();
+            Analizer = processingFactory.CreateAnalizer();
+
             _processorSubscription = _sourceRegistration.Subscribe(Processor);
         }
 

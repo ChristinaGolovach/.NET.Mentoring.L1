@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Potestas.ApplicationFrame.ProcessingGroup;
-using Potestas.Processors;
 
 namespace Potestas.ApplicationFrame.SourceRegistration
 {
@@ -18,8 +16,6 @@ namespace Potestas.ApplicationFrame.SourceRegistration
 
         void Unregister();
 
-        IProcessingGroup AttachProcessingGroup(IProcessingFactory<IEnergyObservation> processingFactory, 
-                                               IStreamProcessor<IEnergyObservation> streamProcessor = null, string filePath = null,
-                                               IEnergyObservationStorage<IEnergyObservation> storage = null, Stream stream = null);
+        IProcessingGroup AttachProcessingGroup(IProcessingFactory<IEnergyObservation> processingFactory);
     }
 }

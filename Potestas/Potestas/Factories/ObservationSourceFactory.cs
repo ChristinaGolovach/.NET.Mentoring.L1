@@ -1,8 +1,8 @@
 ﻿using Potestas.Sources;
 
-namespace Potestas.Factories.second_attempt
+namespace Potestas.Factories
 {
-    public class RandomEnergySourceFactory : ISourceFactory<IEnergyObservation>
+    public class ObservationSourceFactory : ISourceFactory<IEnergyObservation>
     {
         public IEnergyObservationEventSource<IEnergyObservation> CreateEventSource()
         {

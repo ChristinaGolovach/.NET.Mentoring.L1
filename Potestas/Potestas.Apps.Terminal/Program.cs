@@ -1,11 +1,13 @@
-﻿using Potestas.ApplicationFrame;
+﻿using Potestas.Analizers;
+using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.SourceRegistration;
-using Potestas.Factories.second_attempt;
-using Potestas.Factories.second_attempt.ProcessingFactories;
-using Potestas.Factories.second_attempt.SerializeStreamProcessorFactory;
+using Potestas.Factories;
 using Potestas.Processors;
+using Potestas.Serializers;
+using Potestas.Storages;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Potestas.Apps.Terminal
 {
@@ -22,11 +24,7 @@ namespace Potestas.Apps.Terminal
         static void Main()
         {
             Console.CancelKeyPress += Console_CancelKeyPress;
-            // _app.LoadPlugin(Assembly.LoadFrom("Potestas.dll")); //for loading plugin module_3 task. now it anly check that it works
-
-            // for testing that it also work 
-            //_testRegistration.AttachProcessingGroup(new SaveToStorageProcessorFactory(), null, null, storageFactory.CreateStorage(@"D:\test.txt", new JsonSerializer<IEnergyObservation>()));
-            //_testRegistration.Start().Wait();
+            _app.LoadPlugin(Assembly.LoadFrom("Potestas.dll")); //for loading plugin module_3 task. now it anly check that it works
 
             MainMenu();
         }
@@ -99,7 +97,7 @@ namespace Potestas.Apps.Terminal
             StartFinishMenu();
             var consoleProcessingKey = Console.ReadKey();
 
-            _testRegistration = _app.CreateAndRegisterSource(new RandomEnergySourceFactory());
+            _testRegistration = _app.CreateAndRegisterSource(new ObservationSourceFactory());
             _testRegistration.AttachProcessingGroup(new ConsoleProcessingFactory());
             _testRegistration.Start().Wait();
         }
@@ -118,9 +116,8 @@ namespace Potestas.Apps.Terminal
             StartFinishMenu();
             var saveToFileProcessingKey = Console.ReadKey();
 
-            _testRegistration = _app.CreateAndRegisterSource(new RandomEnergySourceFactory());
-            var streamProcessor = new SerializeStreamProcessorFactory().CreateStreamProcessor(); // for demo only hardcoded
-            _testRegistration.AttachProcessingGroup(new SaveToFileProcessorFactory(), streamProcessor, filePath);
+            _testRegistration = _app.CreateAndRegisterSource(new ObservationSourceFactory());
+            _testRegistration.AttachProcessingGroup(new SaveToFileProcessingFactory(filePath, new JsonSerializer<IEnergyObservation>()));
             _testRegistration.Start().Wait();
         }
     }
@@ -141,10 +138,26 @@ namespace Potestas.Apps.Terminal
 
     class ConsoleProcessingFactory : IProcessingFactory<IEnergyObservation>
     {
-        public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor(IStreamProcessor<IEnergyObservation> streamProcessor = null, string filePath = null, 
-                                                                               IEnergyObservationStorage<IEnergyObservation> storage = null, Stream stream = null)
+        private IEnergyObservationStorage<IEnergyObservation> _storage;
+
+        public IEnergyObservationAnalizer CreateAnalizer()
+        {
+            return new LINQAnalizer(CreateStorage());
+        }
+
+        public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()
         {
             return new ConsoleProcessor();
+        }
+
+        public IEnergyObservationStorage<IEnergyObservation> CreateStorage()
+        {
+            if (_storage == null)
+            {
+                _storage = new ListStorage();
+            }
+
+            return _storage;
         }
     }
 

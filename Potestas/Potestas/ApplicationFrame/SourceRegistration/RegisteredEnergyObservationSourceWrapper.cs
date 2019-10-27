@@ -35,10 +35,9 @@ namespace Potestas.ApplicationFrame.SourceRegistration
             return _inner.Subscribe(processor);
         }
 
-        public IProcessingGroup AttachProcessingGroup(IProcessingFactory<IEnergyObservation> processingFactory, IStreamProcessor<IEnergyObservation> streamProcessor = null, 
-                                                      string filePath = null, IEnergyObservationStorage<IEnergyObservation> storage = null, Stream stream = null)
+        public IProcessingGroup AttachProcessingGroup(IProcessingFactory<IEnergyObservation> processingFactory)
         {
-            var processingGroup = new RegisteredSourceProcessingGroup(this, processingFactory, streamProcessor, filePath, storage, stream);
+            var processingGroup = new RegisteredSourceProcessingGroup(this, processingFactory);
             _processingGroups.Add(processingGroup);
             return processingGroup;
         }

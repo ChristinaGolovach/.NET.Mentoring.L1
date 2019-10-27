@@ -4,9 +4,9 @@
     {
         IEnergyObservationProcessor<IEnergyObservation> Processor { get; }
 
-        //IEnergyObservationStorage<IEnergyObservation> Storage { get; }
+        IEnergyObservationStorage<IEnergyObservation> Storage { get; }
 
-        //IEnergyObservationAnalizer Analizer { get; }
+        IEnergyObservationAnalizer Analizer { get; }
 
         void Detach();
     }
