@@ -5,18 +5,19 @@
      * Which pattern is used here?
      * Why factory interface is needed here?
      */
-    public interface ISourceFactory
-    {
-        IEnergyObservationSource CreateSource();
 
-        IEnergyObservationEventSource CreateEventSource();
+    public interface ISourceFactory<T> where T : IEnergyObservation
+    {
+        IEnergyObservationSource<T> CreateSource();
+
+        IEnergyObservationEventSource<T> CreateEventSource();
     }
 
-    public interface IProcessingFactory
+    public interface IProcessingFactory<T> where T : IEnergyObservation
     {
-        IEnergyObservationProcessor CreateProcessor();
+        IEnergyObservationProcessor<T> CreateProcessor();
 
-        IEnergyObservationStorage CreateStorage();
+        IEnergyObservationStorage<T> CreateStorage();
 
         IEnergyObservationAnalizer CreateAnalizer();
     }
