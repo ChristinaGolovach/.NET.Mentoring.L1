@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using Potestas.Exceptions.ProcessorExceptions;
 
 namespace Potestas.Processors
@@ -31,14 +29,21 @@ namespace Potestas.Processors
 
         public void OnNext(T value)
         {
-            if (EqualityComparer<T>.Default.Equals(value, default(T)))
+            if (EqualityComparer<T>.Default.Equals(value, default))
             {
                 throw new ArgumentException($"The {nameof(value)} must be initialized.");
             }
 
-            using (IDbConnection connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             {
+                var command = new SqlCommand("Insert_FlasObservation", connection) { CommandType = CommandType.StoredProcedure };
+                command.Parameters.AddWithValue("@X", value.ObservationPoint.X);
+                command.Parameters.AddWithValue("@Y", value.ObservationPoint.Y);
+                command.Parameters.AddWithValue("@EstimatedValue", value.EstimatedValue);
+                command.Parameters.AddWithValue("@ObservationTime", value.ObservationTime);
 
+                connection.Open();
+                int affected = command.ExecuteNonQuery();
             }
         }
     }

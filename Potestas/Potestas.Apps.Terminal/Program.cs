@@ -6,6 +6,7 @@ using Potestas.Processors;
 using Potestas.Serializers;
 using Potestas.Storages;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Reflection;
 
@@ -147,7 +148,7 @@ namespace Potestas.Apps.Terminal
 
         public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()
         {
-            return new ConsoleProcessor();
+            return new SaveToSqlProcessor<IEnergyObservation>(ConfigurationManager.ConnectionStrings["ObservationConnection"].ConnectionString);//ConsoleProcessor();
         }
 
         public IEnergyObservationStorage<IEnergyObservation> CreateStorage()
