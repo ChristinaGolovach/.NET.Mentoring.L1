@@ -24,7 +24,7 @@ namespace Potestas.Apps.Terminal
         static void Main()
         {
             Console.CancelKeyPress += Console_CancelKeyPress;
-            _app.LoadPlugin(Assembly.LoadFrom("Potestas.dll")); //for loading plugin module_3 task. now it anly check that it works
+            //_app.LoadPlugin(Assembly.LoadFrom("Potestas.dll")); //for loading plugin module_3 task. now it anly check that it works
 
             MainMenu();
         }
