@@ -25,6 +25,7 @@ namespace Potestas.Observations
         public static readonly double PRECISION = 0.01;
         public static readonly int MININTENSITY = 0;
         public static readonly int MAXINTENSITY = 2000000000;
+        public int Id { get; }
 
         public int DurationMs { get; }
 
@@ -39,7 +40,10 @@ namespace Potestas.Observations
         public FlashObservation(int durationMs, double intensity, Coordinates observationPoint) 
             : this (durationMs, intensity, observationPoint, DateTime.UtcNow) { }
 
-        public FlashObservation(int durationMs, double intensity, Coordinates observationPoint, DateTime observationTime)
+        public FlashObservation(int durationMs, double intensity, Coordinates observationPoint, DateTime observationTime) 
+            : this(0, durationMs, intensity, observationPoint, observationTime) { }
+
+        public FlashObservation(int id, int durationMs, double intensity, Coordinates observationPoint, DateTime observationTime)
         {
             if (intensity < MININTENSITY || MAXINTENSITY < intensity)
             {
@@ -50,6 +54,7 @@ namespace Potestas.Observations
             Intensity = intensity;
             ObservationPoint = observationPoint;
             ObservationTime = observationTime;
+            Id = id;
         }
 
         public static bool operator ==(FlashObservation flashObservation1, FlashObservation flashObservation2)

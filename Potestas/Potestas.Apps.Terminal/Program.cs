@@ -2,6 +2,7 @@
 using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
+using Potestas.Observations;
 using Potestas.Processors;
 using Potestas.Serializers;
 using Potestas.Storages;
@@ -32,6 +33,11 @@ namespace Potestas.Apps.Terminal
 
         private static void MainMenu()
         {
+            var sqlStorage = new SqlStorage<IEnergyObservation>(ConfigurationManager.ConnectionStrings["ObservationConnection"].ConnectionString);
+            //sqlStorage.Add(new FlashObservation(11, 12, new Coordinates(11,22)));
+            var testArray = new IEnergyObservation[100];
+            sqlStorage.CopyTo(testArray, 2);
+
             ShowMainMenu();
 
             var key = Console.ReadKey();
