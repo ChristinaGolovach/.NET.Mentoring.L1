@@ -43,5 +43,119 @@ END TRY
 BEGIN CATCH
 	ROLLBACK TRAN
 END CATCH
-
+GO
 --------------END Insert_FlasObservation---------------
+
+--------------BEGIN  GetAverageEnergy------------------
+IF (OBJECT_ID('Select_Average_Energy') IS NOT NULL)
+  DROP PROCEDURE Select_Average_Energy
+GO
+
+CREATE PROCEDURE [dbo].[Select_Average_Energy]
+AS
+	SELECT AVG(EstimatedValue)
+	FROM FlashObservations
+GO
+
+
+IF (OBJECT_ID('Select_Average_Energy_Between_Dates') IS NOT NULL)
+  DROP PROCEDURE Select_Average_Energy_Between_Dates
+GO
+
+CREATE PROCEDURE [dbo].[Select_Average_Energy_Between_Dates]
+	@StartFrom DATETIME,
+	@EndBy DATETIME
+AS
+	SELECT AVG(EstimatedValue)
+	FROM FlashObservations
+	WHERE FlashObservations.ObservationTime >= @StartFrom AND FlashObservations.ObservationTime <= @EndBy
+GO
+
+
+IF (OBJECT_ID('Select_Average_Energy_Between_Coordinates') IS NOT NULL)
+  DROP PROCEDURE Select_Average_Energy_Between_Coordinates
+GO
+
+CREATE PROCEDURE [dbo].[Select_Average_Energy_Between_Coordinates]
+	@TopLeftX FLOAT(53),
+	@TopLeftY FLOAT(53),
+	@BottomRightX FLOAT(53),
+	@BottomRightY FLOAT(53)
+AS
+	SELECT AVG(EstimatedValue)
+	FROM FlashObservations
+	JOIN Coordinates ON Coordinates.Id = FlashObservations.CoordinateId
+	WHERE X > @TopLeftX AND 
+		  X < @BottomRightX AND 
+		  Y > @TopLeftY AND
+		  Y < @BottomRightY
+GO
+--------------END  GetAverageEnergy--------------------
+
+--------------BEGIN  GetDistributionByCoordinates------
+--------------END  GetDistributionByCoordinates--------
+
+
+--------------BEGIN  GetMaxEnergy----------------------
+IF (OBJECT_ID('Select_Max_Energy') IS NOT NULL)
+  DROP PROCEDURE Select_Max_Energy
+GO
+
+CREATE PROCEDURE [dbo].[Select_Max_Energy]
+AS
+	SELECT MAX(EstimatedValue)
+	FROM FlashObservations
+GO
+
+IF (OBJECT_ID('Select_Max_Energy_Between_Dates') IS NOT NULL)
+  DROP PROCEDURE Select_Max_Energy_Between_Dates
+GO
+
+CREATE PROCEDURE [dbo].[Select_Max_Energy_Between_Dates]
+	@StartFrom DATETIME,
+	@EndBy DATETIME
+AS
+	SELECT MAX(EstimatedValue)
+	FROM FlashObservations
+	WHERE FlashObservations.ObservationTime >= @StartFrom AND FlashObservations.ObservationTime <= @EndBy
+GO
+
+
+IF (OBJECT_ID('Select_Max_Energy_Between_Coordinates') IS NOT NULL)
+  DROP PROCEDURE Select_Max_Energy_Between_Coordinates
+GO
+
+CREATE PROCEDURE [dbo].[Select_Max_Energy_Between_Coordinates]
+	@TopLeftX FLOAT(53),
+	@TopLeftY FLOAT(53),
+	@BottomRightX FLOAT(53),
+	@BottomRightY FLOAT(53)
+AS
+	SELECT MAX(EstimatedValue)
+	FROM FlashObservations
+	JOIN Coordinates ON Coordinates.Id = FlashObservations.CoordinateId
+	WHERE X > @TopLeftX AND 
+		  X < @BottomRightX AND 
+		  Y > @TopLeftY AND
+		  Y < @BottomRightY
+GO
+--------------END  GetMaxEnergy------------------------
+
+--------------BEGIN  GetMaxEnergyPosition--------------
+--------------d=sqrt(x2−x1)^2+(y2−y1)^2 --where 
+
+--IF (OBJECT_ID('Select_Max_Energy_Position') IS NOT NULL)
+--  DROP PROCEDURE Select_Max_Energy_Position
+--GO
+
+--CREATE PROCEDURE [dbo].[Select_Max_Energy_Position]
+--AS
+--	SELECT Coordinates.Id, X, Y
+--	FROM FlashObservations
+--	JOIN Coordinates ON Coordinates.Id = FlashObservations.CoordinateId
+--	--WHERE 
+--GO
+--------------END  GetMaxEnergyPosition----------------
+
+--------------BEGIN  GetMaxEnergyTime------------------
+--------------END  GetMaxEnergyTime--------------------

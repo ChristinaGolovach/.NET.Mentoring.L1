@@ -24,7 +24,6 @@ namespace Potestas.Storages
         private readonly string coordinateTableName = "Coordinates";
         private readonly string observationTableName = "Observations";
 
-
         public string Description => "SQL storage of energy observations";
 
         public int Count => _observations.Rows.Count;
@@ -46,26 +45,23 @@ namespace Potestas.Storages
                 throw new ArgumentException($"The {nameof(item)} must be initialized.");
             }
 
-            if (item.Id == 0)
-            {
-                var newCoordinateRow = _coordinates.NewRow();
-                var newObservationRow = _observations.NewRow();
+            var newCoordinateRow = _coordinates.NewRow();
+            var newObservationRow = _observations.NewRow();
 
-                newCoordinateRow["X"] = item.ObservationPoint.X;
-                newCoordinateRow["Y"] = item.ObservationPoint.Y;
+            newCoordinateRow["X"] = item.ObservationPoint.X;
+            newCoordinateRow["Y"] = item.ObservationPoint.Y;
 
-                _coordinates.Rows.Add(newCoordinateRow);
+            _coordinates.Rows.Add(newCoordinateRow);
 
-                newObservationRow["CoordinateId"] = (int)newCoordinateRow["Id"];
-                newObservationRow["EstimatedValue"] = item.EstimatedValue;
-                newObservationRow["ObservationTime"] = item.ObservationTime;
+            newObservationRow["CoordinateId"] = (int)newCoordinateRow["Id"];
+            newObservationRow["EstimatedValue"] = item.EstimatedValue;
+            newObservationRow["ObservationTime"] = item.ObservationTime;
 
-                _observations.Rows.Add(newObservationRow);
+            _observations.Rows.Add(newObservationRow);
 
-                _dataSet.AcceptChanges();
+            _dataSet.AcceptChanges();
 
-                // SendChangesToDB();
-            }
+            // SendChangesToDB();
         }
 
         public void Clear()
@@ -100,26 +96,11 @@ namespace Potestas.Storages
 
             try
             {
-                //TODO move to separate method
-                var joinResult = from t1 in _coordinates.AsEnumerable()
-                             join t2 in _observations.AsEnumerable()
-                                on (int)t1["Id"] equals (int)t2["CoordinateId"]
-                             select new 
-                             {
-                                 Id = (int)t2["Id"],
-                                 ObservationPoint = new Coordinates((int)t1["Id"], (double)t1["X"], (double)t1["Y"]),
-                                 EstimatedValue = (double)t2["EstimatedValue"],
-                                 ObservationTime = (DateTime)t2["ObservationTime"]
-                             }.ActLike<IEnergyObservation>(); //https://github.com/ekonbenefits/impromptu-interface
+                var joinResult = JoinCoordinateAndObservation(_coordinates, _observations);
 
-                var resultList = new List<T>();
+                var genericColection = ConvertTypedCollectionToGeneric(joinResult);
 
-                foreach (var result in joinResult)
-                {
-                    resultList.Add((T)result);
-                }
-
-                resultList.CopyTo(array, arrayIndex);
+                genericColection.CopyTo(array, arrayIndex);
 
             }
             catch (Exception exception)
@@ -128,10 +109,11 @@ namespace Potestas.Storages
             }
         }
 
-
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            var joinResult = JoinCoordinateAndObservation(_coordinates, _observations);
+
+            return ConvertTypedCollectionToGeneric(joinResult).GetEnumerator();
         }
 
         public bool Remove(T item)
@@ -182,6 +164,34 @@ namespace Potestas.Storages
                     _dataSet.Tables[coordinateTableName].Columns["Id"],
                     _dataSet.Tables[observationTableName].Columns["CoordinateId"]);
             }
+        }
+
+        private IEnumerable<IEnergyObservation> JoinCoordinateAndObservation(DataTable coordinates, DataTable observations)
+        {
+             return from t1 in coordinates.AsEnumerable()
+                             join t2 in observations.AsEnumerable()
+                                on (int)t1["Id"] equals (int)t2["CoordinateId"]
+                             select new
+                             {
+                                 Id = (int)t2["Id"],
+                                 ObservationPoint = new Coordinates((int)t1["Id"], (double)t1["X"], (double)t1["Y"]),
+                                 EstimatedValue = (double)t2["EstimatedValue"],
+                                 ObservationTime = (DateTime)t2["ObservationTime"]
+                             }.ActLike<IEnergyObservation>();
+            // https://stackoverflow.com/questions/612689/a-generic-list-of-anonymous-class  - not suitable 
+            //https://github.com/ekonbenefits/impromptu-interface - I have used it to convert anonymous type to Interface type
+        }
+
+        private List<T> ConvertTypedCollectionToGeneric(IEnumerable<IEnergyObservation> typedCollection)
+        {
+            var genericCollection = new List<T>();
+
+            foreach (var result in typedCollection)
+            {
+                genericCollection.Add((T)result);
+            }
+
+            return genericCollection;
         }
 
         //private void SendChangesToDB()
