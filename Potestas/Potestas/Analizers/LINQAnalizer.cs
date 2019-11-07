@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Potestas.Observations.Comparers.OrderComparers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -72,12 +73,12 @@ namespace Potestas.Analizers
 
         public Coordinates GetMaxEnergyPosition()
         {
-            return _observationStorage.Max(obs => obs.ObservationPoint);
+            return _observationStorage.OrderBy(obs => obs.EstimatedValue).LastOrDefault().ObservationPoint;
         }
 
         public DateTime GetMaxEnergyTime()
         {
-            return _observationStorage.Max(obs => obs.ObservationTime);
+            return _observationStorage.OrderBy(obs => obs.EstimatedValue).LastOrDefault().ObservationTime;
         }
 
         public double GetMinEnergy()
@@ -99,12 +100,12 @@ namespace Potestas.Analizers
 
         public Coordinates GetMinEnergyPosition()
         {
-            return _observationStorage.Min(obs => obs.ObservationPoint);
+            return _observationStorage.OrderBy(obs => obs.EstimatedValue).FirstOrDefault().ObservationPoint;
         }
 
         public DateTime GetMinEnergyTime()
         {
-            return _observationStorage.Min(obs => obs.ObservationTime);
+            return _observationStorage.OrderBy(obs => obs.EstimatedValue).FirstOrDefault().ObservationTime;
         }
     }
 }

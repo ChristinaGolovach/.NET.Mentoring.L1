@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+using Potestas.DBUtils;
 using Potestas.Exceptions.ProcessorExceptions;
 
 namespace Potestas.Processors
@@ -34,17 +33,14 @@ namespace Potestas.Processors
                 throw new ArgumentException($"The {nameof(value)} must be initialized.");
             }
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                var command = new SqlCommand("Insert_FlasObservation", connection) { CommandType = CommandType.StoredProcedure };
-                command.Parameters.AddWithValue("@X", value.ObservationPoint.X);
-                command.Parameters.AddWithValue("@Y", value.ObservationPoint.Y);
-                command.Parameters.AddWithValue("@EstimatedValue", value.EstimatedValue);
-                command.Parameters.AddWithValue("@ObservationTime", value.ObservationTime);
+            var parameters = new Dictionary<string, object>();
 
-                connection.Open();
-                int affected = command.ExecuteNonQuery();
-            }
+            parameters.Add("@X", value.ObservationPoint.X);
+            parameters.Add("@Y", value.ObservationPoint.Y);
+            parameters.Add("@EstimatedValue", value.EstimatedValue);
+            parameters.Add("@ObservationTime", value.ObservationTime);
+
+            ADOUtils.ExecuteNonQuery(_connectionString, "Insert_FlasObservation", parameters);
         }
     }
 }

@@ -33,10 +33,18 @@ namespace Potestas.Apps.Terminal
 
         private static void MainMenu()
         {
-            var sqlStorage = new SqlStorage<IEnergyObservation>(ConfigurationManager.ConnectionStrings["ObservationConnection"].ConnectionString);
-            //sqlStorage.Add(new FlashObservation(11, 12, new Coordinates(11,22)));
+            string connectionString = ConfigurationManager.ConnectionStrings["ObservationConnection"].ConnectionString;
+
+
+            var sqlStorage = new SqlStorage<IEnergyObservation>(connectionString);
+            sqlStorage.Add(new FlashObservation(11, 12, new Coordinates(11,22)));
             var testArray = new IEnergyObservation[100];
             sqlStorage.CopyTo(testArray, 2);
+
+
+            var sqlAnalizer = new SqlAnalizer(connectionString);
+            var average = sqlAnalizer.GetAverageEnergy();
+            var distribution = sqlAnalizer.GetDistributionByCoordinates();
 
             ShowMainMenu();
 
