@@ -1,13 +1,11 @@
-﻿using System;
+﻿using ImpromptuInterface;
+using Potestas.Exceptions.StorageExcepions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
-using System.Linq;
 using System.Data.SqlClient;
-using ImpromptuInterface;
-using Dynamitey;
-using Potestas.Exceptions.StorageExcepions;
+using System.Linq;
 
 namespace Potestas.Storages
 {
@@ -18,11 +16,7 @@ namespace Potestas.Storages
         private DataSet _dataSet;
         private DataTable _coordinates;
         private DataTable _observations;
-        private SqlDataAdapter _coordinatesAdapter;
-        private SqlDataAdapter _observationsAdapter;
-
-        private readonly string coordinateTableName = "Coordinates";
-        private readonly string observationTableName = "Observations";
+        private SqlDataAdapter _adapter;
 
         public string Description => "SQL storage of energy observations";
 
@@ -34,6 +28,8 @@ namespace Potestas.Storages
             _connectionString = connectionString ?? throw new ArgumentNullException($"The {nameof(connectionString)} can not be null.");
 
             _dataSet = new DataSet("ObservationSet");
+
+            _connection = new SqlConnection(_connectionString);
 
             FillDataSet();            
         }
@@ -59,9 +55,7 @@ namespace Potestas.Storages
 
             _observations.Rows.Add(newObservationRow);
 
-            _dataSet.AcceptChanges();
-
-            // SendChangesToDB();
+            SendChangesToDB();
         }
 
         public void Clear()
@@ -145,24 +139,24 @@ namespace Potestas.Storages
             string getCoordinateCommand = "SELECT * FROM Coordinates;";
             string getObservationCommand = "SELECT * FROM FlashObservations;";
 
-            using (_connection = new SqlConnection(_connectionString))
+            using (_connection)
             {
                 _connection.Open();
-                _coordinatesAdapter = new SqlDataAdapter(getCoordinateCommand, _connection);
-                _observationsAdapter = new SqlDataAdapter(getObservationCommand, _connection);
+         
+                _adapter = new SqlDataAdapter(getCoordinateCommand + getObservationCommand, _connection);
 
-                _coordinatesAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-                _observationsAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                _adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                //_adapter.TableMappings.Add("Coordinates", "Table");
+                //_adapter.TableMappings.Add("FlashObservations", "Table1");
 
-                _coordinatesAdapter.Fill(_dataSet, coordinateTableName);
-                _observationsAdapter.Fill(_dataSet, observationTableName);
+                _adapter.Fill(_dataSet);
 
-                _coordinates = _dataSet.Tables[coordinateTableName];
-                _observations = _dataSet.Tables[observationTableName];
+                _coordinates = _dataSet.Tables[0];
+                _observations = _dataSet.Tables[1];
 
                 DataRelation relation = _dataSet.Relations.Add("CoordinatesObservations",
-                    _dataSet.Tables[coordinateTableName].Columns["Id"],
-                    _dataSet.Tables[observationTableName].Columns["CoordinateId"]);
+                    _dataSet.Tables[0].Columns["Id"],
+                    _dataSet.Tables[1].Columns["CoordinateId"]);
             }
         }
 
@@ -194,32 +188,32 @@ namespace Potestas.Storages
             return genericCollection;
         }
 
-        //private void SendChangesToDB()
-        //{
-        //    _connection = new SqlConnection(_connectionString);
 
-        //    try
-        //    {
-        //        _connection.Open();
+        private void SendChangesToDB()
+        {           
+            try
+            {
+                _connection.ConnectionString = _connectionString;
+                _connection.Open();
 
-        //        SqlCommandBuilder coordinatesCommand = new SqlCommandBuilder(_coordinatesAdapter);
-        //        SqlCommandBuilder observationsCommand = new SqlCommandBuilder(_observationsAdapter);
+                SqlCommandBuilder observationsCommand = new SqlCommandBuilder(_adapter);
 
-        //        coordinatesCommand.DataAdapter.Update(_coordinates);
-        //        observationsCommand.DataAdapter.Update(_observations);
+                _adapter.Update(_coordinates);
+                _adapter.Update(_observations);
 
-        //        _dataSet.AcceptChanges();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var newEx = ex;
-        //        _dataSet.RejectChanges();
-        //    }
-        //    finally
-        //    {
-        //        _connection.Close();
-        //    }
-        //}
+                _dataSet.AcceptChanges();
+            }
+            catch (Exception ex)
+            {
+                var newEx = ex;
+
+                _dataSet.RejectChanges();
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
 
     }
 }
