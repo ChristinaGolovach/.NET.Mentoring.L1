@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Potestas.Exceptions.ProcessorExceptions
+namespace Potestas.ADO.Plugin.Exceptions
 {
     public class SaveToSqlProcessorException : Exception
     {

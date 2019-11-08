@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Potestas.ADO.Plugin.Exceptions;
+using System;
 using System.Collections.Generic;
-using Potestas.DBUtils;
-using Potestas.Exceptions.StorageExcepions;
-using Potestas.Observations.Comparers.EqualityComparers;
 
-namespace Potestas.Analizers
+namespace Potestas.ADO.Plugin
 {
     public class SqlAnalizer : IEnergyObservationAnalizer
     {
@@ -62,7 +60,7 @@ namespace Potestas.Analizers
         }
 
         public IDictionary<Coordinates, int> GetDistributionByCoordinates()
-        {           
+        {
             var resultDistribution = new Dictionary<Coordinates, int>(new CoordinateEqualityComparer());
             int fieldCountInSelectedItem = 4;
 
@@ -96,7 +94,7 @@ namespace Potestas.Analizers
             }
 
             foreach (var item in selectedItems)
-            {              
+            {
                 resultDistribution.Add((double)item["EstimatedValue"], (int)item["Count"]);
             }
 

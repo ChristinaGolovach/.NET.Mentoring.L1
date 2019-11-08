@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas", "Potestas\Potestas.csproj", "{EEB46883-CBA0-4919-B984-A3254930E9CA}"
 EndProject
@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{19C95DF5-1FB
 		CreateDB.sql = CreateDB.sql
 		CreateProcedures.sql = CreateProcedures.sql
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.ADO.Plugin", "Potestas.ADO.Plugin\Potestas.ADO.Plugin.csproj", "{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{3C3E81BE-F2C2-406D-B75D-599B6527F377}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C3E81BE-F2C2-406D-B75D-599B6527F377}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C3E81BE-F2C2-406D-B75D-599B6527F377}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

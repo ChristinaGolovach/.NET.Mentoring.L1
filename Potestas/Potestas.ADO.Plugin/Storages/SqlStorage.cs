@@ -1,13 +1,13 @@
-﻿using ImpromptuInterface;
-using Potestas.Exceptions.StorageExcepions;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using ImpromptuInterface;
+using Potestas.ADO.Plugin.Exceptions;
 
-namespace Potestas.Storages
+namespace Potestas.ADO.Plugin
 {
     public class SqlStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
     {
@@ -66,8 +66,8 @@ namespace Potestas.Storages
         public void Clear()
         {
             _dataSet.Clear();
-     
-             SendChangesToDB();
+
+            SendChangesToDB();
         }
 
         public bool Contains(T item)
@@ -96,7 +96,7 @@ namespace Potestas.Storages
 
             try
             {
-                var joinResult = JoinCoordinateAndObservation(_adapterTablePairs[_srcCoordinatesTblName].Value, 
+                var joinResult = JoinCoordinateAndObservation(_adapterTablePairs[_srcCoordinatesTblName].Value,
                                                               _adapterTablePairs[_srcObservationsTblName].Value);
 
                 var genericColection = ConvertTypedCollectionToGeneric(joinResult);
@@ -111,7 +111,7 @@ namespace Potestas.Storages
 
         public IEnumerator<T> GetEnumerator()
         {
-            var joinResult = JoinCoordinateAndObservation(_adapterTablePairs[_srcCoordinatesTblName].Value, 
+            var joinResult = JoinCoordinateAndObservation(_adapterTablePairs[_srcCoordinatesTblName].Value,
                                                           _adapterTablePairs[_srcObservationsTblName].Value);
 
             return ConvertTypedCollectionToGeneric(joinResult).GetEnumerator();
@@ -137,7 +137,7 @@ namespace Potestas.Storages
                 }
             }
 
-            return false;    
+            return false;
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -170,16 +170,16 @@ namespace Potestas.Storages
 
         private IEnumerable<IEnergyObservation> JoinCoordinateAndObservation(DataTable coordinates, DataTable observations)
         {
-             return from t1 in coordinates.AsEnumerable()
-                             join t2 in observations.AsEnumerable()
-                                on (int)t1["Id"] equals (int)t2["CoordinateId"]
-                             select new
-                             {
-                                 Id = (int)t2["Id"],
-                                 ObservationPoint = new Coordinates((int)t1["Id"], (double)t1["X"], (double)t1["Y"]),
-                                 EstimatedValue = (double)t2["EstimatedValue"],
-                                 ObservationTime = (DateTime)t2["ObservationTime"]
-                             }.ActLike<IEnergyObservation>();
+            return from t1 in coordinates.AsEnumerable()
+                   join t2 in observations.AsEnumerable()
+                      on (int)t1["Id"] equals (int)t2["CoordinateId"]
+                   select new
+                   {
+                       Id = (int)t2["Id"],
+                       ObservationPoint = new Coordinates((int)t1["Id"], (double)t1["X"], (double)t1["Y"]),
+                       EstimatedValue = (double)t2["EstimatedValue"],
+                       ObservationTime = (DateTime)t2["ObservationTime"]
+                   }.ActLike<IEnergyObservation>();
             // https://stackoverflow.com/questions/612689/a-generic-list-of-anonymous-class  - not suitable 
             //https://github.com/ekonbenefits/impromptu-interface - I have used it to convert anonymous type to Interface type
         }
@@ -205,7 +205,7 @@ namespace Potestas.Storages
         }
 
         private void SendChangesToDB(SqlDataAdapter dataAdapter, DataTable dataTable)
-        {           
+        {
             try
             {
                 _connection.ConnectionString = _connectionString;

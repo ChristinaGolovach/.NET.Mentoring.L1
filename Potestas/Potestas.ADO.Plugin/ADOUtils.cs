@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace Potestas.DBUtils
+namespace Potestas.ADO.Plugin
 {
-    public static class ADOUtils
+    internal static class ADOUtils
     {
         public static void ExecuteNonQuery(string connectionString, string sprocName, Dictionary<string, object> parameters)
         {
@@ -38,9 +38,9 @@ namespace Potestas.DBUtils
             return result;
         }
 
-        public static IDictionary<string, object> ExecuteReaderSingleRow(string connectionString, 
-                                                                        string sprocName, 
-                                                                        IDictionary<string, object> parameters, 
+        public static IDictionary<string, object> ExecuteReaderSingleRow(string connectionString,
+                                                                        string sprocName,
+                                                                        IDictionary<string, object> parameters,
                                                                         int filedCountOfSelectedEntity)
         {
             CheckArguments(connectionString, sprocName);
@@ -71,9 +71,9 @@ namespace Potestas.DBUtils
         }
 
 
-        public static IEnumerable<IDictionary<string, object>> ExecuteReaderRows(string connectionString, 
-                                                                                string sprocName, 
-                                                                                IDictionary<string, object> parameters, 
+        public static IEnumerable<IDictionary<string, object>> ExecuteReaderRows(string connectionString,
+                                                                                string sprocName,
+                                                                                IDictionary<string, object> parameters,
                                                                                 int filedCountOfSelectedEntity)
         {
             CheckArguments(connectionString, sprocName);

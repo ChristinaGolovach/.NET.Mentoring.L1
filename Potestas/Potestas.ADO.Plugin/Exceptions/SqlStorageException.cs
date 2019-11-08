@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Potestas.Exceptions.StorageExcepions
+namespace Potestas.ADO.Plugin.Exceptions
 {
     public class SqlStorageException : Exception
     {

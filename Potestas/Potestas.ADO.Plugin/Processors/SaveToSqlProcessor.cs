@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Potestas.DBUtils;
-using Potestas.Exceptions.ProcessorExceptions;
+using Potestas.ADO.Plugin.Exceptions;
 
-namespace Potestas.Processors
+namespace Potestas.ADO.Plugin
 {
     public class SaveToSqlProcessor<T> : IEnergyObservationProcessor<T> where T : IEnergyObservation
     {
