@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Potestas.DBUtils;
 using Potestas.Exceptions.StorageExcepions;
+using Potestas.Observations.Comparers.EqualityComparers;
 
 namespace Potestas.Analizers
 {
@@ -61,8 +62,8 @@ namespace Potestas.Analizers
         }
 
         public IDictionary<Coordinates, int> GetDistributionByCoordinates()
-        {
-            var resultDistribution = new Dictionary<Coordinates, int>();
+        {           
+            var resultDistribution = new Dictionary<Coordinates, int>(new CoordinateEqualityComparer());
             int fieldCountInSelectedItem = 4;
 
             var selectedItems = ADOUtils.ExecuteReaderRows(_connectionString, "Select_Distribution_By_Coordinates", null, fieldCountInSelectedItem);
@@ -256,6 +257,19 @@ namespace Potestas.Analizers
             }
 
             return (DateTime)result;
+        }
+
+        private class CoordinateEqualityComparer : EqualityComparer<Coordinates>
+        {
+            public override bool Equals(Coordinates x, Coordinates y)
+            {
+                return x.Id == y.Id;
+            }
+
+            public override int GetHashCode(Coordinates obj)
+            {
+                return obj.Id.GetHashCode();
+            }
         }
     }
 }

@@ -11,18 +11,20 @@ namespace Potestas.Storages
 {
     public class SqlStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
     {
+        private readonly string _srcCoordinatesTblName = "Coordinates";
+        private readonly string _srcObservationsTblName = "FlashObservations";
+
         private string _connectionString;
         private SqlConnection _connection;
         private DataSet _dataSet;
-        private DataTable _coordinates;
-        private DataTable _observations;
-        private SqlDataAdapter _adapter;
+        private Dictionary<string, KeyValuePair<SqlDataAdapter, DataTable>> _adapterTablePairs;
 
         public string Description => "SQL storage of energy observations";
 
-        public int Count => _observations.Rows.Count;
+        public int Count => _adapterTablePairs[_srcObservationsTblName].Value.Rows.Count;
 
         public bool IsReadOnly => false;
+
         public SqlStorage(string connectionString)
         {
             _connectionString = connectionString ?? throw new ArgumentNullException($"The {nameof(connectionString)} can not be null.");
@@ -31,7 +33,10 @@ namespace Potestas.Storages
 
             _connection = new SqlConnection(_connectionString);
 
-            FillDataSet();            
+            _adapterTablePairs = new Dictionary<string, KeyValuePair<SqlDataAdapter, DataTable>>();
+
+            FillDataSet(_srcCoordinatesTblName);
+            FillDataSet(_srcObservationsTblName);
         }
 
         public void Add(T item)
@@ -41,19 +46,19 @@ namespace Potestas.Storages
                 throw new ArgumentException($"The {nameof(item)} must be initialized.");
             }
 
-            var newCoordinateRow = _coordinates.NewRow();
-            var newObservationRow = _observations.NewRow();
+            var newCoordinateRow = _adapterTablePairs[_srcCoordinatesTblName].Value.NewRow();
+            var newObservationRow = _adapterTablePairs[_srcObservationsTblName].Value.NewRow();
 
             newCoordinateRow["X"] = item.ObservationPoint.X;
             newCoordinateRow["Y"] = item.ObservationPoint.Y;
 
-            _coordinates.Rows.Add(newCoordinateRow);
+            _adapterTablePairs[_srcCoordinatesTblName].Value.Rows.Add(newCoordinateRow);
 
             newObservationRow["CoordinateId"] = (int)newCoordinateRow["Id"];
             newObservationRow["EstimatedValue"] = item.EstimatedValue;
             newObservationRow["ObservationTime"] = item.ObservationTime;
 
-            _observations.Rows.Add(newObservationRow);
+            _adapterTablePairs[_srcObservationsTblName].Value.Rows.Add(newObservationRow);
 
             SendChangesToDB();
         }
@@ -61,7 +66,8 @@ namespace Potestas.Storages
         public void Clear()
         {
             _dataSet.Clear();
-            _dataSet.AcceptChanges();
+     
+             SendChangesToDB();
         }
 
         public bool Contains(T item)
@@ -71,7 +77,7 @@ namespace Potestas.Storages
                 throw new ArgumentException($"The {nameof(item)} must be initialized.");
             }
 
-            return _observations.Rows.Contains(item.Id);
+            return _adapterTablePairs[_srcObservationsTblName].Value.Rows.Contains(item.Id);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
@@ -90,12 +96,12 @@ namespace Potestas.Storages
 
             try
             {
-                var joinResult = JoinCoordinateAndObservation(_coordinates, _observations);
+                var joinResult = JoinCoordinateAndObservation(_adapterTablePairs[_srcCoordinatesTblName].Value, 
+                                                              _adapterTablePairs[_srcObservationsTblName].Value);
 
                 var genericColection = ConvertTypedCollectionToGeneric(joinResult);
 
                 genericColection.CopyTo(array, arrayIndex);
-
             }
             catch (Exception exception)
             {
@@ -105,23 +111,25 @@ namespace Potestas.Storages
 
         public IEnumerator<T> GetEnumerator()
         {
-            var joinResult = JoinCoordinateAndObservation(_coordinates, _observations);
+            var joinResult = JoinCoordinateAndObservation(_adapterTablePairs[_srcCoordinatesTblName].Value, 
+                                                          _adapterTablePairs[_srcObservationsTblName].Value);
 
             return ConvertTypedCollectionToGeneric(joinResult).GetEnumerator();
         }
 
         public bool Remove(T item)
         {
-            if (_observations.Rows.Contains(item.Id) && _coordinates.Rows.Contains(item.ObservationPoint.Id))
+            if (_adapterTablePairs[_srcObservationsTblName].Value.Rows.Contains(item.Id) &&
+                _adapterTablePairs[_srcCoordinatesTblName].Value.Rows.Contains(item.ObservationPoint.Id))
             {
                 try
                 {
-                    _observations.Rows.Find(item.Id).Delete();
-                    _coordinates.Rows.Find(item.ObservationPoint.Id).Delete();
-                    _dataSet.AcceptChanges();
+                    _adapterTablePairs[_srcObservationsTblName].Value.Rows.Find(item.Id).Delete();
+                    _adapterTablePairs[_srcCoordinatesTblName].Value.Rows.Find(item.ObservationPoint.Id).Delete();
+
+                    SendChangesToDB();
 
                     return true;
-
                 }
                 catch
                 {
@@ -134,30 +142,30 @@ namespace Potestas.Storages
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private void FillDataSet()
+        private void FillDataSet(string srcTableName)
         {
-            string getCoordinateCommand = "SELECT * FROM Coordinates;";
-            string getObservationCommand = "SELECT * FROM FlashObservations;";
+            string command = $"SELECT * FROM {srcTableName};";
 
             using (_connection)
             {
+                _connection.ConnectionString = _connectionString;
                 _connection.Open();
-         
-                _adapter = new SqlDataAdapter(getCoordinateCommand + getObservationCommand, _connection);
 
-                _adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-                //_adapter.TableMappings.Add("Coordinates", "Table");
-                //_adapter.TableMappings.Add("FlashObservations", "Table1");
+                var dataAdapter = new SqlDataAdapter(command, _connection);
 
-                _adapter.Fill(_dataSet);
+                dataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
 
-                _coordinates = _dataSet.Tables[0];
-                _observations = _dataSet.Tables[1];
+                dataAdapter.Fill(_dataSet, srcTableName);
 
-                DataRelation relation = _dataSet.Relations.Add("CoordinatesObservations",
-                    _dataSet.Tables[0].Columns["Id"],
-                    _dataSet.Tables[1].Columns["CoordinateId"]);
+                var dataTable = _dataSet.Tables[srcTableName];
+
+                _adapterTablePairs.Add(srcTableName, new KeyValuePair<SqlDataAdapter, DataTable>(dataAdapter, dataTable));
             }
+        }
+
+        private void setRelationship(DataTable parent, string primaryKeyName, DataTable child, string foreignKeyName, string relationshipName)
+        {
+            DataRelation relation = _dataSet.Relations.Add(relationshipName, parent.Columns[primaryKeyName], child.Columns[foreignKeyName]);
         }
 
         private IEnumerable<IEnergyObservation> JoinCoordinateAndObservation(DataTable coordinates, DataTable observations)
@@ -188,20 +196,25 @@ namespace Potestas.Storages
             return genericCollection;
         }
 
-
         private void SendChangesToDB()
+        {
+            foreach (var pair in _adapterTablePairs)
+            {
+                SendChangesToDB(pair.Value.Key, pair.Value.Value);
+            }
+        }
+
+        private void SendChangesToDB(SqlDataAdapter dataAdapter, DataTable dataTable)
         {           
             try
             {
                 _connection.ConnectionString = _connectionString;
                 _connection.Open();
 
-                SqlCommandBuilder observationsCommand = new SqlCommandBuilder(_adapter);
+                SqlCommandBuilder observationsCommand = new SqlCommandBuilder(dataAdapter);
 
-                _adapter.Update(_coordinates);
-                _adapter.Update(_observations);
-
-                _dataSet.AcceptChanges();
+                dataAdapter.AcceptChangesDuringUpdate = true;
+                dataAdapter.Update(dataTable);
             }
             catch (Exception ex)
             {
@@ -213,7 +226,12 @@ namespace Potestas.Storages
             {
                 _connection.Close();
             }
-        }
 
+            // It is why I used several adapters
+
+            // If your dataset contains multiple tables, you have to update them individually
+            // by calling the Update method of each data adapter separately
+            //https://docs.microsoft.com/en-us/previous-versions/aa983594(v=vs.71)?redirectedfrom=MSDN
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace Potestas.DBUtils
             }
         }
 
-        public static object ExecuteScalar(string connectionString, string sprocName, Dictionary<string, object> parameters)
+        public static object ExecuteScalar(string connectionString, string sprocName, IDictionary<string, object> parameters)
         {
             CheckArguments(connectionString, sprocName);
 
@@ -38,9 +38,9 @@ namespace Potestas.DBUtils
             return result;
         }
 
-        public static Dictionary<string, object> ExecuteReaderSingleRow(string connectionString, 
+        public static IDictionary<string, object> ExecuteReaderSingleRow(string connectionString, 
                                                                         string sprocName, 
-                                                                        Dictionary<string, object> parameters, 
+                                                                        IDictionary<string, object> parameters, 
                                                                         int filedCountOfSelectedEntity)
         {
             CheckArguments(connectionString, sprocName);
@@ -71,9 +71,9 @@ namespace Potestas.DBUtils
         }
 
 
-        public static IEnumerable<Dictionary<string, object>> ExecuteReaderRows(string connectionString, 
+        public static IEnumerable<IDictionary<string, object>> ExecuteReaderRows(string connectionString, 
                                                                                 string sprocName, 
-                                                                                Dictionary<string, object> parameters, 
+                                                                                IDictionary<string, object> parameters, 
                                                                                 int filedCountOfSelectedEntity)
         {
             CheckArguments(connectionString, sprocName);
@@ -106,7 +106,7 @@ namespace Potestas.DBUtils
             return resultRows;
         }
 
-        private static SqlCommand CreateStoredProcedureCommand(SqlConnection connection, string sprocName, Dictionary<string, object> parameters)
+        private static SqlCommand CreateStoredProcedureCommand(SqlConnection connection, string sprocName, IDictionary<string, object> parameters)
         {
             var command = new SqlCommand(sprocName, connection) { CommandType = CommandType.StoredProcedure };
 
