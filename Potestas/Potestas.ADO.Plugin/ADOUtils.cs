@@ -9,7 +9,9 @@ namespace Potestas.ADO.Plugin
     {
         public static void ExecuteNonQuery(string connectionString, string sprocName, Dictionary<string, object> parameters)
         {
-            CheckArguments(connectionString, sprocName);
+            CheckNotNullOrEmpty(connectionString, "connectionString");
+            CheckNotNullOrEmpty(sprocName, "sprocName");
+
 
             using (var connection = new SqlConnection(connectionString))
             {
@@ -23,7 +25,8 @@ namespace Potestas.ADO.Plugin
 
         public static object ExecuteScalar(string connectionString, string sprocName, IDictionary<string, object> parameters)
         {
-            CheckArguments(connectionString, sprocName);
+            CheckNotNullOrEmpty(connectionString, nameof(connectionString));
+            CheckNotNullOrEmpty(sprocName, nameof(sprocName));
 
             object result = null;
             using (var connection = new SqlConnection(connectionString))
@@ -43,7 +46,8 @@ namespace Potestas.ADO.Plugin
                                                                         IDictionary<string, object> parameters,
                                                                         int filedCountOfSelectedEntity)
         {
-            CheckArguments(connectionString, sprocName);
+            CheckNotNullOrEmpty(connectionString, nameof(connectionString));
+            CheckNotNullOrEmpty(sprocName, nameof(sprocName));
 
             var fieldsOfRow = new Dictionary<string, object>(); //fieldsOfRow : key(name in DB) - value(data in DB)
 
@@ -76,7 +80,8 @@ namespace Potestas.ADO.Plugin
                                                                                 IDictionary<string, object> parameters,
                                                                                 int filedCountOfSelectedEntity)
         {
-            CheckArguments(connectionString, sprocName);
+            CheckNotNullOrEmpty(connectionString, nameof(connectionString));
+            CheckNotNullOrEmpty(sprocName, nameof(sprocName));
 
             var resultRows = new List<Dictionary<string, object>>();
 
@@ -121,16 +126,11 @@ namespace Potestas.ADO.Plugin
             return command;
         }
 
-        private static void CheckArguments(string connectionString, string sprocName)
+        private static void CheckNotNullOrEmpty(string value, string name)
         {
-            if (string.IsNullOrEmpty(connectionString))
+            if (string.IsNullOrEmpty(value))
             {
-                throw new ArgumentException($"The {nameof(connectionString)} can not be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(sprocName))
-            {
-                throw new ArgumentException($"The {nameof(sprocName)} can not be null or empty.");
+                throw new ArgumentException($"The {nameof(name)} can not be null or empty.");
             }
         }
     }
