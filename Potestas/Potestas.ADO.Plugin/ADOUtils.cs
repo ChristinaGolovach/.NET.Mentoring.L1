@@ -130,7 +130,7 @@ namespace Potestas.ADO.Plugin
         {
             if (string.IsNullOrEmpty(value))
             {
-                throw new ArgumentException($"The {nameof(name)} can not be null or empty.");
+                throw new ArgumentException($"The {name} can not be null or empty.");
             }
         }
     }
