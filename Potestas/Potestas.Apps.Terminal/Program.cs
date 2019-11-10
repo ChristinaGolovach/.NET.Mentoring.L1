@@ -89,14 +89,15 @@ namespace Potestas.Apps.Terminal
             e.Cancel = true;
             _testRegistration.Stop();
             Console.Clear();
-            MainMenu();
         }
 
         private static void LoadPlugin()
         {
             Console.WriteLine("would you like to load a palgin? - Y/N");
 
-            if (Console.ReadLine().ToUpper() == "Y")
+            var userChoice = Console.ReadKey().KeyChar.ToString().ToUpper();
+
+            if (userChoice == "Y")
             {
                 Console.Clear();
                 Console.WriteLine("Please, choise a plugin or go to main menu.");
@@ -145,10 +146,9 @@ namespace Potestas.Apps.Terminal
             var exit = false;
             while (!exit)
             {
-                var userChoise = Console.ReadLine();
                 int menuIndex = 0;
-
-                if (int.TryParse(userChoise, out menuIndex))
+                var userChoice = Console.ReadKey().Key.ToString();
+                if (int.TryParse(userChoice, out menuIndex))
                 {
                     switch (menuIndex)
                     {
@@ -187,6 +187,9 @@ namespace Potestas.Apps.Terminal
                 else
                 {
                     exit = true;
+                    Console.Clear();
+                    ShowMainMenu();
+
                 }
             }
         }

@@ -16,21 +16,16 @@ DECLARE @CoordinateId INT = 0
 BEGIN TRY
 	BEGIN TRAN
 
-	--SELECT @CoordinateId = @CoordinateId
-	--FROM Coordinates WHERE X = @X AND Y = @Y
+	SELECT @CoordinateId = @CoordinateId
+	FROM Coordinates WHERE X = @X AND Y = @Y
 
-	--IF(@CoordinateId = 0)
-	--BEGIN
-	--	INSERT INTO Coordinates (X, Y)
-	--	VALUES (@X, @Y)
+	IF(@CoordinateId = 0)
+	BEGIN
+		INSERT INTO Coordinates (X, Y)
+		VALUES (@X, @Y)
 
-	--	SELECT @CoordinateId = SCOPE_IDENTITY();
-	--END
-
-	INSERT INTO Coordinates (X, Y)
-	VALUES (@X, @Y)
-
-	SELECT @CoordinateId = SCOPE_IDENTITY();
+		SELECT @CoordinateId = SCOPE_IDENTITY();
+	END
 	   
 	INSERT INTO FlashObservations(CoordinateId, EstimatedValue, ObservationTime)
 	VALUES (@CoordinateId, @EstimatedValue, @ObservationTime)
