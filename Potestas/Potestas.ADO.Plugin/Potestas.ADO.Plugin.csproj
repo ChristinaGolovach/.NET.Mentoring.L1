@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>D:\EPAM\Mentoring.L1\.NET.Mentoring.L1\Potestas\Potestas.Apps.Terminal\bin\Debug\netcoreapp2.2\netstandard2.0\</OutputPath>
+    <OutputPath></OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

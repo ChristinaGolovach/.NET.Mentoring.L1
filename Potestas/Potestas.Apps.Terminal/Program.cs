@@ -2,11 +2,11 @@
 using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
-using Potestas.Processors;
 using Potestas.Serializers;
 using Potestas.Storages;
 using System;
-using System.Configuration;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -18,15 +18,19 @@ namespace Potestas.Apps.Terminal
         private static ISourceRegistration _testRegistration;
         private static int startPluginProcessorsIndexInMenu = 3;
         private static string selectedPluginDllName;
+        private static readonly string pathForSeekDLL;
+        private static readonly string solutionName = "Potestas";
 
         static Program()
         {
             _app = new ApplicationCoreFrame();
+            var curentAssemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            pathForSeekDLL = curentAssemblyPath.Substring(0, curentAssemblyPath.IndexOf(solutionName) + solutionName.Length + 1);
         }
 
         static void Main()
         {
-            Console.CancelKeyPress += Console_CancelKeyPress;
+            Console.CancelKeyPress += Console_CancelKeyPress;            
 
             MainMenu();
         }
@@ -117,8 +121,7 @@ namespace Potestas.Apps.Terminal
                     {
                         case ConsoleKey.D1:
                             selectedPluginDllName = "Potestas.ADO.Plugin";
-                            _app.LoadPlugin(Assembly.LoadFrom(selectedPluginDllName + ".dll"));  
-                            //_app.LoadPlugin(AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.FullName.StartsWith("Potestas.ADO.Pluginl.dll")).First());
+                            LoadPluginDll();
                             break;
                     }
 
@@ -226,6 +229,17 @@ namespace Potestas.Apps.Terminal
                     startPluginProcessorsIndexInMenu++;
                 }
             }
+        }
+
+        private static void LoadPluginDll()
+        {
+            var extensions = new List<string> { ".dll", ".DLL" };
+
+            var allDll = Directory.GetFiles(pathForSeekDLL, "*.*", SearchOption.AllDirectories).Where(fileName => extensions.IndexOf(Path.GetExtension(fileName)) >= 0);
+
+            var selectedPluginDllPath = allDll.ToList().Where(dllPath => dllPath.IndexOf(selectedPluginDllName) >= 0).FirstOrDefault();
+
+            _app.LoadPlugin(Assembly.LoadFrom(selectedPluginDllPath));
         }
 
         private static void ConsoleProcessingMenu()
