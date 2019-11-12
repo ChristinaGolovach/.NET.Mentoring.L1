@@ -23,12 +23,15 @@ namespace Potestas
         public static readonly double yMinValue = 0;
         public static readonly double yMaxValue = 180;  
 
+        public int Id { get; }
 
         public double X { get; }
 
         public double Y { get; }
 
-        public Coordinates(double xCoordinate, double yCoordinate)
+        public Coordinates(double xCoordinate, double yCoordinate) : this (0, xCoordinate, yCoordinate) { }
+
+        public Coordinates(int id, double xCoordinate, double yCoordinate)
         {
             if (xCoordinate < xMinValue || xMaxValue < xCoordinate)
             {
@@ -42,7 +45,7 @@ namespace Potestas
 
             X = xCoordinate;
             Y = yCoordinate;
-
+            Id = id;
         }
 
         public static Coordinates operator +(Coordinates coordinates1, Coordinates coordinates2)

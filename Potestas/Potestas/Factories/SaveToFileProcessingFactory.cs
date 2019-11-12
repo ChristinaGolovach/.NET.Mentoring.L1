@@ -15,6 +15,7 @@ namespace Potestas.Factories
 
         public SaveToFileProcessingFactory(string storagePath, ISerializer<IEnergyObservation> serializer)
         {
+            //_storagePath = ConfigurationManager.AppSettings["fileStoragePath"]; // just to test this way of working
             _storagePath = storagePath ?? throw new ArgumentNullException($"The {nameof(storagePath)} can not be null.");  //ConfigurationManager.AppSettings["fileStoragePath"];
             _serializer = serializer ?? throw new ArgumentNullException($"The {nameof(serializer)} can not be null.");
         }

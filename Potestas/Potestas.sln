@@ -9,6 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.Tests", "Potestas.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.Apps.Terminal", "Potestas.Apps.Terminal\Potestas.Apps.Terminal.csproj", "{3C3E81BE-F2C2-406D-B75D-599B6527F377}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{19C95DF5-1FB4-481E-96A0-13515B6E7655}"
+	ProjectSection(SolutionItems) = preProject
+		CreateDB.sql = CreateDB.sql
+		CreateProcedures.sql = CreateProcedures.sql
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.ADO.Plugin", "Potestas.ADO.Plugin\Potestas.ADO.Plugin.csproj", "{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +35,10 @@ Global
 		{3C3E81BE-F2C2-406D-B75D-599B6527F377}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C3E81BE-F2C2-406D-B75D-599B6527F377}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C3E81BE-F2C2-406D-B75D-599B6527F377}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
