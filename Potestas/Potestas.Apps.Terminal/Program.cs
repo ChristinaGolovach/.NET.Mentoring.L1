@@ -2,7 +2,10 @@
 using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
+using Potestas.Models;
+using Potestas.Processors;
 using Potestas.Serializers;
+using Potestas.Sources;
 using Potestas.Storages;
 using System;
 using System.Collections.Generic;
@@ -284,7 +287,7 @@ namespace Potestas.Apps.Terminal
 
         public IEnergyObservationSource<IEnergyObservation> CreateSource( )
         {
-            return new ConsoleSource();
+            return new RandomEnergySource();
         }
     }
 
@@ -299,7 +302,7 @@ namespace Potestas.Apps.Terminal
 
         public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()
         {
-            return new ConsoleProcessor();
+            return new SaveToSqlORMProcessor<IEnergyObservation>(new ObservationContext()); //new ConsoleProcessor();
         }
 
         public IEnergyObservationStorage<IEnergyObservation> CreateStorage()
