@@ -17,13 +17,11 @@ CREATE TABLE [dbo].[Coordinates](
 	CONSTRAINT PK_Coordinates PRIMARY KEY ([Id]))
 GO
 
-CREATE TABLE [dbo].[FlashObservations](
+CREATE TABLE [dbo].[EnergyObservations](
 	[Id] INT IDENTITY (1,1) NOT NULL,
 	[CoordinateId] INT NOT NULL,
-	--[DurationMs] INT NOT NULL,
-	--[Intensity] FLOAT(53) NOT NULL,
 	[EstimatedValue] FLOAT(53) NOT NULL,
 	[ObservationTime] DATETIME NOT NULL,	
-	CONSTRAINT PK_FlashObservations PRIMARY KEY ([Id]),
-	CONSTRAINT FK_FlashObservations_Coordinates_CoordinateId FOREIGN KEY ([CoordinateId]) REFERENCES [Coordinates]([Id]))
+	CONSTRAINT PK_EnergyObservations PRIMARY KEY ([Id]),
+	CONSTRAINT FK_EnergyObservations_Coordinates_CoordinateId FOREIGN KEY ([CoordinateId]) REFERENCES [Coordinates]([Id]))
 GO

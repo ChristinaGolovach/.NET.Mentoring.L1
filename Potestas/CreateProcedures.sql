@@ -1,10 +1,10 @@
-﻿--------------BEGIN Insert_FlasObservation---------------
+﻿--------------BEGIN Insert_EnergyObservation---------------
 
-IF (OBJECT_ID('Insert_FlasObservation') IS NOT NULL)
-  DROP PROCEDURE Insert_FlasObservation
+IF (OBJECT_ID('Insert_EnergyObservation') IS NOT NULL)
+  DROP PROCEDURE Insert_EnergyObservation
 GO
 
-CREATE PROCEDURE [dbo].[Insert_FlasObservation]
+CREATE PROCEDURE [dbo].[Insert_EnergyObservation]
 	@X FLOAT(53),
 	@Y FLOAT(53),
 	@EstimatedValue FLOAT(53),
@@ -27,7 +27,7 @@ BEGIN TRY
 		SELECT @CoordinateId = SCOPE_IDENTITY();
 	END
 	   
-	INSERT INTO FlashObservations(CoordinateId, EstimatedValue, ObservationTime)
+	INSERT INTO EnergyObservations(CoordinateId, EstimatedValue, ObservationTime)
 	VALUES (@CoordinateId, @EstimatedValue, @ObservationTime)
 
 	COMMIT TRAN
@@ -37,7 +37,7 @@ BEGIN CATCH
 	ROLLBACK TRAN
 END CATCH
 GO
---------------END Insert_FlasObservation---------------
+--------------END Insert_EnergyObservation---------------
 
 --------------BEGIN  GetAverageEnergy------------------
 IF (OBJECT_ID('Select_Average_Energy') IS NOT NULL)
@@ -47,7 +47,7 @@ GO
 CREATE PROCEDURE [dbo].[Select_Average_Energy]
 AS
 	SELECT AVG(EstimatedValue)
-	FROM FlashObservations
+	FROM EnergyObservations
 GO
 
 
@@ -60,8 +60,8 @@ CREATE PROCEDURE [dbo].[Select_Average_Energy_Between_Dates]
 	@EndBy DATETIME
 AS
 	SELECT AVG(EstimatedValue)
-	FROM FlashObservations
-	WHERE FlashObservations.ObservationTime >= @StartFrom AND FlashObservations.ObservationTime <= @EndBy
+	FROM EnergyObservations
+	WHERE EnergyObservations.ObservationTime >= @StartFrom AND EnergyObservations.ObservationTime <= @EndBy
 GO
 
 
@@ -76,8 +76,8 @@ CREATE PROCEDURE [dbo].[Select_Average_Energy_Between_Coordinates]
 	@BottomRightY FLOAT(53)
 AS
 	SELECT AVG(EstimatedValue)
-	FROM FlashObservations
-	JOIN Coordinates ON Coordinates.Id = FlashObservations.CoordinateId
+	FROM EnergyObservations
+	JOIN Coordinates ON Coordinates.Id = EnergyObservations.CoordinateId
 	WHERE X > @TopLeftX AND 
 		  X < @BottomRightX AND 
 		  Y > @TopLeftY AND
@@ -93,7 +93,7 @@ GO
 CREATE PROCEDURE [dbo].[Select_Distribution_By_EnergyValue]
 AS
 	SELECT EstimatedValue, COUNT(Id) as 'Count'
-  FROM FlashObservations
+  FROM EnergyObservations
   GROUP BY EstimatedValue
 GO
 --------------END GetDistributionByEnergyValue---------
@@ -105,9 +105,9 @@ GO
 
 CREATE PROCEDURE [dbo].[Select_Distribution_By_Coordinates]
 AS
-	SELECT Coordinates.Id, Coordinates.X,Coordinates.Y, COUNT(FlashObservations.Id) AS 'Count'
-  FROM FlashObservations
-  JOIN Coordinates ON Coordinates.Id = FlashObservations.CoordinateId
+	SELECT Coordinates.Id, Coordinates.X,Coordinates.Y, COUNT(EnergyObservations.Id) AS 'Count'
+  FROM EnergyObservations
+  JOIN Coordinates ON Coordinates.Id = EnergyObservations.CoordinateId
   GROUP BY Coordinates.Id, Coordinates.X,Coordinates.Y
 GO
 --------------END GetDistributionByCoordinates---------
@@ -120,7 +120,7 @@ GO
 CREATE PROCEDURE [dbo].[Select_Distribution_By_ObservationTime]
 AS
 	SELECT ObservationTime, COUNT(Id) AS 'Count'
-  FROM FlashObservations
+  FROM EnergyObservations
   GROUP BY ObservationTime
 GO
 --------------END GetDistributionByObservationTime-----
@@ -133,7 +133,7 @@ GO
 CREATE PROCEDURE [dbo].[Select_Max_Energy]
 AS
 	SELECT MAX(EstimatedValue)
-	FROM FlashObservations
+	FROM EnergyObservations
 GO
 
 IF (OBJECT_ID('Select_Max_Energy_By_Date') IS NOT NULL)
@@ -144,8 +144,8 @@ CREATE PROCEDURE [dbo].[Select_Max_Energy_By_Date]
 	@Date DATETIME
 AS
 	SELECT MAX(EstimatedValue)
-	FROM FlashObservations
-	WHERE FlashObservations.ObservationTime = @Date
+	FROM EnergyObservations
+	WHERE EnergyObservations.ObservationTime = @Date
 GO
 
 
@@ -158,8 +158,8 @@ CREATE PROCEDURE [dbo].[Select_Max_Energy_By_Coordinate]
 	@Y FLOAT(53)
 AS
 	SELECT MAX(EstimatedValue)
-	FROM FlashObservations
-	JOIN Coordinates ON Coordinates.Id = FlashObservations.CoordinateId
+	FROM EnergyObservations
+	JOIN Coordinates ON Coordinates.Id = EnergyObservations.CoordinateId
 	WHERE X = @X AND Y = @Y
 GO
 --------------END  GetMaxEnergy------------------------
@@ -173,9 +173,9 @@ CREATE PROCEDURE [dbo].[Select_Max_Energy_Position]
 AS
 	SELECT Coordinates.Id, X, Y
 	FROM Coordinates
-	WHERE Coordinates.Id = (SELECT TOP 1 FlashObservations.CoordinateId 
-                          FROM FlashObservations 
-                          ORDER BY FlashObservations.EstimatedValue DESC)
+	WHERE Coordinates.Id = (SELECT TOP 1 EnergyObservations.CoordinateId 
+                          FROM EnergyObservations 
+                          ORDER BY EnergyObservations.EstimatedValue DESC)
 GO
 --------------END  GetMaxEnergyPosition----------------
 
@@ -186,9 +186,9 @@ GO
 
 CREATE PROCEDURE [dbo].[Select_Max_Energy_Time]
 AS
-	SELECT TOP 1 FlashObservations.ObservationTime
-	FROM FlashObservations
-  ORDER BY FlashObservations.EstimatedValue DESC
+	SELECT TOP 1 EnergyObservations.ObservationTime
+	FROM EnergyObservations
+  ORDER BY EnergyObservations.EstimatedValue DESC
 GO
 --------------END  GetMaxEnergyTime--------------------
 
@@ -200,7 +200,7 @@ GO
 CREATE PROCEDURE [dbo].[Select_Min_Energy]
 AS
 	SELECT MIN(EstimatedValue)
-	FROM FlashObservations
+	FROM EnergyObservations
 GO
 
 
@@ -213,8 +213,8 @@ CREATE PROCEDURE [dbo].[Select_Min_Energy_By_Coordinate]
 	@Y FLOAT(53)
 AS
 	SELECT MIN(EstimatedValue)
-	FROM FlashObservations
-	JOIN Coordinates ON Coordinates.Id = FlashObservations.CoordinateId
+	FROM EnergyObservations
+	JOIN Coordinates ON Coordinates.Id = EnergyObservations.CoordinateId
 	WHERE X = @X AND Y = @Y
 GO
 
@@ -226,8 +226,8 @@ CREATE PROCEDURE [dbo].[Select_Min_Energy_By_Date]
 	@Date DATETIME
 AS
 	SELECT MIN(EstimatedValue)
-	FROM FlashObservations
-	WHERE FlashObservations.ObservationTime = @Date
+	FROM EnergyObservations
+	WHERE EnergyObservations.ObservationTime = @Date
 GO
 --------------END GetMinEnergy-------------------------
 
@@ -240,9 +240,9 @@ CREATE PROCEDURE [dbo].[Select_Min_Energy_Position]
 AS
 	SELECT Coordinates.Id, X, Y
 	FROM Coordinates
-	WHERE Coordinates.Id = (SELECT TOP 1 FlashObservations.CoordinateId 
-                          FROM FlashObservations 
-                          ORDER BY FlashObservations.EstimatedValue)
+	WHERE Coordinates.Id = (SELECT TOP 1 EnergyObservations.CoordinateId 
+                          FROM EnergyObservations 
+                          ORDER BY EnergyObservations.EstimatedValue)
 GO
 --------------END  GetMinEnergyPosition----------------
 
@@ -253,8 +253,8 @@ GO
 
 CREATE PROCEDURE [dbo].[Select_Min_Energy_Time]
 AS
-	SELECT TOP 1 FlashObservations.ObservationTime
-	FROM FlashObservations
-  ORDER BY FlashObservations.EstimatedValue
+	SELECT TOP 1 EnergyObservations.ObservationTime
+	FROM EnergyObservations
+  ORDER BY EnergyObservations.EstimatedValue
 GO
 --------------END  GetMaxEnergyTime--------------------

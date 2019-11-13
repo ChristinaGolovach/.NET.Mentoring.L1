@@ -12,7 +12,7 @@ namespace Potestas.ADO.Plugin
     public class SqlStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
     {
         private readonly string _srcCoordinatesTblName = "Coordinates";
-        private readonly string _srcObservationsTblName = "FlashObservations";
+        private readonly string _srcObservationsTblName = "EnergyObservations";
 
         private string _connectionString;
         private SqlConnection _connection;
