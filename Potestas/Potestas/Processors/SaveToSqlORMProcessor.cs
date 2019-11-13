@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Potestas.Observations.Comparers;
 using Potestas.Models;
+using Potestas.Observations.Comparers;
+using Potestas.Validators;
 
 namespace Potestas.Processors
 {
@@ -31,12 +31,9 @@ namespace Potestas.Processors
 
         public void OnNext(T value)
         {
-            if (EqualityComparer<T>.Default.Equals(value, default))
-            {
-                throw new ArgumentException($"The {nameof(value)} must be initialized.");
-            }
+            GenericValidator.CheckInitialization(value, nameof(value));
 
-           var coordinate = _dbContext.Set<Models.Coordinates>().FirstOrDefault(c => new Coordinates(c.X, c.Y).Equals(new Coordinates(value.ObservationPoint.X, value.ObservationPoint.Y)));
+            var coordinate = _dbContext.Set<Models.Coordinates>().FirstOrDefault(c => new Coordinates(c.X, c.Y).Equals(new Coordinates(value.ObservationPoint.X, value.ObservationPoint.Y)));
 
             if (coordinate != null)
             {

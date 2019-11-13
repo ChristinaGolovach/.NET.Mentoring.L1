@@ -3,6 +3,7 @@ using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
 using Potestas.Models;
+using Potestas.Observations;
 using Potestas.Processors;
 using Potestas.Serializers;
 using Potestas.Sources;
@@ -40,6 +41,9 @@ namespace Potestas.Apps.Terminal
 
         private static void MainMenu()
         {
+            var sqlORM = new SqlORMStorage<IEnergyObservation>(new ObservationContext());
+            var countREcords = sqlORM.Count;           
+
             LoadPlugin();
             ShowMainMenu();
 
