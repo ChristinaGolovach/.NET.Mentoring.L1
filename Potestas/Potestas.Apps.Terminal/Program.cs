@@ -42,7 +42,11 @@ namespace Potestas.Apps.Terminal
         private static void MainMenu()
         {
             var sqlORM = new SqlORMStorage<IEnergyObservation>(new ObservationContext());
-            var countREcords = sqlORM.Count;           
+            var countREcords = sqlORM.Count;
+            var forDeletedItem = new FlashObservation(1500, 111, 121212, new Coordinates(55, 55), DateTime.Now);
+            //sqlORM.Add(forDeletedItem);
+            sqlORM.Remove(forDeletedItem);
+            sqlORM.Clear();
 
             LoadPlugin();
             ShowMainMenu();

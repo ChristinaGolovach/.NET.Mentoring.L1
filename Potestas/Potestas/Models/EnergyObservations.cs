@@ -2,7 +2,7 @@
 
 namespace Potestas.Models
 {
-    public partial class EnergyObservations
+    public partial class EnergyObservations : IEnergyObservation
     {
         public int Id { get; set; }
         public int CoordinateId { get; set; }
@@ -10,5 +10,7 @@ namespace Potestas.Models
         public DateTime ObservationTime { get; set; }
 
         public virtual Coordinates Coordinate { get; set; }
+
+        public Potestas.Coordinates ObservationPoint { get; set; }
     }
 }

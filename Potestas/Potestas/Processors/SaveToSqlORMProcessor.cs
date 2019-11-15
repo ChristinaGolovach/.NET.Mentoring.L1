@@ -62,10 +62,5 @@ namespace Potestas.Processors
             _dbContext.SaveChanges();
 
         }
-
-        private double GetCanonicalDoubleValue(double value)
-        {
-            return ComparerUtils.GetCanonicalValues(value, ComparerUtils.comparePrecision);
-        }
     }
 }

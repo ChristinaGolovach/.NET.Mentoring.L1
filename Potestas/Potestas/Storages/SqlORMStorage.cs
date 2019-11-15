@@ -1,17 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Potestas.Models;
 using Potestas.Validators;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Potestas.Storages
 {
     public class SqlORMStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
     {
         private readonly DbContext _dbContext;
+        private readonly ObservationContext observationContext;
 
         public string Description => "SQL (EF Core ORM) storage of energy observations";
 
@@ -27,11 +28,45 @@ namespace Potestas.Storages
         public void Add(T item)
         {
             GenericValidator.CheckInitialization(item, nameof(item));
+
+            //TODO move to help method. since it is copy-past from OnNext of SaveToSqlORMProcessor 
+            var coordinate = _dbContext.Set<Models.Coordinates>().FirstOrDefault(c => new Coordinates(c.X, c.Y).Equals(new Coordinates(item.ObservationPoint.X, item.ObservationPoint.Y)));
+            EntityEntry<EnergyObservations> newEntity = null;
+            if (coordinate != null)
+            {
+                newEntity = _dbContext.Set<EnergyObservations>().Add(new EnergyObservations()
+                {
+                    CoordinateId = coordinate.Id,
+                    EstimatedValue = item.EstimatedValue,
+                    ObservationTime = item.ObservationTime
+                });
+            }
+
+            else
+            {
+                coordinate = new Models.Coordinates() { X = item.ObservationPoint.X, Y = item.ObservationPoint.Y };
+
+                newEntity = _dbContext.Set<EnergyObservations>().Add(new EnergyObservations()
+                {
+                    Coordinate = coordinate,
+                    EstimatedValue = item.EstimatedValue,
+                    ObservationTime = item.ObservationTime
+                });
+            }
+
+            // TODO MApper
+            //item = newEntity.Entity;
+
+            _dbContext.SaveChanges();
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            //not beautiful
+            _dbContext.Set<EnergyObservations>().RemoveRange(_dbContext.Set<EnergyObservations>());
+            _dbContext.Set<Models.Coordinates>().RemoveRange(_dbContext.Set<Models.Coordinates>());
+
+            _dbContext.SaveChanges();
         }
 
         public bool Contains(T item)
@@ -53,6 +88,7 @@ namespace Potestas.Storages
 
         public IEnumerator<T> GetEnumerator()
         {
+            // https://riptutorial.com/csharp/example/15938/creating-an-instance-of-a-type
             throw new NotImplementedException();
         }
 
@@ -60,7 +96,26 @@ namespace Potestas.Storages
         {
             GenericValidator.CheckInitialization(item, nameof(item));
 
-            return false; 
+            //TODO make mapper
+            var energyEntity = new EnergyObservations()
+            {
+                Id = item.Id
+            };
+
+            try
+            {
+                var deletedEntity = _dbContext.Remove<EnergyObservations>(energyEntity);
+                //or
+                //var deletedEntity  = _dbContext.Set<EnergyObservations>().Remove(energyEntity);
+
+                _dbContext.SaveChanges();
+
+                return true;
+            }
+            catch(DbUpdateConcurrencyException ex)
+            {
+                return false;
+            }         
         }
 
         IEnumerator IEnumerable.GetEnumerator()
