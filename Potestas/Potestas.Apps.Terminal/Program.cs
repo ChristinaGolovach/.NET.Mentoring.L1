@@ -43,10 +43,16 @@ namespace Potestas.Apps.Terminal
         {
             var sqlORM = new SqlORMStorage<IEnergyObservation>(new ObservationContext());
             var countREcords = sqlORM.Count;
-            var forDeletedItem = new FlashObservation(1500, 111, 121212, new Coordinates(55, 55), DateTime.Now);
+            //------------------------------------------Enumerator Check
+            var enumerator = sqlORM.GetEnumerator();
+            enumerator.MoveNext();
+            var current = enumerator.Current;
+            //------------------------------------------
+
+            //var forDeletedItem = new FlashObservation(1500, 111, 121212, new Coordinates(55, 55), DateTime.Now);
             //sqlORM.Add(forDeletedItem);
-            sqlORM.Remove(forDeletedItem);
-            sqlORM.Clear();
+            //sqlORM.Remove(forDeletedItem);
+            //sqlORM.Clear();
 
             LoadPlugin();
             ShowMainMenu();

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Potestas.Extensions;
 using Potestas.Models;
 using Potestas.Validators;
 using System;
@@ -12,7 +13,6 @@ namespace Potestas.Storages
     public class SqlORMStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
     {
         private readonly DbContext _dbContext;
-        private readonly ObservationContext observationContext;
 
         public string Description => "SQL (EF Core ORM) storage of energy observations";
 
@@ -83,13 +83,39 @@ namespace Potestas.Storages
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            array = array ?? throw new ArgumentNullException($"The {nameof(array)} can not be null.");
+
+            if (arrayIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException($"The {nameof(arrayIndex)} can not be less than 0.");
+            }
+
+            if (array.Length - arrayIndex < Count)
+            {
+                throw new ArgumentException($"The available space in {nameof(array)} is not enough.");
+            }
+
+            try
+            {
+
+                var genericColection = _dbContext.Set<EnergyObservations>()
+                                                 .Include(x => x.Coordinate)
+                                                 .AsEnumerable()
+                                                 .ConvertObservationCollectionToGeneric<T, EnergyObservations>();
+
+                genericColection.CopyTo(array, arrayIndex);
+            }
+            catch (Exception exception)
+            {
+                // throw new ORMSqlStorageException($"Exception occurred during copy data from the sql storage to array.", exception);
+            }
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            // https://riptutorial.com/csharp/example/15938/creating-an-instance-of-a-type
-            throw new NotImplementedException();
+            var setCollection = _dbContext.Set<EnergyObservations>().Include(x => x.Coordinate).AsEnumerable();
+
+            return setCollection.ConvertObservationCollectionToGeneric<T, EnergyObservations>().GetEnumerator();           
         }
 
         public bool Remove(T item)

@@ -11,6 +11,6 @@ namespace Potestas.Models
 
         public virtual Coordinates Coordinate { get; set; }
 
-        public Potestas.Coordinates ObservationPoint { get; set; }
+        public Potestas.Coordinates ObservationPoint => new Potestas.Coordinates(Coordinate.Id, Coordinate.X, Coordinate.Y);
     }
 }
