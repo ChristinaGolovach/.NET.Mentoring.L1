@@ -3,7 +3,7 @@ using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Potestas.Models
+namespace Potestas.ORM.Plugin.Models
 {
     public partial class ObservationContext : DbContext
     {
@@ -27,7 +27,6 @@ namespace Potestas.Models
             }
         }
 
-        //In Entity Framework Core, the ModelBuilder class acts as a Fluent API.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.0-rtm-35687");

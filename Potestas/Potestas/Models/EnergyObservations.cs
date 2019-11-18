@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Potestas.Models
 {
@@ -11,6 +12,7 @@ namespace Potestas.Models
 
         public virtual Coordinates Coordinate { get; set; }
 
+        [NotMapped]
         public Potestas.Coordinates ObservationPoint => new Potestas.Coordinates(Coordinate.Id, Coordinate.X, Coordinate.Y);
     }
 }
