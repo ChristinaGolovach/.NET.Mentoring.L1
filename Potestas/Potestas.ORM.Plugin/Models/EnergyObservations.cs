@@ -2,6 +2,12 @@
 
 namespace Potestas.ORM.Plugin.Models
 {
+
+    // DBStorage is generic class and has some methods that return T,
+    // so we need to convert EnergyObservations to T.
+    // For this purpose I used the ConvertObservationCollectionToGeneric method from EnergyObservationExtension.cs in the Potestas project
+    // and if this model (EnergyObservations) does not implement IEnergyObservation
+    // the in runtime we will have an exception in method ConvertObservationCollectionToGeneric
     public partial class EnergyObservations : IEnergyObservation
     {
         public int Id { get; set; }

@@ -15,7 +15,7 @@ namespace Potestas.ORM.Plugin.Storages
     {
         private readonly DbContext _dbContext;
 
-        public string Description => "SQL (EF Core ORM) storage of energy observations";
+        public string Description => "DB storage of energy observations. (using EF Core ORM)";
 
         public int Count => _dbContext.Set<EnergyObservations>().Count();
 
