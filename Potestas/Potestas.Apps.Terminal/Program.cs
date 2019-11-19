@@ -256,7 +256,7 @@ namespace Potestas.Apps.Terminal
 
             var pathOfDll = Directory.GetFiles(pathForSeekDLL, "*.*", SearchOption.AllDirectories)
                                      .Where(fileName => extensions.IndexOf(Path.GetExtension(fileName)) >= 0 && 
-                                            fileName.EndsWith(selectedPluginDllName +".dll", StringComparison.OrdinalIgnoreCase))
+                                            fileName.EndsWith(selectedPluginDllName + ".dll", StringComparison.OrdinalIgnoreCase))
                                      .FirstOrDefault();
 
            _app.LoadPlugin(Assembly.LoadFrom(pathOfDll));
