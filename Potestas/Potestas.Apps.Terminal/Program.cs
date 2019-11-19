@@ -1,5 +1,6 @@
 ﻿using Potestas.Analizers;
 using Potestas.ApplicationFrame;
+using Potestas.ApplicationFrame.ProcessingGroup;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
 using Potestas.Serializers;
@@ -21,6 +22,7 @@ namespace Potestas.Apps.Terminal
         private static string selectedPluginDllName;
         private static readonly string pathForSeekDLL;
         private static readonly string solutionName = "Potestas";
+        private static IProcessingGroup attachedProcessingGroup;
 
         static Program()
         {
@@ -83,7 +85,7 @@ namespace Potestas.Apps.Terminal
                             var plaginSourceFactory = _app.SourceFactories.Where(sourceFactory => sourceFactory.GetType().ToString().StartsWith(selectedPluginDllName)).First();
 
                             _testRegistration = _app.CreateAndRegisterSource(plaginSourceFactory);
-                            var attachedProcessingGroup =  _testRegistration.AttachProcessingGroup(plaginProcessingFactory);
+                            attachedProcessingGroup =  _testRegistration.AttachProcessingGroup(plaginProcessingFactory);
 
                             _testRegistration.Start().Wait();
 
@@ -91,6 +93,7 @@ namespace Potestas.Apps.Terminal
                         }
 
                     } while (true);
+
                 }
             }
         }
@@ -145,11 +148,11 @@ namespace Potestas.Apps.Terminal
         private static void ShowAnalizerResult(IEnergyObservationAnalizer analizer)
         {
             Console.Clear();
-            Console.WriteLine("Select:");
+            Console.WriteLine("Select and press 'Enter' button:");
             Console.WriteLine("1 - GetAverageEnergy");
-            //Console.WriteLine("2 - GetDistributionByCoordinates");
-            //Console.WriteLine("3 - GetDistributionByEnergyValue");
-            //Console.WriteLine("4 - GetDistributionByObservationTime");
+            Console.WriteLine("2 - GetDistributionByCoordinates");
+            Console.WriteLine("3 - GetDistributionByEnergyValue");
+            Console.WriteLine("4 - GetDistributionByObservationTime");
             Console.WriteLine("5 - GetMaxEnergy");
             Console.WriteLine("6 - GetMaxEnergyPosition");
             Console.WriteLine("7 - GetMaxEnergyTime");
@@ -162,40 +165,44 @@ namespace Potestas.Apps.Terminal
             while (!exit)
             {
                 int menuIndex = 0;
-                var userChoice = Console.ReadKey().Key.ToString();
-                if (int.TryParse(userChoice, out menuIndex))
+                var userChoice = Console.ReadLine();
+                var isParsed = int.TryParse(userChoice, out menuIndex);
+                if (isParsed)
                 {
                     switch (menuIndex)
                     {
                         case 1:
-                            Console.WriteLine(analizer.GetAverageEnergy());
+                            Console.WriteLine(" Average energy is: " + analizer.GetAverageEnergy());
                             break;
-                        //case 2:
-                        //    analizer.GetDistributionByCoordinates();
-                        //    break;
-                        //case 3:
-                        //    (analizer.GetDistributionByEnergyValue();
-                        //    break;
-                        //case 4:
-                        //    analizer.GetDistributionByObservationTime();
-                        //    break;
+                        case 2:
+                            Console.WriteLine("Distribution by coordinates is:");
+                            analizer.GetDistributionByCoordinates().PrintDistribution("Coordinates");                           
+                            break;
+                        case 3:
+                            Console.WriteLine("Distribution by energy value is:");
+                            analizer.GetDistributionByEnergyValue().PrintDistribution("Energy value");
+                            break;
+                        case 4:
+                            Console.WriteLine("Distribution by observation time is:");
+                            analizer.GetDistributionByObservationTime().PrintDistribution("Observation time");
+                            break;
                         case 5:
-                            Console.WriteLine(analizer.GetMaxEnergy());
+                            Console.WriteLine(" Max energy is: " + analizer.GetMaxEnergy());
                             break;
                         case 6:
-                            Console.WriteLine(analizer.GetMaxEnergyPosition());
+                            Console.WriteLine(" Max energy position is: " + analizer.GetMaxEnergyPosition());
                             break;
                         case 7:
-                            Console.WriteLine(analizer.GetMaxEnergyTime());
+                            Console.WriteLine(" Max energyTime is: " + analizer.GetMaxEnergyTime());
                             break;
                         case 8:
-                            Console.WriteLine(analizer.GetMinEnergy());
+                            Console.WriteLine(" Min energy is: " + analizer.GetMinEnergy());
                             break;
                         case 9:
-                            Console.WriteLine(analizer.GetMinEnergyPosition());
+                            Console.WriteLine(" Position of min energy is: " + analizer.GetMinEnergyPosition());
                             break;
                         case 10:
-                            Console.WriteLine(analizer.GetMinEnergyTime());
+                            Console.WriteLine(" Time of min energy is: " + analizer.GetMinEnergyTime());
                             break;
                     }
                 }
@@ -284,6 +291,14 @@ namespace Potestas.Apps.Terminal
             _testRegistration.AttachProcessingGroup(new SaveToFileProcessingFactory(filePath, new JsonSerializer<IEnergyObservation>()));
             _testRegistration.Start().Wait();
 
+        }
+
+        private static void PrintDistribution<T>(this IDictionary<T, int> collection, string keyName)
+        {
+            foreach (var item in collection)
+            {
+                Console.WriteLine($"{keyName}: {item.Key.ToString()}, count: {item.Value}");
+            }
         }
     }
 
