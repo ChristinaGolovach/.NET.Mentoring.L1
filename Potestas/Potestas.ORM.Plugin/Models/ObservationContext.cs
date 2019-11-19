@@ -1,14 +1,20 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Configuration;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Potestas.ORM.Plugin.Models
 {
     public partial class ObservationContext : DbContext
     {
+        private string _connectionString;
+
         public ObservationContext()
         {
+        }
+
+        public ObservationContext(string connectionString)
+        {
+            _connectionString = connectionString ?? throw new ArgumentNullException($"{nameof(_connectionString)} can not be null.");
         }
 
         public ObservationContext(DbContextOptions<ObservationContext> options)
@@ -23,7 +29,12 @@ namespace Potestas.ORM.Plugin.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["ObservationConnection"].ConnectionString);
+                if (_connectionString == null)
+                {
+                    _connectionString = ConfigurationManager.ConnectionStrings["ObservationConnection"].ConnectionString;
+                }
+
+                optionsBuilder.UseSqlServer(_connectionString);
             }
         }
 

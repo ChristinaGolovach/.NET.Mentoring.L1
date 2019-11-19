@@ -1,18 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Potestas.Extensions;
+using Potestas.ORM.Plugin.Exceptions;
+using Potestas.ORM.Plugin.Mappers;
+using Potestas.ORM.Plugin.Models;
 using Potestas.Validators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Potestas.Extensions;
-using Potestas.ORM.Plugin.Exceptions;
-using Potestas.ORM.Plugin.Models;
-using Potestas.ORM.Plugin.Mappers;
 
 namespace Potestas.ORM.Plugin.Storages
 {
-    public class ORMStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
+    public class DBStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
     {
         private readonly DbContext _dbContext;
 
@@ -22,7 +21,7 @@ namespace Potestas.ORM.Plugin.Storages
 
         public bool IsReadOnly => false;
 
-        public ORMStorage(DbContext dbContext)
+        public DBStorage(DbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException($"the {nameof(dbContext)} can not be null.");
         }
@@ -31,12 +30,11 @@ namespace Potestas.ORM.Plugin.Storages
         {
             GenericValidator.CheckInitialization(item, nameof(item));
 
-            //TODO move to help method. since it is copy-past from OnNext of SaveToSqlORMProcessor 
             var coordinate = _dbContext.Set<Models.Coordinates>().FirstOrDefault(c => new Coordinates(c.X, c.Y).Equals(new Coordinates(item.ObservationPoint.X, item.ObservationPoint.Y)));
-            EntityEntry<EnergyObservations> newEntity = null;
+
             if (coordinate != null)
             {
-                newEntity = _dbContext.Set<EnergyObservations>().Add(new EnergyObservations()
+                _dbContext.Set<EnergyObservations>().Add(new EnergyObservations()
                 {
                     CoordinateId = coordinate.Id,
                     EstimatedValue = item.EstimatedValue,
@@ -48,7 +46,7 @@ namespace Potestas.ORM.Plugin.Storages
             {
                 coordinate = new Models.Coordinates() { X = item.ObservationPoint.X, Y = item.ObservationPoint.Y };
 
-                newEntity = _dbContext.Set<EnergyObservations>().Add(new EnergyObservations()
+                _dbContext.Set<EnergyObservations>().Add(new EnergyObservations()
                 {
                     Coordinate = coordinate,
                     EstimatedValue = item.EstimatedValue,
@@ -56,10 +54,9 @@ namespace Potestas.ORM.Plugin.Storages
                 });
             }
 
-            // TODO MApper
-            //item = newEntity.Entity;
-
             _dbContext.SaveChanges();
+
+            //as we have navigation property in EnergyObservations points to coordinates, the last will be added in DB automaticly
         }
 
         public void Clear()
@@ -108,7 +105,7 @@ namespace Potestas.ORM.Plugin.Storages
             }
             catch (Exception exception)
             {
-                throw new ORMStorageException($"Exception occurred during copy data from the ORM storage to array.", exception);
+                throw new DBStorageException($"Exception occurred during copy data from the ORM storage to array.", exception);
             }
         }
 

@@ -2,9 +2,6 @@
 using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
-using Potestas.Models;
-using Potestas.Observations;
-using Potestas.Processors;
 using Potestas.Serializers;
 using Potestas.Sources;
 using Potestas.Storages;
@@ -41,18 +38,11 @@ namespace Potestas.Apps.Terminal
 
         private static void MainMenu()
         {
-            var sqlORM = new SqlORMStorage<IEnergyObservation>(new ObservationContext());
-            var countREcords = sqlORM.Count;
             //------------------------------------------Enumerator Check
-            var enumerator = sqlORM.GetEnumerator();
-            enumerator.MoveNext();
-            var current = enumerator.Current;
+            //var enumerator = sqlORM.GetEnumerator();
+            //enumerator.MoveNext();
+            //var current = enumerator.Current;
             //------------------------------------------
-
-            //var forDeletedItem = new FlashObservation(1500, 111, 121212, new Coordinates(55, 55), DateTime.Now);
-            //sqlORM.Add(forDeletedItem);
-            //sqlORM.Remove(forDeletedItem);
-            //sqlORM.Clear();
 
             LoadPlugin();
             ShowMainMenu();
@@ -124,6 +114,7 @@ namespace Potestas.Apps.Terminal
                 Console.WriteLine("Please, choise a plugin or go to main menu.");
                 Console.WriteLine("0. Go to Main menu.");
                 Console.WriteLine("1. Potestas.ADO.Plugin.dll");
+                Console.WriteLine("2. Potestas.ORM.Plugin.dll");
 
                 bool pluginIsSelected = false;
 
@@ -138,6 +129,10 @@ namespace Potestas.Apps.Terminal
                     {
                         case ConsoleKey.D1:
                             selectedPluginDllName = "Potestas.ADO.Plugin";
+                            LoadPluginDll();
+                            break;
+                        case ConsoleKey.D2:
+                            selectedPluginDllName = "Potestas.ORM.Plugin";
                             LoadPluginDll();
                             break;
                     }
@@ -252,11 +247,12 @@ namespace Potestas.Apps.Terminal
         {
             var extensions = new List<string> { ".dll", ".DLL" };
 
-            var allDll = Directory.GetFiles(pathForSeekDLL, "*.*", SearchOption.AllDirectories).Where(fileName => extensions.IndexOf(Path.GetExtension(fileName)) >= 0);
+            var pathOfDll = Directory.GetFiles(pathForSeekDLL, "*.*", SearchOption.AllDirectories)
+                                     .Where(fileName => extensions.IndexOf(Path.GetExtension(fileName)) >= 0 && 
+                                            fileName.EndsWith(selectedPluginDllName +".dll", StringComparison.OrdinalIgnoreCase))
+                                     .FirstOrDefault();
 
-            var selectedPluginDllPath = allDll.ToList().Where(dllPath => dllPath.IndexOf(selectedPluginDllName) >= 0).FirstOrDefault();
-
-            _app.LoadPlugin(Assembly.LoadFrom(selectedPluginDllPath));
+           _app.LoadPlugin(Assembly.LoadFrom(pathOfDll));
         }
 
         private static void ConsoleProcessingMenu()
@@ -316,7 +312,7 @@ namespace Potestas.Apps.Terminal
 
         public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()
         {
-            return new SaveToSqlORMProcessor<IEnergyObservation>(new ObservationContext()); //new ConsoleProcessor();
+            return new ConsoleProcessor();
         }
 
         public IEnergyObservationStorage<IEnergyObservation> CreateStorage()
