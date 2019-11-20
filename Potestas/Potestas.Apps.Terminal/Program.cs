@@ -1,8 +1,10 @@
 ﻿using Potestas.Analizers;
 using Potestas.ApplicationFrame;
+using Potestas.ApplicationFrame.ProcessingGroup;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
 using Potestas.Serializers;
+using Potestas.Sources;
 using Potestas.Storages;
 using System;
 using System.Collections.Generic;
@@ -20,6 +22,7 @@ namespace Potestas.Apps.Terminal
         private static string selectedPluginDllName;
         private static readonly string pathForSeekDLL;
         private static readonly string solutionName = "Potestas";
+        private static IProcessingGroup attachedProcessingGroup;
 
         static Program()
         {
@@ -37,6 +40,12 @@ namespace Potestas.Apps.Terminal
 
         private static void MainMenu()
         {
+            //------------------------------------------Enumerator Check
+            //var enumerator = sqlORM.GetEnumerator();
+            //enumerator.MoveNext();
+            //var current = enumerator.Current;
+            //------------------------------------------
+
             LoadPlugin();
             ShowMainMenu();
 
@@ -76,7 +85,7 @@ namespace Potestas.Apps.Terminal
                             var plaginSourceFactory = _app.SourceFactories.Where(sourceFactory => sourceFactory.GetType().ToString().StartsWith(selectedPluginDllName)).First();
 
                             _testRegistration = _app.CreateAndRegisterSource(plaginSourceFactory);
-                            var attachedProcessingGroup =  _testRegistration.AttachProcessingGroup(plaginProcessingFactory);
+                            attachedProcessingGroup =  _testRegistration.AttachProcessingGroup(plaginProcessingFactory);
 
                             _testRegistration.Start().Wait();
 
@@ -84,6 +93,7 @@ namespace Potestas.Apps.Terminal
                         }
 
                     } while (true);
+
                 }
             }
         }
@@ -107,6 +117,7 @@ namespace Potestas.Apps.Terminal
                 Console.WriteLine("Please, choise a plugin or go to main menu.");
                 Console.WriteLine("0. Go to Main menu.");
                 Console.WriteLine("1. Potestas.ADO.Plugin.dll");
+                Console.WriteLine("2. Potestas.ORM.Plugin.dll");
 
                 bool pluginIsSelected = false;
 
@@ -123,6 +134,10 @@ namespace Potestas.Apps.Terminal
                             selectedPluginDllName = "Potestas.ADO.Plugin";
                             LoadPluginDll();
                             break;
+                        case ConsoleKey.D2:
+                            selectedPluginDllName = "Potestas.ORM.Plugin";
+                            LoadPluginDll();
+                            break;
                     }
 
                     pluginIsSelected = true;
@@ -133,11 +148,11 @@ namespace Potestas.Apps.Terminal
         private static void ShowAnalizerResult(IEnergyObservationAnalizer analizer)
         {
             Console.Clear();
-            Console.WriteLine("Select:");
+            Console.WriteLine("Select and press 'Enter' button:");
             Console.WriteLine("1 - GetAverageEnergy");
-            //Console.WriteLine("2 - GetDistributionByCoordinates");
-            //Console.WriteLine("3 - GetDistributionByEnergyValue");
-            //Console.WriteLine("4 - GetDistributionByObservationTime");
+            Console.WriteLine("2 - GetDistributionByCoordinates");
+            Console.WriteLine("3 - GetDistributionByEnergyValue");
+            Console.WriteLine("4 - GetDistributionByObservationTime");
             Console.WriteLine("5 - GetMaxEnergy");
             Console.WriteLine("6 - GetMaxEnergyPosition");
             Console.WriteLine("7 - GetMaxEnergyTime");
@@ -150,40 +165,44 @@ namespace Potestas.Apps.Terminal
             while (!exit)
             {
                 int menuIndex = 0;
-                var userChoice = Console.ReadKey().Key.ToString();
-                if (int.TryParse(userChoice, out menuIndex))
+                var userChoice = Console.ReadLine();
+                var isParsed = int.TryParse(userChoice, out menuIndex);
+                if (isParsed)
                 {
                     switch (menuIndex)
                     {
                         case 1:
-                            Console.WriteLine(analizer.GetAverageEnergy());
+                            Console.WriteLine(" Average energy is: " + analizer.GetAverageEnergy());
                             break;
-                        //case 2:
-                        //    analizer.GetDistributionByCoordinates();
-                        //    break;
-                        //case 3:
-                        //    (analizer.GetDistributionByEnergyValue();
-                        //    break;
-                        //case 4:
-                        //    analizer.GetDistributionByObservationTime();
-                        //    break;
+                        case 2:
+                            Console.WriteLine("Distribution by coordinates is:");
+                            analizer.GetDistributionByCoordinates().PrintDistribution("Coordinates");                           
+                            break;
+                        case 3:
+                            Console.WriteLine("Distribution by energy value is:");
+                            analizer.GetDistributionByEnergyValue().PrintDistribution("Energy value");
+                            break;
+                        case 4:
+                            Console.WriteLine("Distribution by observation time is:");
+                            analizer.GetDistributionByObservationTime().PrintDistribution("Observation time");
+                            break;
                         case 5:
-                            Console.WriteLine(analizer.GetMaxEnergy());
+                            Console.WriteLine(" Max energy is: " + analizer.GetMaxEnergy());
                             break;
                         case 6:
-                            Console.WriteLine(analizer.GetMaxEnergyPosition());
+                            Console.WriteLine(" Max energy position is: " + analizer.GetMaxEnergyPosition());
                             break;
                         case 7:
-                            Console.WriteLine(analizer.GetMaxEnergyTime());
+                            Console.WriteLine(" Max energyTime is: " + analizer.GetMaxEnergyTime());
                             break;
                         case 8:
-                            Console.WriteLine(analizer.GetMinEnergy());
+                            Console.WriteLine(" Min energy is: " + analizer.GetMinEnergy());
                             break;
                         case 9:
-                            Console.WriteLine(analizer.GetMinEnergyPosition());
+                            Console.WriteLine(" Position of min energy is: " + analizer.GetMinEnergyPosition());
                             break;
                         case 10:
-                            Console.WriteLine(analizer.GetMinEnergyTime());
+                            Console.WriteLine(" Time of min energy is: " + analizer.GetMinEnergyTime());
                             break;
                     }
                 }
@@ -235,11 +254,12 @@ namespace Potestas.Apps.Terminal
         {
             var extensions = new List<string> { ".dll", ".DLL" };
 
-            var allDll = Directory.GetFiles(pathForSeekDLL, "*.*", SearchOption.AllDirectories).Where(fileName => extensions.IndexOf(Path.GetExtension(fileName)) >= 0);
+            var pathOfDll = Directory.GetFiles(pathForSeekDLL, "*.*", SearchOption.AllDirectories)
+                                     .Where(fileName => extensions.IndexOf(Path.GetExtension(fileName)) >= 0 && 
+                                            fileName.EndsWith(selectedPluginDllName + ".dll", StringComparison.OrdinalIgnoreCase))
+                                     .FirstOrDefault();
 
-            var selectedPluginDllPath = allDll.ToList().Where(dllPath => dllPath.IndexOf(selectedPluginDllName) >= 0).FirstOrDefault();
-
-            _app.LoadPlugin(Assembly.LoadFrom(selectedPluginDllPath));
+           _app.LoadPlugin(Assembly.LoadFrom(pathOfDll));
         }
 
         private static void ConsoleProcessingMenu()
@@ -272,6 +292,14 @@ namespace Potestas.Apps.Terminal
             _testRegistration.Start().Wait();
 
         }
+
+        private static void PrintDistribution<T>(this IDictionary<T, int> collection, string keyName)
+        {
+            foreach (var item in collection)
+            {
+                Console.WriteLine($"{keyName}: {item.Key.ToString()}, count: {item.Value}");
+            }
+        }
     }
 
     #region console factories
@@ -284,7 +312,7 @@ namespace Potestas.Apps.Terminal
 
         public IEnergyObservationSource<IEnergyObservation> CreateSource( )
         {
-            return new ConsoleSource();
+            return new RandomEnergySource();
         }
     }
 

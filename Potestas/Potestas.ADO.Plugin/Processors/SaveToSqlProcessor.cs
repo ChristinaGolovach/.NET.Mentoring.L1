@@ -39,7 +39,7 @@ namespace Potestas.ADO.Plugin
             parameters.Add("@EstimatedValue", value.EstimatedValue);
             parameters.Add("@ObservationTime", value.ObservationTime);
 
-            ADOUtils.ExecuteNonQuery(_connectionString, "Insert_FlasObservation", parameters);
+            ADOUtils.ExecuteNonQuery(_connectionString, "Insert_EnergyObservation", parameters);
         }
     }
 }

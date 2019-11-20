@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas", "Potestas\Potestas.csproj", "{EEB46883-CBA0-4919-B984-A3254930E9CA}"
 EndProject
@@ -15,7 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{19C95DF5-1FB
 		CreateProcedures.sql = CreateProcedures.sql
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.ADO.Plugin", "Potestas.ADO.Plugin\Potestas.ADO.Plugin.csproj", "{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.ADO.Plugin", "Potestas.ADO.Plugin\Potestas.ADO.Plugin.csproj", "{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.ORM.Plugin", "Potestas.ORM.Plugin\Potestas.ORM.Plugin.csproj", "{6C97BB79-2813-4C19-8A28-87F5B417E92B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.ORM.CodeFirstAproach", "Potestas.ORM.CodeFirstAproach\Potestas.ORM.CodeFirstAproach.csproj", "{7998598E-A38E-47A4-AB70-86623B442C12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3AC4BF1-E6E0-47CA-8BDD-8ACAF9868701}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C97BB79-2813-4C19-8A28-87F5B417E92B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C97BB79-2813-4C19-8A28-87F5B417E92B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C97BB79-2813-4C19-8A28-87F5B417E92B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C97BB79-2813-4C19-8A28-87F5B417E92B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7998598E-A38E-47A4-AB70-86623B442C12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7998598E-A38E-47A4-AB70-86623B442C12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7998598E-A38E-47A4-AB70-86623B442C12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7998598E-A38E-47A4-AB70-86623B442C12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
