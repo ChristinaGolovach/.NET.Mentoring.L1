@@ -32,27 +32,17 @@ namespace Potestas.ORM.Plugin.Storages
 
             var coordinate = _dbContext.Set<Models.Coordinates>().FirstOrDefault(c => new Coordinates(c.X, c.Y).Equals(new Coordinates(item.ObservationPoint.X, item.ObservationPoint.Y)));
 
-            if (coordinate != null)
-            {
-                _dbContext.Set<EnergyObservations>().Add(new EnergyObservations()
-                {
-                    CoordinateId = coordinate.Id,
-                    EstimatedValue = item.EstimatedValue,
-                    ObservationTime = item.ObservationTime
-                });
-            }
-
-            else
+            if (coordinate == null)
             {
                 coordinate = new Models.Coordinates() { X = item.ObservationPoint.X, Y = item.ObservationPoint.Y };
-
-                _dbContext.Set<EnergyObservations>().Add(new EnergyObservations()
-                {
-                    Coordinate = coordinate,
-                    EstimatedValue = item.EstimatedValue,
-                    ObservationTime = item.ObservationTime
-                });
             }
+
+            _dbContext.Set<EnergyObservations>().Add(new EnergyObservations()
+            {
+                Coordinate = coordinate,
+                EstimatedValue = item.EstimatedValue,
+                ObservationTime = item.ObservationTime
+            });
 
             _dbContext.SaveChanges();
 
