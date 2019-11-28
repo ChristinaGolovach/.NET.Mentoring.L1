@@ -1,61 +1,95 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Potestas.MongoDB.Plugin.Entities;
+using Potestas.MongoDB.Plugin.Mappers;
+using Potestas.Validators;
 
 namespace Potestas.MongoDB.Plugin.Storages
 {
     public class MongoDBStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
     {
+        private readonly BsonDocument _getAllFilter;
         private string _connectionString;
         private MongoClient _dbClient;
         private IMongoDatabase _database;
+        private IMongoCollection<BsonEnergyObservation> _collection;
 
         public string Description => "MongoDB storage.";
 
-        public int Count => throw new NotImplementedException();
+        public int Count => unchecked((int)_collection.CountDocuments(_getAllFilter));
 
-        public bool IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly => false;
 
-        public MongoDBStorage(string connectionString, string dbName)
+        public MongoDBStorage(string connectionString, string dbName, string collectionName)
         {
             _connectionString = connectionString ?? throw new ArgumentNullException($"{nameof(_connectionString)} can not be null.");
             dbName = dbName ?? throw new ArgumentNullException($"{nameof(dbName)} can not be null.");
+            collectionName = collectionName ?? throw new ArgumentNullException($"{nameof(collectionName)} can not be null.");
 
             _dbClient = new MongoClient(connectionString);
             _database = _dbClient.GetDatabase(dbName);
+            _collection = _database.GetCollection<BsonEnergyObservation>(collectionName);
+            _getAllFilter = new BsonDocument();
         }
 
         public void Add(T item)
         {
-            throw new NotImplementedException();
+            GenericValidator.CheckInitialization(item, nameof(item));
 
+            _collection.InsertOne(item.ToBsonEntity());            
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            _collection.DeleteMany(_getAllFilter);
+        }
+
+        public bool Remove(T item)
+        {
+            GenericValidator.CheckInitialization(item, nameof(item));
+
+            var deleteResult = _collection.DeleteOne(observation => observation.Id == item.Id);
+
+            if (!deleteResult.IsAcknowledged)
+            {
+                return false;
+            }
+
+            return deleteResult.DeletedCount > 0 ? true : false;
         }
 
         public bool Contains(T item)
         {
-            throw new NotImplementedException();
+            GenericValidator.CheckInitialization(item, nameof(item));
+
+            return _collection.AsQueryable().Any(observation => observation.Id == item.Id);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
+            array = array ?? throw new ArgumentNullException($"The {nameof(array)} can not be null.");
+
+            if (arrayIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException($"The {nameof(arrayIndex)} can not be less than 0.");
+            }
+
+            if (array.Length - arrayIndex < Count)
+            {
+                throw new ArgumentException($"The available space in {nameof(array)} is not enough.");
+            }
+
             throw new NotImplementedException();
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
-        }
-
-        public bool Remove(T item)
-        {
+            //https://stackoverflow.com/questions/29682371/how-is-an-iasynccursor-used-for-iteration-with-the-mongodb-c-sharp-driver
+            // https://stackoverflow.com/questions/37175592/mongodb-c-sharp-iteration-as-enumerator
             throw new NotImplementedException();
         }
 

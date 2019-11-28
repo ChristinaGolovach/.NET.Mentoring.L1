@@ -4,7 +4,7 @@ namespace Potestas.MongoDB.Plugin.Mappers
 {
     public static class CoordinatesMapper
     {
-        public static BsonCoordinates ToBson(this Coordinates coordinates)
+        public static BsonCoordinates ToBsonEntity(this Coordinates coordinates)
         {
             return new BsonCoordinates
             {

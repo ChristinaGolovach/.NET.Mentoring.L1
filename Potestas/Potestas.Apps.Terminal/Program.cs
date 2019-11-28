@@ -3,11 +3,14 @@ using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.ProcessingGroup;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
+using Potestas.MongoDB.Plugin.Storages;
+using Potestas.Observations;
 using Potestas.Serializers;
 using Potestas.Sources;
 using Potestas.Storages;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -45,6 +48,19 @@ namespace Potestas.Apps.Terminal
             //enumerator.MoveNext();
             //var current = enumerator.Current;
             //------------------------------------------
+
+            //------------------------------------------MongoDB Check
+            var connectopn = ConfigurationManager.ConnectionStrings["MongoDBObservationConnection"].ConnectionString;
+            var newItem = new FlashObservation(2, 11, 23.3, new Coordinates(12, 12), DateTime.Now);
+
+            var mongoStorage = new MongoDBStorage<IEnergyObservation>(connectopn, "observation", "energyObservations");
+            mongoStorage.Add(newItem);
+            //mongoStorage.Clear();
+            mongoStorage.Remove(newItem);
+
+            var countItems = mongoStorage.Count;
+
+            //-------------------------------------------------------
 
             LoadPlugin();
             ShowMainMenu();
