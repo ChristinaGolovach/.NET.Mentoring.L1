@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Potestas.MongoDB.Plugin.Storages
@@ -30,6 +31,7 @@ namespace Potestas.MongoDB.Plugin.Storages
         public void Add(T item)
         {
             throw new NotImplementedException();
+
         }
 
         public void Clear()
