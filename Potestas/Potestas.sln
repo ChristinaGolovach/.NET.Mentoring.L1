@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.ADO.Plugin", "Pote
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.ORM.Plugin", "Potestas.ORM.Plugin\Potestas.ORM.Plugin.csproj", "{6C97BB79-2813-4C19-8A28-87F5B417E92B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.ORM.CodeFirstAproach", "Potestas.ORM.CodeFirstAproach\Potestas.ORM.CodeFirstAproach.csproj", "{7998598E-A38E-47A4-AB70-86623B442C12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.ORM.CodeFirstAproach", "Potestas.ORM.CodeFirstAproach\Potestas.ORM.CodeFirstAproach.csproj", "{7998598E-A38E-47A4-AB70-86623B442C12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.MongoDB.Plugin", "Potestas.MongoDB.Plugin\Potestas.MongoDB.Plugin.csproj", "{55B7EC06-DD74-40C9-8308-FFC980E5515A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{7998598E-A38E-47A4-AB70-86623B442C12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7998598E-A38E-47A4-AB70-86623B442C12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7998598E-A38E-47A4-AB70-86623B442C12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55B7EC06-DD74-40C9-8308-FFC980E5515A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55B7EC06-DD74-40C9-8308-FFC980E5515A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55B7EC06-DD74-40C9-8308-FFC980E5515A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55B7EC06-DD74-40C9-8308-FFC980E5515A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
