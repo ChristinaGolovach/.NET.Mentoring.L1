@@ -1,89 +1,137 @@
-﻿using System;
+﻿using MongoDB.Driver;
+using Potestas.MongoDB.Plugin.Entities;
+using Potestas.MongoDB.Plugin.Mappers;
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Potestas.MongoDB.Plugin.Analizers
 {
+    //https://mongodb.github.io/mongo-csharp-driver/2.1/reference/driver/crud/linq/
+
     public class MongoDBAnalizer : IEnergyObservationAnalizer
     {
+        private IMongoCollection<BsonEnergyObservation> _dbCollection;
+
+        public MongoDBAnalizer(IMongoCollection<BsonEnergyObservation> dbCollection)
+        {
+            _dbCollection = dbCollection ?? throw new ArgumentNullException($"The {nameof(dbCollection)} can not be null.");
+        }
         public double GetAverageEnergy()
         {
-            throw new NotImplementedException();
+           return _dbCollection.AsQueryable().Average(obs => obs.EstimatedValue);
         }
 
         public double GetAverageEnergy(DateTime startFrom, DateTime endBy)
         {
-            throw new NotImplementedException();
+            return _dbCollection.AsQueryable().Where(obs => obs.ObservationTime >= startFrom && endBy >= obs.ObservationTime)
+                                              .Average(obs => obs.EstimatedValue);
         }
 
         public double GetAverageEnergy(Coordinates rectTopLeft, Coordinates rectBottomRight)
         {
-            throw new NotImplementedException();
+            return _dbCollection.AsQueryable().Where(obs => obs.ObservationPoint.X > rectTopLeft.X
+                                                            && obs.ObservationPoint.X < rectBottomRight.X
+                                                            && obs.ObservationPoint.Y > rectBottomRight.Y
+                                                            && obs.ObservationPoint.Y < rectTopLeft.Y)
+                                              .Average(obs => obs.EstimatedValue);
         }
 
         public IDictionary<Coordinates, int> GetDistributionByCoordinates()
         {
-            throw new NotImplementedException();
+            var bsonGruppedCollection =  _dbCollection.AsQueryable()
+                                                      .GroupBy(obs => obs.ObservationPoint)
+                                                      .ToDictionary(k => k.Key, v => v.Count());
+
+            var resultCollection = new Dictionary<Coordinates, int>();
+
+            foreach (var item in bsonGruppedCollection)
+            {
+                resultCollection.Add(item.Key.ToDomainEntity(), item.Value);
+            }
+
+            return resultCollection;
         }
 
         public IDictionary<double, int> GetDistributionByEnergyValue()
         {
-            throw new NotImplementedException();
+            return _dbCollection.AsQueryable().GroupBy(obs => obs.EstimatedValue)
+                                              .ToDictionary(k => k.Key, v => v.Count());
         }
 
         public IDictionary<DateTime, int> GetDistributionByObservationTime()
         {
-            throw new NotImplementedException();
+            return _dbCollection.AsQueryable().GroupBy(obs => obs.ObservationTime)
+                                              .ToDictionary(k => k.Key, v => v.Count());
         }
 
         public double GetMaxEnergy()
         {
-            throw new NotImplementedException();
+            return _dbCollection.AsQueryable().Max(obs => obs.EstimatedValue);
         }
 
         public double GetMaxEnergy(Coordinates coordinates)
         {
-            throw new NotImplementedException();
+            // TODO проверить
+            // на рантайме может упасть, т.к внутри Where исп-ся дерево выражений и не все лямбды парсятся (у меня внутри вызов кастомного ToDomainEntity)
+            return _dbCollection.AsQueryable().Where(obs => obs.ObservationPoint.ToDomainEntity() == coordinates)
+                                              .Max(obs => obs.EstimatedValue);
         }
 
         public double GetMaxEnergy(DateTime dateTime)
         {
-            throw new NotImplementedException();
+            return _dbCollection.AsQueryable().Where(obs => obs.ObservationTime == dateTime)
+                                              .Max(obs => obs.EstimatedValue);
         }
 
         public Coordinates GetMaxEnergyPosition()
         {
-            throw new NotImplementedException();
+            var bsonCoordinates =  _dbCollection.AsQueryable()
+                                                .OrderByDescending(obs => obs.EstimatedValue)                
+                                                .First().ObservationPoint;
+
+            return bsonCoordinates.ToDomainEntity();
         }
 
         public DateTime GetMaxEnergyTime()
         {
-            throw new NotImplementedException();
+            return _dbCollection.AsQueryable().OrderByDescending(obs => obs.EstimatedValue)
+                                              .First().ObservationTime;
         }
 
         public double GetMinEnergy()
         {
-            throw new NotImplementedException();
+            return _dbCollection.AsQueryable().Min(obs => obs.EstimatedValue);
         }
 
         public double GetMinEnergy(Coordinates coordinates)
         {
-            throw new NotImplementedException();
+            // TODO проверить
+            // на рантайме может упасть, т.к внутри Where иcп-ся дерево выражений и не все лямбды парсятся (у меня внутри вызов кастомного ToDomainEntity)
+            return _dbCollection.AsQueryable().Where(obs => obs.ObservationPoint.ToDomainEntity() == coordinates)
+                                              .Min(obs => obs.EstimatedValue);
         }
 
         public double GetMinEnergy(DateTime dateTime)
         {
-            throw new NotImplementedException();
+            return _dbCollection.AsQueryable().Where(obs => obs.ObservationTime == dateTime)
+                                              .Min(obs => obs.EstimatedValue);
         }
 
         public Coordinates GetMinEnergyPosition()
         {
-            throw new NotImplementedException();
+            var bsonCoordinates = _dbCollection.AsQueryable()
+                                               .OrderBy(obs => obs.EstimatedValue)
+                                               .First().ObservationPoint;
+
+            return bsonCoordinates.ToDomainEntity();
         }
 
         public DateTime GetMinEnergyTime()
         {
-            throw new NotImplementedException();
+            return _dbCollection.AsQueryable()
+                                .OrderBy(obs => obs.EstimatedValue)
+                                .First().ObservationTime;
         }
     }
 }

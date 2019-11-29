@@ -25,6 +25,8 @@ namespace Potestas.MongoDB.Plugin.Storages
 
         public bool IsReadOnly => false;
 
+        protected internal IMongoCollection<BsonEnergyObservation> ObservationDBCollection => _collection;
+
         public MongoDBStorage(string connectionString, string dbName, string collectionName)
         {
             _connectionString = connectionString ?? throw new ArgumentNullException($"{nameof(_connectionString)} can not be null.");
