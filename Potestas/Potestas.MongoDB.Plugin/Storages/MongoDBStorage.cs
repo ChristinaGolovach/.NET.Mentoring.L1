@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Potestas.Extensions;
 using Potestas.MongoDB.Plugin.Entities;
 using Potestas.MongoDB.Plugin.Mappers;
 using Potestas.Validators;
@@ -83,14 +84,20 @@ namespace Potestas.MongoDB.Plugin.Storages
                 throw new ArgumentException($"The available space in {nameof(array)} is not enough.");
             }
 
-            throw new NotImplementedException();
+            var observations = _collection.Find(_getAllFilter)
+                                          .ToEnumerable()
+                                          .ConvertObservationCollectionToGeneric<T, BsonEnergyObservation>();
+
+
+            observations.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            //https://stackoverflow.com/questions/29682371/how-is-an-iasynccursor-used-for-iteration-with-the-mongodb-c-sharp-driver
-            // https://stackoverflow.com/questions/37175592/mongodb-c-sharp-iteration-as-enumerator
-            throw new NotImplementedException();
+            return _collection.Find(_getAllFilter)
+                              .ToEnumerable()
+                              .ConvertObservationCollectionToGeneric<T, BsonEnergyObservation>()
+                              .GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

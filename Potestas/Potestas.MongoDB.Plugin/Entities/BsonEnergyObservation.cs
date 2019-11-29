@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Potestas.MongoDB.Plugin.Entities
 {
-    public class BsonEnergyObservation
+    public class BsonEnergyObservation : IEnergyObservation
     {
         [BsonId]
         public int Id { get; set; }
@@ -16,5 +16,8 @@ namespace Potestas.MongoDB.Plugin.Entities
 
         [BsonElement("observationTime")]
         public DateTime ObservationTime { get; set; }
+
+        [BsonIgnore]
+        Coordinates IEnergyObservation.ObservationPoint => new Coordinates(ObservationPoint.X, ObservationPoint.Y);
     }
 }
