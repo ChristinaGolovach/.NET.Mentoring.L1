@@ -3,14 +3,11 @@ using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.ProcessingGroup;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
-using Potestas.MongoDB.Plugin.Storages;
-using Potestas.Observations;
 using Potestas.Serializers;
 using Potestas.Sources;
 using Potestas.Storages;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -50,15 +47,15 @@ namespace Potestas.Apps.Terminal
             //------------------------------------------
 
             //------------------------------------------MongoDB Check
-            var connectopn = ConfigurationManager.ConnectionStrings["MongoDBObservationConnection"].ConnectionString;
-            var newItem = new FlashObservation(2, 11, 23.3, new Coordinates(12, 12), DateTime.Now);
+            //var connectopn = ConfigurationManager.ConnectionStrings["MongoDBObservationConnection"].ConnectionString;
+            //var newItem = new FlashObservation(2, 11, 23.3, new Coordinates(12, 12), DateTime.Now);
 
-            var mongoStorage = new MongoDBStorage<IEnergyObservation>(connectopn, "observation", "energyObservations");
-            mongoStorage.Add(newItem);
+            //var mongoStorage = new MongoDBStorage<IEnergyObservation>(connectopn, "observation", "energyObservations");
+            //mongoStorage.Add(newItem);
             //mongoStorage.Clear();
-            mongoStorage.Remove(newItem);
+            //mongoStorage.Remove(newItem);
 
-            var countItems = mongoStorage.Count;
+            //var countItems = mongoStorage.Count;
 
             //-------------------------------------------------------
 
@@ -134,6 +131,7 @@ namespace Potestas.Apps.Terminal
                 Console.WriteLine("0. Go to Main menu.");
                 Console.WriteLine("1. Potestas.ADO.Plugin.dll");
                 Console.WriteLine("2. Potestas.ORM.Plugin.dll");
+                Console.WriteLine("3. Potestas.MongoDB.Plugin.dll");
 
                 bool pluginIsSelected = false;
 
@@ -152,6 +150,10 @@ namespace Potestas.Apps.Terminal
                             break;
                         case ConsoleKey.D2:
                             selectedPluginDllName = "Potestas.ORM.Plugin";
+                            LoadPluginDll();
+                            break;
+                        case ConsoleKey.D3:
+                            selectedPluginDllName = "Potestas.MongoDB.Plugin";
                             LoadPluginDll();
                             break;
                     }

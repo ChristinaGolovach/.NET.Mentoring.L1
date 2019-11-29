@@ -15,6 +15,7 @@ namespace Potestas.MongoDB.Plugin.Storages
     {
         private readonly BsonDocument _getAllFilter;
         private string _connectionString;
+        private int currentId;
         private MongoClient _dbClient;
         private IMongoDatabase _database;
         private IMongoCollection<BsonEnergyObservation> _collection;
@@ -37,13 +38,18 @@ namespace Potestas.MongoDB.Plugin.Storages
             _database = _dbClient.GetDatabase(dbName);
             _collection = _database.GetCollection<BsonEnergyObservation>(collectionName);
             _getAllFilter = new BsonDocument();
+
+            InitiateCurrentId();
         }
 
         public void Add(T item)
         {
             GenericValidator.CheckInitialization(item, nameof(item));
 
-            _collection.InsertOne(item.ToBsonEntity());            
+            var bsonItem = item.ToBsonEntity();
+            bsonItem.Id = ++currentId;
+
+            _collection.InsertOne(bsonItem);            
         }
 
         public void Clear()
@@ -101,6 +107,13 @@ namespace Potestas.MongoDB.Plugin.Storages
                               .ConvertObservationCollectionToGeneric<T, BsonEnergyObservation>()
                               .GetEnumerator();
         }
+
+        private void InitiateCurrentId()
+        {
+            var bsonObservation = _collection.AsQueryable().OrderByDescending(observation => observation.Id).FirstOrDefault();
+
+            currentId = bsonObservation == null ? 0 : bsonObservation.Id;
+        } 
 
         IEnumerator IEnumerable.GetEnumerator()
         {

@@ -72,8 +72,6 @@ namespace Potestas.MongoDB.Plugin.Analizers
 
         public double GetMaxEnergy(Coordinates coordinates)
         {
-            // TODO проверить
-            // на рантайме может упасть, т.к внутри Where исп-ся дерево выражений и не все лямбды парсятся (у меня внутри вызов кастомного ToDomainEntity)
             return _dbCollection.AsQueryable().Where(obs => obs.ObservationPoint.ToDomainEntity() == coordinates)
                                               .Max(obs => obs.EstimatedValue);
         }
