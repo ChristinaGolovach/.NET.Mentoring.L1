@@ -15,12 +15,16 @@ Steps:
 ![alt-текст](https://github.com/ChristinaGolovach/.NET.Mentoring.L1/blob/module_6/Potestas/docker2.png) 
 
 - run docker container based on the previously created image 
-```docker run -p 27017:27014 --name your_container_name your_image_name```
+```docker run -p 27017:27017 --name your_container_name your_image_name```
 
 ##### example
 ![alt-текст](https://github.com/ChristinaGolovach/.NET.Mentoring.L1/blob/module_6/Potestas/docker3.png) 
 
 - run Potestas.App.Terminal project
+
+links:
+https://www.scalyr.com/blog/create-docker-image/
+https://docs.docker.com/engine/reference/commandline/run/
 
 #### Using direct mongo installation 
 
