@@ -14,7 +14,8 @@ Steps:
 #### result
 ![alt-текст](https://github.com/ChristinaGolovach/.NET.Mentoring.L1/blob/module_6/Potestas/docker2.png) 
 
-- run docker container based on the previously created image --
+- run docker container based on the previously created image
+
 ```docker run -p 27017:27017 --name your_container_name your_image_name```
 
 ##### example
