@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using Potestas.MongoDB.Plugin.Entities;
 using Potestas.MongoDB.Plugin.Mappers;
 using System;
@@ -72,8 +73,20 @@ namespace Potestas.MongoDB.Plugin.Analizers
 
         public double GetMaxEnergy(Coordinates coordinates)
         {
-            return _dbCollection.AsQueryable().Where(obs => obs.ObservationPoint.ToDomainEntity() == coordinates)
-                                              .Max(obs => obs.EstimatedValue);
+            //return _dbCollection.AsQueryable().Where(obs => obs.ObservationPoint.ToDomainEntity() == coordinates)
+            //                                  .Max(obs => obs.EstimatedValue);
+
+            var builder = Builders<BsonEnergyObservation>.Filter;
+
+            var filter = builder.Eq("observationPoint.x", coordinates.X) &
+                         builder.Eq("observationPoint.y", coordinates.Y);
+
+            var result = _dbCollection.Aggregate()
+                                      .Match(filter)
+                                      .Group(new BsonDocument { { "_id", "_id" }, { "estimatedValue", new BsonDocument { { "$max", "$estimatedValue" } } } })
+                                      .First();
+
+            return result["estimatedValue"].AsDouble;
         }
 
         public double GetMaxEnergy(DateTime dateTime)
@@ -104,10 +117,43 @@ namespace Potestas.MongoDB.Plugin.Analizers
 
         public double GetMinEnergy(Coordinates coordinates)
         {
-            // TODO проверить
-            // на рантайме может упасть, т.к внутри Where иcп-ся дерево выражений и не все лямбды парсятся (у меня внутри вызов кастомного ToDomainEntity)
-            return _dbCollection.AsQueryable().Where(obs => obs.ObservationPoint.ToDomainEntity() == coordinates)
-                                              .Min(obs => obs.EstimatedValue);
+            // TODO 
+            //https://www.tutorialsteacher.com/linq/expression-tree
+            //https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/expression-trees/
+            //https://stackoverflow.com/questions/11258307/binaryexpression-contains-method
+            //https://www.red-gate.com/simple-talk/dotnet/net-framework/giving-clarity-to-linq-queries-by-extending-expressions/
+            //https://stackoverflow.com/questions/8337774/lambda-and-expression-call-for-an-extension-method/20340865
+
+            //ParameterExpression peBsonEnergyObservation = Expression.Parameter(typeof(BsonEnergyObservation), "obs");
+            //ParameterExpression peCoordinates = Expression.Parameter(typeof(Coordinates), "coordinates");
+            //MemberExpression me = Expression.Property(peBsonEnergyObservation, "ObservationPoint");
+
+            //var toDomainEntityMethod = typeof(BsonEnergyObservation).GetExtensionMethod("ToDomainEntity");
+
+            //var toDomainEntityMethod = typeof(BsonEnergyObservation).GetMethod("ToDomainEntity", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null,  new[] {typeof(BsonEnergyObservation)}, null);
+            //var methodCall = Expression.Call(toDomainEntityMethod, peBsonEnergyObservation);
+
+            //BinaryExpression body = Expression.Equal(methodCall, peCoordinates);
+
+            //var resultExpression = Expression.Lambda<Func<BsonEnergyObservation, bool>>(body, peBsonEnergyObservation);
+
+            //return _dbCollection.AsQueryable().Where(resultExpression)
+            //                                  .Min(obs => obs.EstimatedValue);
+
+            //return _dbCollection.AsQueryable().Where(obs => obs.ObservationPoint.ToDomainEntity() == coordinates)
+            //                                  .Min(obs => obs.EstimatedValue);
+
+            var builder = Builders<BsonEnergyObservation>.Filter;
+
+            var filter = builder.Eq("observationPoint.x", coordinates.X) & 
+                         builder.Eq("observationPoint.y", coordinates.Y);
+
+            var result = _dbCollection.Aggregate()
+                                      .Match(filter)
+                                      .Group(new BsonDocument {{"_id", "_id"}, {"estimatedValue", new BsonDocument {{"$min", "$estimatedValue"}}}})
+                                      .First();
+
+            return result["estimatedValue"].AsDouble;
         }
 
         public double GetMinEnergy(DateTime dateTime)

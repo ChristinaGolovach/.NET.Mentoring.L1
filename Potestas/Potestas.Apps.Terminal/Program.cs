@@ -48,13 +48,15 @@ namespace Potestas.Apps.Terminal
 
             //------------------------------------------MongoDB Check
             //var connectopn = ConfigurationManager.ConnectionStrings["MongoDBObservationConnection"].ConnectionString;
-            //var newItem = new FlashObservation(2, 11, 23.3, new Coordinates(12, 12), DateTime.Now);
+            //var newItem = new FlashObservation( 11, 23.3, new Coordinates(12, 12), DateTime.Now);
 
             //var mongoStorage = new MongoDBStorage<IEnergyObservation>(connectopn, "observation", "energyObservations");
             //mongoStorage.Add(newItem);
-            //mongoStorage.Clear();
-            //mongoStorage.Remove(newItem);
 
+            //var analizer = new MongoDBAnalizer(mongoStorage.ObservationDBCollection);
+            ////mongoStorage.Clear();
+            ////mongoStorage.Remove(newItem);
+            //Console.WriteLine(analizer.GetMinEnergy(new Coordinates(12, 12)));
             //var countItems = mongoStorage.Count;
 
             //-------------------------------------------------------
