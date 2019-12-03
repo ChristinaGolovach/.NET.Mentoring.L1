@@ -46,6 +46,21 @@ namespace Potestas.Apps.Terminal
             //var current = enumerator.Current;
             //------------------------------------------
 
+            //------------------------------------------MongoDB Check
+            //var connectopn = ConfigurationManager.ConnectionStrings["MongoDBObservationConnection"].ConnectionString;
+            //var newItem = new FlashObservation( 11, 23.3, new Coordinates(12, 12), DateTime.Now);
+
+            //var mongoStorage = new MongoDBStorage<IEnergyObservation>(connectopn, "observation", "energyObservations");
+            //mongoStorage.Add(newItem);
+
+            //var analizer = new MongoDBAnalizer(mongoStorage.ObservationDBCollection);
+            ////mongoStorage.Clear();
+            ////mongoStorage.Remove(newItem);
+            //Console.WriteLine(analizer.GetMinEnergy(new Coordinates(12, 12)));
+            //var countItems = mongoStorage.Count;
+
+            //-------------------------------------------------------
+
             LoadPlugin();
             ShowMainMenu();
 
@@ -118,6 +133,7 @@ namespace Potestas.Apps.Terminal
                 Console.WriteLine("0. Go to Main menu.");
                 Console.WriteLine("1. Potestas.ADO.Plugin.dll");
                 Console.WriteLine("2. Potestas.ORM.Plugin.dll");
+                Console.WriteLine("3. Potestas.MongoDB.Plugin.dll");
 
                 bool pluginIsSelected = false;
 
@@ -136,6 +152,10 @@ namespace Potestas.Apps.Terminal
                             break;
                         case ConsoleKey.D2:
                             selectedPluginDllName = "Potestas.ORM.Plugin";
+                            LoadPluginDll();
+                            break;
+                        case ConsoleKey.D3:
+                            selectedPluginDllName = "Potestas.MongoDB.Plugin";
                             LoadPluginDll();
                             break;
                     }
