@@ -68,7 +68,7 @@ namespace Potestas.MongoDB.Plugin.Storages
                 return false;
             }
 
-            return deleteResult.DeletedCount > 0 ? true : false;
+            return deleteResult.DeletedCount > 0;
         }
 
         public bool Contains(T item)
