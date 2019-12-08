@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas", "Potestas\Potestas.csproj", "{EEB46883-CBA0-4919-B984-A3254930E9CA}"
 EndProject
@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.ORM.Plugin", "Pote
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.ORM.CodeFirstAproach", "Potestas.ORM.CodeFirstAproach\Potestas.ORM.CodeFirstAproach.csproj", "{7998598E-A38E-47A4-AB70-86623B442C12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.MongoDB.Plugin", "Potestas.MongoDB.Plugin\Potestas.MongoDB.Plugin.csproj", "{55B7EC06-DD74-40C9-8308-FFC980E5515A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.MongoDB.Plugin", "Potestas.MongoDB.Plugin\Potestas.MongoDB.Plugin.csproj", "{55B7EC06-DD74-40C9-8308-FFC980E5515A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.API", "Potestas.API\Potestas.API.csproj", "{100A5A5D-E94A-4752-8DDE-9DB61A83C6A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{55B7EC06-DD74-40C9-8308-FFC980E5515A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55B7EC06-DD74-40C9-8308-FFC980E5515A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55B7EC06-DD74-40C9-8308-FFC980E5515A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{100A5A5D-E94A-4752-8DDE-9DB61A83C6A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{100A5A5D-E94A-4752-8DDE-9DB61A83C6A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{100A5A5D-E94A-4752-8DDE-9DB61A83C6A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{100A5A5D-E94A-4752-8DDE-9DB61A83C6A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
