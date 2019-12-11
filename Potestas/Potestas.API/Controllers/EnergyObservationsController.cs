@@ -14,7 +14,7 @@ namespace Potestas.API.Controllers
 
         public EnergyObservationsController(IEnergyObservationService energyObservationService)
         {
-            _energyObservationService = energyObservationService; //ask: should we check null
+            _energyObservationService = energyObservationService;
         }
 
         [HttpGet]
@@ -48,14 +48,18 @@ namespace Potestas.API.Controllers
             return NoContent(); // ask: or return Ok();
         }
 
-        //[HttpDelete()]
-        //[ProducesResponseType(StatusCodes.Status204NoContent)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> ClearObservationsAsync()
-        //{
-        //    await _energyObservationService.ClearObservationsAsync();
+        [HttpDelete("clearing")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ClearObservationsAsync()
+        {
+            await _energyObservationService.ClearObservationsAsync();
 
-        //    return NoContent(); // ask: or return Ok();
-        //}
+            return NoContent(); // ask: or return Ok();
+        }
     }
+
+    //TODO
+    //https://code-maze.com/global-error-handling-aspnetcore/#builtinmiddleware
+    //https://weblog.west-wind.com/posts/2016/oct/16/error-handling-and-exceptionfilter-dependency-injection-for-aspnet-core-apis
 }

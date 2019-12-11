@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
-using AutoMapper;
 using Potestas.API.Mappers;
 using Potestas.API.Services;
 using Potestas.API.Services.Implementations;
-using Potestas.Storages;
+using Potestas.ORM.Plugin.Models;
+using Potestas.ORM.Plugin.Storages;
+using Potestas.ORM.Plugin.Analizers;
 
 namespace Potestas.API
 {
@@ -34,12 +30,19 @@ namespace Potestas.API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSwaggerGen(s => s.SwaggerDoc("v1", new Info { Title = "API", Version = "v1" }));
 
-            var mapperConfig = new MapperConfiguration(m => m.AddProfile(new EnergyObservationMappingProfile()));
-            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddRouting(opt => opt.LowercaseUrls = true);
 
-            services.AddSingleton(mapper);
+            services.AddCors();
+
+            string dbConnection = Configuration["Data:ConnectionStrings:ObservationConnection"];
+            services.AddDbContext<ObservationContext>(opt => opt.UseSqlServer(dbConnection));
+
+            services.AddSingleton(ConfigureMapper());
+            services.AddScoped<DbContext, ObservationContext>();
             services.AddScoped<IEnergyObservationService, EnergyObservationService>();
-            services.AddScoped<IEnergyObservationStorage<IEnergyObservation>, ListStorage>(); //TODO replase To ORM Storage 
+            services.AddScoped<IEnergyObservationStorage<IEnergyObservation>, DBStorage<IEnergyObservation>>();
+            services.AddScoped<IEnergyObservationAnalizer, ORMAnalizer>();
+            services.AddScoped<IResearcherService, ResearcherService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +64,12 @@ namespace Potestas.API
             app.UseSwaggerUI(s => s.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1"));
 
             app.UseMvc();
+        }
+
+        private IMapper ConfigureMapper()
+        {
+            var mapperConfig = new MapperConfiguration(m => m.AddProfile(new EnergyObservationMappingProfile()));
+            return mapperConfig.CreateMapper();
         }
     }
 }

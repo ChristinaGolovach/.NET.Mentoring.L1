@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Potestas.API.ViewModels;
+using Potestas.ORM.Plugin.Models;
 
 namespace Potestas.API.Mappers
 {
@@ -7,20 +8,26 @@ namespace Potestas.API.Mappers
     {
         public EnergyObservationMappingProfile()
         {
-            //CreateMap<EnergyObservationModel, IEnergyObservation>()
-            //    .ForMember(d => d.ObservationPoint, opt => opt.MapFrom(src => src.ObservationPoint))
-            //    .ReverseMap()
-            //    .ForPath(s => s.ObservationPoint, opt => opt.MapFrom(src => src.ObservationPoint));
+            CreateMap<CoordinatesModel, EnergyObservations>();
 
-            //CreateMap<EnergyObservationModel, IEnergyObservation>().ForMember(dest => dest.ObservationPoint, member => member.MapFrom(src => src.ObservationPoint));
+            CreateMap<CoordinatesModel, ORM.Plugin.Models.Coordinates>().ReverseMap();
 
+            CreateMap<CoordinatesModel, Coordinates>()
+                .ConstructUsing(src => new Coordinates(src.Id, src.X, src.Y));
 
-            CreateMap<CoordinatesModel, IEnergyObservation>(); //xчто-то странный мапинг потребовал автомапер
+            CreateMap<EnergyObservations, EnergyObservationModel>()
+                    .ForMember(d => d.ObservationPoint, opt => opt.MapFrom(src => src.Coordinate))
+                    .ReverseMap()
+                    .ForPath(d => d.Coordinate, opt => opt.MapFrom(src => src.ObservationPoint));
 
-            CreateMap<EnergyObservationModel, IEnergyObservation>().IncludeMembers(s => s.ObservationPoint);
-
-
-            // CreateMap<IEnergyObservation, EnergyObservationModel>();
+            CreateMap<EnergyObservationModel, IEnergyObservation>()
+                .ConstructUsing(src => new EnergyObservations()
+                {
+                    Id = src.Id,
+                    Coordinate = new ORM.Plugin.Models.Coordinates() { Id = src.ObservationPoint.Id, X = src.ObservationPoint.X, Y = src.ObservationPoint.Y },
+                    EstimatedValue = src.EstimatedValue,
+                    ObservationTime = src.ObservationTime
+                });
         }
     }
 

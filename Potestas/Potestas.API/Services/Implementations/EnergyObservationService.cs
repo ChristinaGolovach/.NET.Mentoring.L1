@@ -31,8 +31,7 @@ namespace Potestas.API.Services.Implementations
 
         public async Task AddObservationAsync(EnergyObservationModel flashObservation)
         {
-            var mapResult = _mapper.Map<EnergyObservationModel, IEnergyObservation>(flashObservation);
-            await Task.Run(() => _storage.Add(_mapper.Map<EnergyObservationModel, IEnergyObservation>(flashObservation)));
+            await Task.Run(() => _storage.Add(_mapper.Map<IEnergyObservation>(flashObservation)));
         }
 
         public async Task DeleteObservationAsync(EnergyObservationModel flashObservation)
