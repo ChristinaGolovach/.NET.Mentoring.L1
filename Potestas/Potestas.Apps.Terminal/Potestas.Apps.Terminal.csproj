@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Potestas.API.Plugin\Potestas.API.Plugin.csproj" />
     <ProjectReference Include="..\Potestas\Potestas.csproj" />
   </ItemGroup>
 

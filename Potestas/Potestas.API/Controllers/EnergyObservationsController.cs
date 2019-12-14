@@ -25,6 +25,22 @@ namespace Potestas.API.Controllers
             return Ok(await _energyObservationService.GetAllObservationsAsync());
         }
 
+        [HttpGet("count")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCount()
+        {
+            return Ok(await _energyObservationService.GetCountAsync());
+        }
+
+        [HttpPost("checking/existence")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CheckExistenceAsync([FromBody] EnergyObservationModel energyObservation)
+        {
+            return Ok(await _energyObservationService.CheckExistenceAsync(energyObservation));
+        }
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -38,7 +54,7 @@ namespace Potestas.API.Controllers
         // !ModelState.IsValid is unnecessary in an action method
 
 
-        [HttpDelete()]
+        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteObservationAsync([FromBody] EnergyObservationModel flashObservation)

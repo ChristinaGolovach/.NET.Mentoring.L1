@@ -1,6 +1,7 @@
 ﻿using Potestas.API.Plugin.Analizers;
 using Potestas.API.Plugin.Storages;
 using Potestas.Processors;
+using System;
 
 namespace Potestas.API.Plugin.Factories
 {
@@ -30,4 +31,15 @@ namespace Potestas.API.Plugin.Factories
             return _storage;
         }
     }
+
+    //public interface IEnergyObservationOpen : IEnergyObservation
+    //{
+    //    int Id { get; set; }
+
+    //    Coordinates ObservationPoint { get; set; }
+
+    //    double EstimatedValue { get; set; }
+
+    //    DateTime ObservationTime { get; set; }
+    //}
 }

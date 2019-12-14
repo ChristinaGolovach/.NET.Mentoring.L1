@@ -1,8 +1,10 @@
 ﻿using Potestas.Analizers;
+using Potestas.API.Plugin.Storages;
 using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.ProcessingGroup;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
+using Potestas.Observations;
 using Potestas.Serializers;
 using Potestas.Sources;
 using Potestas.Storages;
@@ -60,6 +62,16 @@ namespace Potestas.Apps.Terminal
             //var countItems = mongoStorage.Count;
 
             //-------------------------------------------------------
+
+            //--------------------------------------API Plugin Check
+            var apiStorage = new APIStorage<IEnergyObservation>();
+            var newItem = new FlashObservation(5989, 11, 23.3, new Coordinates(5976, 12, 12), DateTime.Now);
+            //apiStorage.Remove(newItem);
+            IEnergyObservation[] array = new IEnergyObservation[45];
+            array[1] = newItem;
+            apiStorage.CopyTo(array, 1);
+
+            //------------------------------------------------------
 
             LoadPlugin();
             ShowMainMenu();

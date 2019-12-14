@@ -29,6 +29,16 @@ namespace Potestas.API.Services.Implementations
             return observations;
         }
 
+        public async Task<int> GetCountAsync()
+        {
+            return await Task.Run(() => _storage.Count));
+        }
+
+        public async Task<bool> CheckExistenceAsync(EnergyObservationModel flashObservation)
+        {
+            return await Task.Run(() => _storage.Contains(_mapper.Map<IEnergyObservation>(flashObservation)));
+        }
+
         public async Task AddObservationAsync(EnergyObservationModel flashObservation)
         {
             await Task.Run(() => _storage.Add(_mapper.Map<IEnergyObservation>(flashObservation)));

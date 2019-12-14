@@ -8,6 +8,10 @@ namespace Potestas.API.Services
     {
         Task<IEnumerable<EnergyObservationModel>> GetAllObservationsAsync();
 
+        Task<int> GetCountAsync();
+
+        Task<bool> CheckExistenceAsync(EnergyObservationModel flashObservation);
+
         Task AddObservationAsync(EnergyObservationModel flashObservation);
 
         Task DeleteObservationAsync(EnergyObservationModel flashObservation);
