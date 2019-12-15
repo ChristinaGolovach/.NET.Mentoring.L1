@@ -1,8 +1,12 @@
 ## How to run app
 
+[module_6](#module_6) 
 [module_7](#module_7) 
 
-### module_6
+
+
+
+<a name="module_6"><h3>module_6</h3></a>
 #### Using docker
 
 Steps:
