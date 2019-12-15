@@ -43,15 +43,4 @@ namespace Potestas.API.Plugin.Factories
             return _httpClientService;
         }
     }
-
-    //public interface IEnergyObservationOpen : IEnergyObservation
-    //{
-    //    int Id { get; set; }
-
-    //    Coordinates ObservationPoint { get; set; }
-
-    //    double EstimatedValue { get; set; }
-
-    //    DateTime ObservationTime { get; set; }
-    //}
 }
