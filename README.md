@@ -51,6 +51,8 @@ in the Potestas.Apps.Terminal/App.config file
 #### Task_1
 - in **cmd** go to the folder .NET.Mentoring.L1/Potestas/Potestas.API and enter ```dotnet run``` after open in browser http://localhost:5000/swagger/index.html for testing or use Postman
 
+![alt-текст](https://github.com/ChristinaGolovach/.NET.Mentoring.L1/blob/module_7/Potestas/module_7.png) 
+
 
 #### Task_2
 - in **cmd** go to the folder .NET.Mentoring.L1/Potestas/Potestas.API and enter ```dotnet run```
