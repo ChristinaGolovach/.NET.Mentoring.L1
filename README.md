@@ -1,5 +1,7 @@
 ## How to run app
 
+[module_7](#module_7) 
+
 ### module_6
 #### Using docker
 
@@ -41,7 +43,7 @@ in the Potestas.Apps.Terminal/App.config file
 - run Potestas.App.Terminal project
 
 
-### module_7
+<a name="module_7"><h3>module_7</h3></a>
 #### Task_1
 - in **cmd** go to the folder .NET.Mentoring.L1/Potestas/Potestas.API and enter ```dotnet run``` after open in browser http://localhost:5000/swagger/index.html for testing or use Postman
 
