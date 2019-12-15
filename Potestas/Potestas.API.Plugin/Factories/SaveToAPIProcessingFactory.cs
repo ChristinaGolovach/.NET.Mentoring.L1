@@ -1,13 +1,15 @@
 ﻿using Potestas.API.Plugin.Analizers;
+using Potestas.API.Plugin.Services;
+using Potestas.API.Plugin.Services.Implementations;
 using Potestas.API.Plugin.Storages;
 using Potestas.Processors;
-using System;
 
 namespace Potestas.API.Plugin.Factories
 {
     public class SaveToAPIProcessingFactory : IProcessingFactory<IEnergyObservation>
     {
         private IEnergyObservationStorage<IEnergyObservation> _storage;
+        private IHttpClientService _httpClientService;
 
         public IEnergyObservationAnalizer CreateAnalizer() 
             => new APIAnalizer();
@@ -25,10 +27,20 @@ namespace Potestas.API.Plugin.Factories
         {
             if (_storage == null)
             {
-                _storage = new APIStorage<IEnergyObservation>();
+                _storage = new APIStorage<IEnergyObservation>(GetHttpService());
             }
 
             return _storage;
+        }
+
+        private IHttpClientService GetHttpService()
+        {
+            if (_httpClientService == null)
+            {
+                _httpClientService = new HttpClientService();
+            }
+
+            return _httpClientService;
         }
     }
 

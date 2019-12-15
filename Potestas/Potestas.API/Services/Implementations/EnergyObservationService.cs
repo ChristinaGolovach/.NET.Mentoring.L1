@@ -31,7 +31,7 @@ namespace Potestas.API.Services.Implementations
 
         public async Task<int> GetCountAsync()
         {
-            return await Task.Run(() => _storage.Count));
+            return await Task.Run(() => _storage.Count);
         }
 
         public async Task<bool> CheckExistenceAsync(EnergyObservationModel flashObservation)

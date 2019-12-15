@@ -1,4 +1,5 @@
 ﻿using Potestas.Analizers;
+using Potestas.API.Plugin.Services.Implementations;
 using Potestas.API.Plugin.Storages;
 using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.ProcessingGroup;
@@ -64,11 +65,11 @@ namespace Potestas.Apps.Terminal
             //-------------------------------------------------------
 
             //--------------------------------------API Plugin Check
-            var apiStorage = new APIStorage<IEnergyObservation>();
+            var apiStorage = new APIStorage<IEnergyObservation>(new HttpClientService());
             var newItem = new FlashObservation(5989, 11, 23.3, new Coordinates(5976, 12, 12), DateTime.Now);
             //apiStorage.Remove(newItem);
             IEnergyObservation[] array = new IEnergyObservation[45];
-            array[1] = newItem;
+            array[0] = newItem;
             apiStorage.CopyTo(array, 1);
 
             //------------------------------------------------------

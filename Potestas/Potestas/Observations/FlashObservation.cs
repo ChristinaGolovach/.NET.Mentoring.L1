@@ -22,7 +22,7 @@ namespace Potestas.Observations
     */
     public struct FlashObservation : IEnergyObservation, IEquatable<FlashObservation>
     {
-        //private double estimatedValue;
+        //private double _estimatedValue;
         public static readonly double PRECISION = 0.01;
         public static readonly int MININTENSITY = 0;
         public static readonly int MAXINTENSITY = 2000000000;
@@ -38,7 +38,7 @@ namespace Potestas.Observations
 
         public double EstimatedValue { get => Intensity * DurationMs; }
 
-        // public double EstimatedValue { get => estimatedValue; set { estimatedValue = value; } }
+        //public double EstimatedValue { get => _estimatedValue; set { _estimatedValue = value; } }
 
         public FlashObservation(int durationMs, double intensity, Coordinates observationPoint) 
             : this (durationMs, intensity, observationPoint, DateTime.UtcNow) { }
@@ -46,10 +46,15 @@ namespace Potestas.Observations
         public FlashObservation(int durationMs, double intensity, Coordinates observationPoint, DateTime observationTime) 
             : this(0, durationMs, intensity, observationPoint, observationTime) { }
 
-        //public FlashObservation(int id, int estimatedValue, Coordinates observationPoint, DateTime observationTime)
-        //    : this(id, 0, 0, observationPoint, observationTime)
+        //public FlashObservation(int id, int estimatedValue, Coordinates observationPoint, DateTime observationTime)            
         //{
-        //    EstimatedValue = estimatedValue;
+        //    Id = id;
+        //    DurationMs = 0;
+        //    Intensity = 0;
+        //    ObservationPoint = observationPoint;
+        //    ObservationTime = observationTime;
+        //    _estimatedValue = estimatedValue;
+
         //}
 
         public FlashObservation(int id, int durationMs, double intensity, Coordinates observationPoint, DateTime observationTime)
@@ -63,7 +68,6 @@ namespace Potestas.Observations
             Intensity = intensity;
             ObservationPoint = observationPoint;
             ObservationTime = observationTime;
-            //estimatedValue = durationMs * intensity;
             Id = id;
         }
 
