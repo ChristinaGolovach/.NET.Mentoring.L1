@@ -1,7 +1,7 @@
 ## How to run app
 
-[module_6](#module_6) 
-[module_7](#module_7) 
+- [module_6](#module_6) 
+- [module_7](#module_7) 
 
 
 
