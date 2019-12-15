@@ -38,6 +38,7 @@ namespace Potestas.API.Controllers
         //ASk про возвращаемое значение 
         [HttpPost("byCoordinates/averageEnergy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAverageEnergyAsync([MaxLength(2), FromBody] CoordinatesModel[] coordinates)
         {
@@ -78,6 +79,7 @@ namespace Potestas.API.Controllers
 
         [HttpPost("byCoordinates/maxEnergy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetMaxEnergy([FromBody] CoordinatesModel coordinate)
         {
@@ -118,6 +120,7 @@ namespace Potestas.API.Controllers
 
         [HttpPost("byCoordinates/minEnergy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetMinEnergyAsync([FromBody] CoordinatesModel coordinate)
         {

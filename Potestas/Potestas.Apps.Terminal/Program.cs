@@ -66,9 +66,9 @@ namespace Potestas.Apps.Terminal
             //-------------------------------------------------------
 
             //--------------------------------------API Plugin Check
-            var httpClient = new HttpClientService();
-            var apiStorage = new APIStorage<IEnergyObservation>(httpClient);
-            var analizer = new APIAnalizer(httpClient);
+            //var httpClient = new HttpClientService();
+            //var apiStorage = new APIStorage<IEnergyObservation>(httpClient);
+            //var analizer = new APIAnalizer(httpClient);
             //var newItem = new FlashObservation(5989, 11, 23.3, new Coordinates(5976, 12, 12), DateTime.Now);
             ////apiStorage.Remove(newItem);
             //IEnergyObservation[] array = new IEnergyObservation[45];
@@ -80,7 +80,7 @@ namespace Potestas.Apps.Terminal
             //var result2 = analizer.GetDistributionByEnergyValue();
             //var result3 = analizer.GetDistributionByObservationTime();
             //var result4 = analizer.GetDistributionByCoordinates();
-            var result5 = analizer.GetMinEnergyPosition();
+            //var result5 = analizer.GetMinEnergyPosition();
             //------------------------------------------------------
 
             LoadPlugin();
@@ -156,6 +156,8 @@ namespace Potestas.Apps.Terminal
                 Console.WriteLine("1. Potestas.ADO.Plugin.dll");
                 Console.WriteLine("2. Potestas.ORM.Plugin.dll");
                 Console.WriteLine("3. Potestas.MongoDB.Plugin.dll");
+                Console.WriteLine("4. Potestas.API.Plugin.dll");
+
 
                 bool pluginIsSelected = false;
 
@@ -178,6 +180,10 @@ namespace Potestas.Apps.Terminal
                             break;
                         case ConsoleKey.D3:
                             selectedPluginDllName = "Potestas.MongoDB.Plugin";
+                            LoadPluginDll();
+                            break;
+                        case ConsoleKey.D4:
+                            selectedPluginDllName = "Potestas.API.Plugin";
                             LoadPluginDll();
                             break;
                     }

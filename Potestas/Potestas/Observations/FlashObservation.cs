@@ -22,7 +22,6 @@ namespace Potestas.Observations
     */
     public struct FlashObservation : IEnergyObservation, IEquatable<FlashObservation>
     {
-        //private double _estimatedValue;
         public static readonly double PRECISION = 0.01;
         public static readonly int MININTENSITY = 0;
         public static readonly int MAXINTENSITY = 2000000000;
@@ -38,24 +37,11 @@ namespace Potestas.Observations
 
         public double EstimatedValue { get => Intensity * DurationMs; }
 
-        //public double EstimatedValue { get => _estimatedValue; set { _estimatedValue = value; } }
-
         public FlashObservation(int durationMs, double intensity, Coordinates observationPoint) 
             : this (durationMs, intensity, observationPoint, DateTime.UtcNow) { }
 
         public FlashObservation(int durationMs, double intensity, Coordinates observationPoint, DateTime observationTime) 
             : this(0, durationMs, intensity, observationPoint, observationTime) { }
-
-        //public FlashObservation(int id, int estimatedValue, Coordinates observationPoint, DateTime observationTime)            
-        //{
-        //    Id = id;
-        //    DurationMs = 0;
-        //    Intensity = 0;
-        //    ObservationPoint = observationPoint;
-        //    ObservationTime = observationTime;
-        //    _estimatedValue = estimatedValue;
-
-        //}
 
         public FlashObservation(int id, int durationMs, double intensity, Coordinates observationPoint, DateTime observationTime)
         {

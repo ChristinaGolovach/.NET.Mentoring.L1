@@ -35,6 +35,7 @@ namespace Potestas.API.Controllers
 
         [HttpPost("checking/existence")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CheckExistenceAsync([FromBody] EnergyObservationModel energyObservation)
         {
@@ -43,6 +44,7 @@ namespace Potestas.API.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] EnergyObservationModel energyObservation)
         {
@@ -56,6 +58,7 @@ namespace Potestas.API.Controllers
 
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteObservationAsync([FromBody] EnergyObservationModel flashObservation)
         {
@@ -75,7 +78,7 @@ namespace Potestas.API.Controllers
         }
     }
 
-    //TODO
+    //TODO in the next module
     //https://code-maze.com/global-error-handling-aspnetcore/#builtinmiddleware
     //https://weblog.west-wind.com/posts/2016/oct/16/error-handling-and-exceptionfilter-dependency-injection-for-aspnet-core-apis
 }

@@ -12,6 +12,10 @@ using Potestas.API.Services.Implementations;
 using Potestas.ORM.Plugin.Models;
 using Potestas.ORM.Plugin.Storages;
 using Potestas.ORM.Plugin.Analizers;
+using FluentValidation.AspNetCore;
+using Potestas.API.Validators;
+using FluentValidation;
+using Potestas.API.ViewModels;
 
 namespace Potestas.API
 {
@@ -27,7 +31,10 @@ namespace Potestas.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                    .AddFluentValidation();
+
             services.AddSwaggerGen(s => s.SwaggerDoc("v1", new Info { Title = "API", Version = "v1" }));
 
             services.AddRouting(opt => opt.LowercaseUrls = true);
@@ -43,6 +50,9 @@ namespace Potestas.API
             services.AddScoped<IEnergyObservationStorage<IEnergyObservation>, DBStorage<IEnergyObservation>>();
             services.AddScoped<IEnergyObservationAnalizer, ORMAnalizer>();
             services.AddScoped<IResearcherService, ResearcherService>();
+            services.AddScoped<IValidator<EnergyObservationModel>, EnergyObservationModelValidator>();
+            services.AddScoped<IValidator<CoordinatesModel>, CoordinatesModelValidator>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
