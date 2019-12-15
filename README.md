@@ -39,3 +39,8 @@ Steps:
 **connectionString="mongodb://host.docker.internal:27017/observation"** to the **connectionString="mongodb://localhost/observation"**
 in the Potestas.Apps.Terminal/App.config file
 - run Potestas.App.Terminal project
+
+
+### module_7
+#### Task_1
+in **cmd** go to the folder .NET.Mentoring.L1/Potestas/Potestas.API and enter ```dotnet run``` after open in browser http://localhost:5000/swagger/index.html for testing or use Postman
