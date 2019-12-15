@@ -15,6 +15,9 @@ namespace Potestas.API.Mappers
             CreateMap<CoordinatesModel, Coordinates>()
                 .ConstructUsing(src => new Coordinates(src.Id, src.X, src.Y));
 
+            CreateMap<Coordinates, CoordinatesModel>()
+                .ConstructUsing(src => new CoordinatesModel { Id = src.Id, X = src.X, Y = src.Y });
+
             CreateMap<EnergyObservations, EnergyObservationModel>()
                     .ForMember(d => d.ObservationPoint, opt => opt.MapFrom(src => src.Coordinate))
                     .ReverseMap()

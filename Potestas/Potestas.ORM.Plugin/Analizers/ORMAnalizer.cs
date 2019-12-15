@@ -23,6 +23,7 @@ namespace Potestas.ORM.Plugin.Analizers
         public double GetAverageEnergy(DateTime startFrom, DateTime endBy)
         {
             return _dbContext.Set<EnergyObservations>().Where(obs => obs.ObservationTime >= startFrom && endBy >= obs.ObservationTime)
+                                                       .DefaultIfEmpty()
                                                        .Average(obs => obs.EstimatedValue);
         }
 

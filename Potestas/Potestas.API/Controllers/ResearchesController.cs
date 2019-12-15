@@ -32,11 +32,10 @@ namespace Potestas.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAverageEnergy([FromQuery] DateTime startFrom, [FromQuery] DateTime endBy)
         {
-            //Todo add validation 
-
             return Ok(await _researcherService.GetAverageEnergyAsync(startFrom, endBy));
         }
-
+ 
+        //ASk про возвращаемое значение 
         [HttpPost("byCoordinates/averageEnergy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

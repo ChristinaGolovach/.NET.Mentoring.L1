@@ -36,7 +36,7 @@ namespace Potestas.API.Services.Implementations
         {
             var distribution = await Task.Run(() => _analizer.GetDistributionByCoordinates());
 
-            return distribution.ToDictionary(keyValue => _mapper.Map<CoordinatesModel>(keyValue.Key), 
+           return distribution.ToDictionary(keyValue => _mapper.Map<CoordinatesModel>(keyValue.Key), 
                                              keyValue => keyValue.Value);
         }
 

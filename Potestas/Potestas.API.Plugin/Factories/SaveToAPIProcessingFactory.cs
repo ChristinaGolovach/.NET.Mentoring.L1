@@ -12,7 +12,7 @@ namespace Potestas.API.Plugin.Factories
         private IHttpClientService _httpClientService;
 
         public IEnergyObservationAnalizer CreateAnalizer() 
-            => new APIAnalizer();
+            => new APIAnalizer(GetHttpService());
 
 
         public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()

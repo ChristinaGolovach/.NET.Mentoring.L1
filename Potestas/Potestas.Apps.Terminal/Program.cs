@@ -1,4 +1,5 @@
 ﻿using Potestas.Analizers;
+using Potestas.API.Plugin.Analizers;
 using Potestas.API.Plugin.Services.Implementations;
 using Potestas.API.Plugin.Storages;
 using Potestas.ApplicationFrame;
@@ -65,13 +66,21 @@ namespace Potestas.Apps.Terminal
             //-------------------------------------------------------
 
             //--------------------------------------API Plugin Check
-            var apiStorage = new APIStorage<IEnergyObservation>(new HttpClientService());
-            var newItem = new FlashObservation(5989, 11, 23.3, new Coordinates(5976, 12, 12), DateTime.Now);
-            //apiStorage.Remove(newItem);
-            IEnergyObservation[] array = new IEnergyObservation[45];
-            array[0] = newItem;
-            apiStorage.CopyTo(array, 1);
+            var httpClient = new HttpClientService();
+            var apiStorage = new APIStorage<IEnergyObservation>(httpClient);
+            var analizer = new APIAnalizer(httpClient);
+            //var newItem = new FlashObservation(5989, 11, 23.3, new Coordinates(5976, 12, 12), DateTime.Now);
+            ////apiStorage.Remove(newItem);
+            //IEnergyObservation[] array = new IEnergyObservation[45];
+            //array[0] = newItem;
+            //apiStorage.CopyTo(array, 1);
 
+            //var result = analizer.GetAverageEnergy(DateTime.Now.AddDays(-2), DateTime.Now);
+            //var result = analizer.GetAverageEnergy(new Coordinates(5979, 45, 19), new Coordinates(5980, 14, 14));
+            //var result2 = analizer.GetDistributionByEnergyValue();
+            //var result3 = analizer.GetDistributionByObservationTime();
+            //var result4 = analizer.GetDistributionByCoordinates();
+            var result5 = analizer.GetMinEnergyPosition();
             //------------------------------------------------------
 
             LoadPlugin();
