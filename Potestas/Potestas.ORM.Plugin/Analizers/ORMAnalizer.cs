@@ -23,24 +23,28 @@ namespace Potestas.ORM.Plugin.Analizers
         public double GetAverageEnergy(DateTime startFrom, DateTime endBy)
         {
             return _dbContext.Set<EnergyObservations>().Where(obs => obs.ObservationTime >= startFrom && endBy >= obs.ObservationTime)
+                                                       .DefaultIfEmpty()
                                                        .Average(obs => obs.EstimatedValue);
         }
 
         public double GetAverageEnergy(Coordinates rectTopLeft, Coordinates rectBottomRight)
         {
+            var result = _dbContext.Set<EnergyObservations>().Include(obs => obs.Coordinate);
+
             return _dbContext.Set<EnergyObservations>().Include(obs => obs.Coordinate)
                                                        .Where(obs => obs.Coordinate.X > rectTopLeft.X
                                                                      && obs.Coordinate.X < rectBottomRight.X
                                                                      && obs.Coordinate.Y > rectBottomRight.Y
                                                                      && obs.Coordinate.Y < rectTopLeft.Y)
+                                                       .DefaultIfEmpty()
                                                        .Average(obs => obs.EstimatedValue);
         }
 
         public IDictionary<Coordinates, int> GetDistributionByCoordinates()
         {
             var ORMDistribution = _dbContext.Set<EnergyObservations>().Include(obs => obs.Coordinate)
-                                                                    .GroupBy(obs => obs.Coordinate)
-                                                                    .ToDictionary(k => k.Key, v => v.Count());
+                                                                      .GroupBy(obs => obs.Coordinate)
+                                                                      .ToDictionary(k => k.Key, v => v.Count());
 
             var domainDistribution = new Dictionary<Coordinates, int>();
 
@@ -84,9 +88,9 @@ namespace Potestas.ORM.Plugin.Analizers
         public Coordinates GetMaxEnergyPosition()
         {
             var ORMCoordinates = _dbContext.Set<EnergyObservations>().Include(obs => obs.Coordinate)
-                                                                      .OrderByDescending(obs => obs.EstimatedValue)
-                                                                      .AsQueryable()
-                                                                      .First().Coordinate;
+                                                                     .OrderByDescending(obs => obs.EstimatedValue)
+                                                                     .AsQueryable()
+                                                                     .First().Coordinate;
 
             return ORMCoordinates.ToDomainEntity();
         }

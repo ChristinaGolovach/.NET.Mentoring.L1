@@ -1,6 +1,12 @@
 ## How to run app
 
+- [module_6](#module_6) 
+- [module_7](#module_7) 
 
+
+
+
+<a name="module_6"><h3>module_6</h3></a>
 #### Using docker
 
 Steps:
@@ -39,3 +45,15 @@ Steps:
 **connectionString="mongodb://host.docker.internal:27017/observation"** to the **connectionString="mongodb://localhost/observation"**
 in the Potestas.Apps.Terminal/App.config file
 - run Potestas.App.Terminal project
+
+
+<a name="module_7"><h3>module_7</h3></a>
+#### Task_1
+- in **cmd** go to the folder .NET.Mentoring.L1/Potestas/Potestas.API and enter ```dotnet run``` after open in browser http://localhost:5000/swagger/index.html for testing or use Postman
+
+![alt-текст](https://github.com/ChristinaGolovach/.NET.Mentoring.L1/blob/module_7/Potestas/module_7.png) 
+
+
+#### Task_2
+- in **cmd** go to the folder .NET.Mentoring.L1/Potestas/Potestas.API and enter ```dotnet run```
+- in Visual Studio (or VS Code :) ) run **Potestas.Apps.Terminal** project

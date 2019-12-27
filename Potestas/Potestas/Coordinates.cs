@@ -1,4 +1,5 @@
-﻿using Potestas.Observations.Comparers;
+﻿using Newtonsoft.Json;
+using Potestas.Observations.Comparers;
 using System;
 
 namespace Potestas

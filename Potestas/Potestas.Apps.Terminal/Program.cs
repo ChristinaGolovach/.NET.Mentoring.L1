@@ -1,8 +1,12 @@
 ﻿using Potestas.Analizers;
+using Potestas.API.Plugin.Analizers;
+using Potestas.API.Plugin.Services.Implementations;
+using Potestas.API.Plugin.Storages;
 using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.ProcessingGroup;
 using Potestas.ApplicationFrame.SourceRegistration;
 using Potestas.Factories;
+using Potestas.Observations;
 using Potestas.Serializers;
 using Potestas.Sources;
 using Potestas.Storages;
@@ -60,6 +64,24 @@ namespace Potestas.Apps.Terminal
             //var countItems = mongoStorage.Count;
 
             //-------------------------------------------------------
+
+            //--------------------------------------API Plugin Check
+            //var httpClient = new HttpClientService();
+            //var apiStorage = new APIStorage<IEnergyObservation>(httpClient);
+            //var analizer = new APIAnalizer(httpClient);
+            //var newItem = new FlashObservation(5989, 11, 23.3, new Coordinates(5976, 12, 12), DateTime.Now);
+            ////apiStorage.Remove(newItem);
+            //IEnergyObservation[] array = new IEnergyObservation[45];
+            //array[0] = newItem;
+            //apiStorage.CopyTo(array, 1);
+
+            //var result = analizer.GetAverageEnergy(DateTime.Now.AddDays(-2), DateTime.Now);
+            //var result = analizer.GetAverageEnergy(new Coordinates(5979, 45, 19), new Coordinates(5980, 14, 14));
+            //var result2 = analizer.GetDistributionByEnergyValue();
+            //var result3 = analizer.GetDistributionByObservationTime();
+            //var result4 = analizer.GetDistributionByCoordinates();
+            //var result5 = analizer.GetMinEnergyPosition();
+            //------------------------------------------------------
 
             LoadPlugin();
             ShowMainMenu();
@@ -134,6 +156,8 @@ namespace Potestas.Apps.Terminal
                 Console.WriteLine("1. Potestas.ADO.Plugin.dll");
                 Console.WriteLine("2. Potestas.ORM.Plugin.dll");
                 Console.WriteLine("3. Potestas.MongoDB.Plugin.dll");
+                Console.WriteLine("4. Potestas.API.Plugin.dll");
+
 
                 bool pluginIsSelected = false;
 
@@ -156,6 +180,10 @@ namespace Potestas.Apps.Terminal
                             break;
                         case ConsoleKey.D3:
                             selectedPluginDllName = "Potestas.MongoDB.Plugin";
+                            LoadPluginDll();
+                            break;
+                        case ConsoleKey.D4:
+                            selectedPluginDllName = "Potestas.API.Plugin";
                             LoadPluginDll();
                             break;
                     }
