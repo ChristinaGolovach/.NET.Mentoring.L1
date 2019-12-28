@@ -19,7 +19,7 @@ namespace Potestas.Factories
             => new AnalizerLoggerDecorator(new LINQAnalizer(GetStorage()), GetLogger());
 
         private IEnergyObservationStorage<IEnergyObservation> GetStorage()
-            => _storage ?? new StorageLoggerDecorator<IEnergyObservation>(new ListStorage(), GetLogger());
+            => _storage == null ? _storage = new StorageLoggerDecorator<IEnergyObservation>(new ListStorage(), GetLogger()) : _storage;
 
         private ILoggerManager GetLogger() => _logger == null ? _logger = new LoggerManager() : _logger;
     }

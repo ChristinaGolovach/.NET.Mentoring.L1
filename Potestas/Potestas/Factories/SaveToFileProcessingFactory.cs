@@ -35,7 +35,7 @@ namespace Potestas.Factories
         
 
         private IEnergyObservationStorage<IEnergyObservation> GetStorage()
-            => _storage ?? new StorageLoggerDecorator<IEnergyObservation>(new FileStorage<IEnergyObservation>(_storagePath, _serializer), GetLogger());
+            => _storage == null ? _storage = new StorageLoggerDecorator<IEnergyObservation>(new FileStorage<IEnergyObservation>(_storagePath, _serializer), GetLogger()) : _storage;
 
 
         private ILoggerManager GetLogger() => _logger == null ? _logger = new LoggerManager() : _logger;
