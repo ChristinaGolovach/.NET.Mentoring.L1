@@ -1,9 +1,11 @@
-﻿using Potestas.Analizers;
+﻿using System;
+using Potestas.Analizers;
 using Potestas.Processors;
 using Potestas.Serializers;
 using Potestas.Storages;
 using Potestas.Utils;
-using System;
+using Potestas.Utils.Cache;
+using Potestas.Utils.Cache.Storages;
 
 namespace Potestas.Factories
 {
@@ -12,6 +14,7 @@ namespace Potestas.Factories
         private IEnergyObservationStorage<IEnergyObservation> _storage;
         private ISerializer<IEnergyObservation> _serializer;
         private ILoggerManager _logger;
+        private IStorage<int, IEnergyObservation> _cacheStorage;
         private string _storagePath;
 
         public SaveToFileProcessingFactory(string storagePath, ISerializer<IEnergyObservation> serializer)
@@ -35,9 +38,20 @@ namespace Potestas.Factories
         
 
         private IEnergyObservationStorage<IEnergyObservation> GetStorage()
-            => _storage == null ? _storage = new StorageLoggerDecorator<IEnergyObservation>(new FileStorage<IEnergyObservation>(_storagePath, _serializer), GetLogger()) : _storage;
+        {
+            if(_storage == null)
+            {
+                var fileStorage = new FileStorage<IEnergyObservation>(_storagePath, _serializer);
+                var storageWithLogger = new StorageLoggerDecorator<IEnergyObservation>(fileStorage, GetLogger());
+                _storage = new StorageCacheDecorator<IEnergyObservation>(storageWithLogger, new CacheService<int, IEnergyObservation>(GetCacheStorage()));
+            }
 
+            return _storage;
+        }
 
         private ILoggerManager GetLogger() => _logger == null ? _logger = new LoggerManager() : _logger;
+
+        private IStorage<int, IEnergyObservation> GetCacheStorage()
+            => _cacheStorage == null ? _cacheStorage = new InMemoryStorage<int, IEnergyObservation>() : _cacheStorage; 
     }
 }
