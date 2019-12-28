@@ -3,6 +3,7 @@ using Potestas.Analizers;
 using Potestas.Processors;
 using Potestas.Serializers;
 using Potestas.Storages;
+using Potestas.Utils;
 
 namespace Potestas.Factories
 {
@@ -10,37 +11,30 @@ namespace Potestas.Factories
     {
         private IEnergyObservationStorage<IEnergyObservation> _storage;
         private ISerializer<IEnergyObservation> _serializer;
+        private ILoggerManager _logger;
         private string _storagePath;
 
         public SaveToFileStorageProcessingFactory(string storagePath, ISerializer<IEnergyObservation> serializer)
         {
-            _storagePath = storagePath ?? throw new ArgumentNullException($"The {nameof(storagePath)} can not be null.");  //ConfigurationManager.AppSettings["fileStoragePath"];
+            _storagePath = storagePath ?? throw new ArgumentNullException($"The {nameof(storagePath)} can not be null.");
             _serializer = serializer ?? throw new ArgumentNullException($"The {nameof(serializer)} can not be null.");
         }
 
         public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()
-        {
-            return new SaveToStorageProcessor<IEnergyObservation>(GetStorage());
-        }
+            => new ProcessorLoggerDecorator<IEnergyObservation>(new SaveToStorageProcessor<IEnergyObservation>(GetStorage()), GetLogger());
+        
 
-        public IEnergyObservationStorage<IEnergyObservation> CreateStorage()
-        {
-            return GetStorage();
-        }
+        public IEnergyObservationStorage<IEnergyObservation> CreateStorage() => GetStorage();
+
 
         public IEnergyObservationAnalizer CreateAnalizer()
-        {
-            return new LINQAnalizer(GetStorage());
-        }
+            => new AnalizerLoggerDecorator(new LINQAnalizer(GetStorage()), GetLogger());       
+        
 
         private IEnergyObservationStorage<IEnergyObservation> GetStorage()
-        {
-            if (_storage == null)
-            {
-                _storage = new FileStorage<IEnergyObservation>(_storagePath, _serializer);
-            }
+            => _storage ?? new StorageLoggerDecorator<IEnergyObservation>(new FileStorage<IEnergyObservation>(_storagePath, _serializer), GetLogger());
 
-            return _storage;
-        }
+
+        private ILoggerManager GetLogger() => _logger == null ? _logger = new LoggerManager() : _logger;
     }
 }

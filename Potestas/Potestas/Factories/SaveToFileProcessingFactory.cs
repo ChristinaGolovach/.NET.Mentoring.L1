@@ -1,9 +1,9 @@
-﻿using System;
-using System.Configuration;
-using Potestas.Analizers;
+﻿using Potestas.Analizers;
 using Potestas.Processors;
 using Potestas.Serializers;
 using Potestas.Storages;
+using Potestas.Utils;
+using System;
 
 namespace Potestas.Factories
 {
@@ -11,6 +11,7 @@ namespace Potestas.Factories
     {
         private IEnergyObservationStorage<IEnergyObservation> _storage;
         private ISerializer<IEnergyObservation> _serializer;
+        private ILoggerManager _logger;
         private string _storagePath;
 
         public SaveToFileProcessingFactory(string storagePath, ISerializer<IEnergyObservation> serializer)
@@ -22,27 +23,21 @@ namespace Potestas.Factories
 
         public IEnergyObservationProcessor<IEnergyObservation> CreateProcessor()
         {
-            return new SaveToFileProcessor<IEnergyObservation>(new SerializeProcessor<IEnergyObservation>(), _storagePath);
+            var processor = new SaveToFileProcessor<IEnergyObservation>(new SerializeProcessor<IEnergyObservation>(), _storagePath);
+
+            return new ProcessorLoggerDecorator<IEnergyObservation>(processor, GetLogger());
         }
 
-        public IEnergyObservationStorage<IEnergyObservation> CreateStorage()
-        {
-            return GetStorage();
-        }
+        public IEnergyObservationStorage<IEnergyObservation> CreateStorage() => GetStorage();
 
         public IEnergyObservationAnalizer CreateAnalizer()
-        {
-            return new LINQAnalizer(GetStorage());
-        }
+            =>  new AnalizerLoggerDecorator(new LINQAnalizer(GetStorage()), GetLogger());
+        
 
         private IEnergyObservationStorage<IEnergyObservation> GetStorage()
-        {
-            if (_storage == null)
-            {
-                _storage = new FileStorage<IEnergyObservation>(_storagePath, _serializer);
-            }
+            => _storage ?? new StorageLoggerDecorator<IEnergyObservation>(new FileStorage<IEnergyObservation>(_storagePath, _serializer), GetLogger());
 
-            return _storage;
-        }
+
+        private ILoggerManager GetLogger() => _logger == null ? _logger = new LoggerManager() : _logger;
     }
 }
