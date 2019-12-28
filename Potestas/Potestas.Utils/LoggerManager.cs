@@ -1,5 +1,4 @@
 ﻿using NLog;
-using System.IO;
 
 namespace Potestas.Utils
 {

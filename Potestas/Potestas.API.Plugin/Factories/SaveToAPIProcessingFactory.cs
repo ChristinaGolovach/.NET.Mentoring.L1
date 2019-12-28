@@ -3,6 +3,7 @@ using Potestas.API.Plugin.Services;
 using Potestas.API.Plugin.Services.Implementations;
 using Potestas.API.Plugin.Storages;
 using Potestas.Processors;
+using Potestas.Utils;
 
 namespace Potestas.API.Plugin.Factories
 {
@@ -37,7 +38,7 @@ namespace Potestas.API.Plugin.Factories
         {
             if (_httpClientService == null)
             {
-                _httpClientService = new HttpClientService();
+                _httpClientService = new HttpClientService(new LoggerManager());
             }
 
             return _httpClientService;

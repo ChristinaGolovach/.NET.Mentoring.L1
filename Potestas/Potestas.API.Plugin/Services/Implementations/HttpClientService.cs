@@ -1,33 +1,61 @@
 ﻿using Newtonsoft.Json;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Polly;
+using System;
+using Potestas.Utils;
 
 namespace Potestas.API.Plugin.Services.Implementations
 {
     public class HttpClientService : IHttpClientService
     {
         private readonly HttpClient _client;
+        private readonly ILoggerManager _loggerManager;
 
-        public HttpClientService()
+        public HttpClientService(ILoggerManager loggerManager)
         {
             _client = new HttpClient();
+            _loggerManager = loggerManager ?? throw new ArgumentNullException();
         }
 
         public async Task<HttpResponseMessage> GetAsync(string url)
-             => await _client.GetAsync(string.Intern(Settings.BaseAddress + url));
+        {
+            var resultUrl = string.Intern(Settings.BaseAddress + url);
+
+            return await ExecuteCallWithRetryAsync((value) => _client.GetAsync(value), resultUrl, resultUrl, 2);
+        }          
 
         public async Task<HttpResponseMessage> PostAsync<T>(string url, T item)
-            => await _client.PostAsJsonAsync(string.Intern(Settings.BaseAddress + url), item);
+        {
+            var resultUrl = string.Intern(Settings.BaseAddress + url);
+
+            return await ExecuteCallWithRetryAsync((value) => _client.PostAsJsonAsync(value, item), resultUrl, resultUrl, 2);
+        }
 
         public async Task<HttpResponseMessage> DeleteAsync<T>(string url)
-            => await _client.DeleteAsync(string.Intern(Settings.BaseAddress + url));
+        {
+            var resultUrl = string.Intern(Settings.BaseAddress + url);
+
+            return await ExecuteCallWithRetryAsync((value) => _client.DeleteAsync(value), resultUrl, resultUrl, 2);
+        }
 
         public async Task<HttpResponseMessage> DeleteAsync<T>(string url, T item)
         {
-            var request = new HttpRequestMessage(HttpMethod.Delete, string.Intern(Settings.BaseAddress + url));
+            var resultUrl = string.Intern(Settings.BaseAddress + url);
+            var request = new HttpRequestMessage(HttpMethod.Delete, resultUrl);
             request.Content = new StringContent(JsonConvert.SerializeObject(item), Settings.EncodingType, Settings.MediaType);
 
-            return await _client.SendAsync(request);
+            return await ExecuteCallWithRetryAsync((value) => _client.SendAsync(value), request, resultUrl, 2);
+        }
+
+        private async Task<HttpResponseMessage> ExecuteCallWithRetryAsync<T>(Func<T, Task<HttpResponseMessage>> func, T value, string url, int retryCount)
+        {
+            return await Policy.HandleResult<HttpResponseMessage>(message => !message.IsSuccessStatusCode)
+                .WaitAndRetryAsync(retryCount, i => TimeSpan.FromSeconds(3), (result, count, context) =>
+                {
+                    _loggerManager.LogWarn($"Request: {url} failed with {result.Result.StatusCode}. Retry attempt {count}.");
+                })
+                .ExecuteAsync(() => func(value));
         }
 
         //ASK не получалось псылать запросы  в API
